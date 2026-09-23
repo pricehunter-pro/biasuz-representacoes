@@ -38,7 +38,7 @@ create table if not exists public.interactions (
   external_id text,
   created_by uuid references auth.users(id)
 );
-create index if not exists interactions_lead_created_idx on public.interactions(lead_id,created_at desc);
+create index if not exists interactions_lead_created_idx on public.interactions(lead_id,created_at desc);\ncreate index if not exists interactions_created_by_idx on public.interactions(created_by);
 
 create table if not exists public.campaigns (
   id uuid primary key default gen_random_uuid(),
@@ -53,37 +53,37 @@ create table if not exists public.campaigns (
   created_by uuid references auth.users(id)
 );
 
-alter table public.leads enable row level security;
+create index if not exists campaigns_created_by_idx on public.campaigns(created_by);\n\nalter table public.leads enable row level security;
 alter table public.interactions enable row level security;
 alter table public.campaigns enable row level security;
 
 drop policy if exists "public_can_create_leads" on public.leads;
 create policy "public_can_create_leads" on public.leads
-for insert to anon, authenticated
+for insert to anon
 with check (
   consent = true
   and stage = 'novo'
   and owner_name = 'Junior'
-  and source in ('landing','whatsapp','manual')
+  and source = 'landing'
 );
 
 drop policy if exists "admins_manage_leads" on public.leads;
 create policy "admins_manage_leads" on public.leads
 for all to authenticated
-using ((select auth.jwt()->'app_metadata'->>'role') = 'admin')
-with check ((select auth.jwt()->'app_metadata'->>'role') = 'admin');
+using (((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin')
+with check (((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin');
 
 drop policy if exists "admins_manage_interactions" on public.interactions;
 create policy "admins_manage_interactions" on public.interactions
 for all to authenticated
-using ((select auth.jwt()->'app_metadata'->>'role') = 'admin')
-with check ((select auth.jwt()->'app_metadata'->>'role') = 'admin');
+using (((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin')
+with check (((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin');
 
 drop policy if exists "admins_manage_campaigns" on public.campaigns;
 create policy "admins_manage_campaigns" on public.campaigns
 for all to authenticated
-using ((select auth.jwt()->'app_metadata'->>'role') = 'admin')
-with check ((select auth.jwt()->'app_metadata'->>'role') = 'admin');
+using (((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin')
+with check (((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin');
 
 grant insert on table public.leads to anon, authenticated;
 grant select, update, delete on table public.leads to authenticated;
