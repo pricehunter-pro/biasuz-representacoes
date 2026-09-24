@@ -68,7 +68,7 @@ window.BiasuzUI=(function(){
   return '<aside class="dashboard-sidebar"><a class="dashboard-brand" href="./index.html"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>REPRESENTAÇÕES</small></span></a><div class="dashboard-role"><span>Ambiente</span><strong>'+info.label+'</strong></div><nav class="dashboard-nav">'+nav+'</nav><div class="dashboard-sidebar-bottom"><div class="dashboard-help"><strong>Primeira vez aqui?</strong><p>Veja um guia rápido dos recursos principais deste painel.</p><button data-start-tour>'+SVG.help+'<span>Como usar este painel</span></button></div>'+linkItem("help","Falar no WhatsApp","https://wa.me/5575992268989")+'</div></aside>';
  }
  function transformAdmin(){
-  const app=document.getElementById("appView");if(!app||app.dataset.uiV2)return;app.dataset.uiV2="1";
+  const app=document.getElementById("appView");if(!app||app.dataset.uiV2)return;app.dataset.uiV2="1";if(app.parentElement)app.parentElement.style.padding="0";
   const old=[...app.childNodes];const main=document.createElement("main");main.className="dashboard-main";
   old.forEach(n=>main.appendChild(n));
   const nav='<div class="dashboard-nav-group">Operação</div>'+
@@ -97,7 +97,7 @@ window.BiasuzUI=(function(){
   attachTour("admin");
  }
  function transformPortal(){
-  const app=document.getElementById("portalView");if(!app||app.dataset.uiV2)return;app.dataset.uiV2="1";const role=currentRole();
+  const app=document.getElementById("portalView");if(!app||app.dataset.uiV2)return;app.dataset.uiV2="1";if(app.parentElement)app.parentElement.style.padding="0";const role=currentRole();
   const old=[...app.childNodes],main=document.createElement("main");main.className="dashboard-main";old.forEach(n=>main.appendChild(n));
   const labels={
    cliente:[["home","Início","contextCard"],["box","Lojas","storesSection"],["cart","Pedidos","ordersList"],["file","Catálogos","repCatalogsSection"],["bell","Notificações","notificationsList"],["help","Demandas","requestsList"]],
