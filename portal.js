@@ -6,6 +6,7 @@ document.getElementById("loginTitle").textContent=roleNames[wanted]||"Acesso ao 
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 function loginError(message){const m=String(message||"");if(/invalid login credentials/i.test(m))return "E-mail ou senha não conferem. Use “Esqueci minha senha” para criar uma nova senha.";if(/email not confirmed/i.test(m))return "Seu e-mail ainda precisa ser confirmado.";return m||"Não foi possível entrar."}
 let profile=null;
+const effectiveRole=()=>profile?.role==="admin"&&["cliente","representada","representante"].includes(wanted)?wanted:profile?.role;
 
 function showPortal(on){document.getElementById("loginView").classList.toggle("hidden",on);document.getElementById("portalView").classList.toggle("hidden",!on)}
 async function getProfile(){
@@ -27,15 +28,20 @@ document.getElementById("loginForm").addEventListener("submit",async e=>{e.preve
 document.getElementById("logout").onclick=async()=>{await sb.auth.signOut();location.reload()};
 
 async function loadPortal(){
- document.getElementById("portalTitle").textContent=roleNames[profile.role]||"Portal";
+ const role=effectiveRole();
+ document.getElementById("portalTitle").textContent=roleNames[role]||"Portal";
  document.getElementById("profileName").textContent=profile.display_name||"Usuário Biasuz";
- document.getElementById("profileRole").textContent=roleNames[profile.role]||profile.role;
+ document.getElementById("profileRole").textContent=profile.role==="admin"&&role!=="admin"?"Acesso master · visualizando "+(roleNames[role]||role):(roleNames[role]||role);
+ const form=document.getElementById("requestForm");
+ if(profile.role==="admin"&&role!=="admin"){form.querySelectorAll("input,select,textarea,button").forEach(el=>el.disabled=true);document.getElementById("requestStatus").textContent="Modo master de visualização: demandas ficam somente para consulta."}
  await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores(),loadNotifications(),loadRepresentativeCatalogs(),loadRepresentativeWorkspace()]);
 }
 async function loadRepresentativeWorkspace(){
- const section=document.getElementById("representativeWorkspace");if(profile.role!=="representante"){section.classList.add("hidden");return}
+ const role=effectiveRole(),section=document.getElementById("representativeWorkspace");if(role!=="representante"){section.classList.add("hidden");return}
  section.classList.remove("hidden");const {data:{user}}=await sb.auth.getUser();
- const {data:seller,error:se}=await sb.from("salespeople").select("*").eq("user_id",user.id).eq("active",true).maybeSingle();
+ let seller=null,se=null;
+ if(profile.role==="admin"){const r=await sb.from("salespeople").select("*").eq("active",true).order("name").limit(1).maybeSingle();seller=r.data;se=r.error}
+ else {const r=await sb.from("salespeople").select("*").eq("user_id",user.id).eq("active",true).maybeSingle();seller=r.data;se=r.error}
  if(se||!seller){document.getElementById("repGoalList").innerHTML='<p class="muted">Seu acesso ainda não foi vinculado a um cadastro de vendedor. O administrador pode fazer o vínculo em Gestão Comercial.</p>';return}
  const now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1),monthKey=monthStart.toISOString().slice(0,10);
  const [cc,perf,goals,comm]=await Promise.all([
@@ -54,8 +60,8 @@ async function loadRepresentativeWorkspace(){
 }
 
 async function loadStores(){
- const section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
- if(profile.role!=="cliente"){section.classList.add("hidden");return}
+ const role=effectiveRole(),section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
+ if(role!=="cliente"){section.classList.add("hidden");return}
  section.classList.remove("hidden");
  const {data,error}=await sb.from("representadas").select("id,name,slug,segments,logo_url,products_count").eq("active",true).order("name");
  if(error){grid.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
@@ -63,17 +69,20 @@ async function loadStores(){
  grid.innerHTML=(data||[]).map(r=>'<article class="store-card"><div class="store-logo">'+(r.logo_url?'<img src="'+esc(r.logo_url)+'" alt="Logomarca '+esc(r.name)+'" onerror="this.remove();this.parentElement.innerHTML=\'<span class=&quot;store-logo-fallback&quot;>'+esc(initials(r.name))+'</span>\'">':'<span class="store-logo-fallback">'+esc(initials(r.name))+'</span>')+'</div><div class="store-card-body"><h3>'+esc(r.name)+'</h3><p>'+esc((r.segments||[]).join(" • "))+' · '+Number(r.products_count||0)+' produtos cadastrados</p><a class="btn btn-small" href="./store.html?slug='+encodeURIComponent(r.slug)+'">Entrar na loja</a></div></article>').join("");
 }
 async function loadContext(){
- const box=document.getElementById("contextContent"),title=document.getElementById("contextTitle");
- if(profile.role==="cliente"&&profile.customer_id){
-   const {data:c}=await sb.from("customers").select("*").eq("id",profile.customer_id).maybeSingle();
+ const role=effectiveRole(),box=document.getElementById("contextContent"),title=document.getElementById("contextTitle");
+ let customerId=profile.customer_id,representadaId=profile.representada_id;
+ if(profile.role==="admin"&&role==="cliente"&&!customerId){const r=await sb.from("customers").select("id").order("legal_name").limit(1).maybeSingle();customerId=r.data?.id||null}
+ if(profile.role==="admin"&&role==="representada"&&!representadaId){const r=await sb.from("representadas").select("id").eq("active",true).order("name").limit(1).maybeSingle();representadaId=r.data?.id||null}
+ if(role==="cliente"&&customerId){
+   const {data:c}=await sb.from("customers").select("*").eq("id",customerId).maybeSingle();
    title.textContent=c?.trade_name||c?.legal_name||"Minha empresa";
    box.innerHTML=c?'<div class="policy-grid"><div class="policy-box"><span>CNPJ</span><strong>'+esc(c.cnpj)+'</strong></div><div class="policy-box"><span>Cidade</span><strong>'+esc((c.city||"")+" / "+(c.state||""))+'</strong></div><div class="policy-box"><span>Telefone</span><strong>'+esc(c.phone1||"—")+'</strong></div><div class="policy-box"><span>Status comercial</span><strong>'+esc(c.lifecycle_stage)+'</strong></div></div>':'<p class="muted">Cadastro não localizado.</p>';
- } else if(profile.role==="representada"&&profile.representada_id){
-   const {data:r}=await sb.from("representadas").select("*").eq("id",profile.representada_id).maybeSingle();
-   const {data:p}=await sb.from("commercial_policies").select("*").eq("representada_id",profile.representada_id).eq("active",true).order("valid_from",{ascending:false}).limit(1).maybeSingle();
+ } else if(role==="representada"&&representadaId){
+   const {data:r}=await sb.from("representadas").select("*").eq("id",representadaId).maybeSingle();
+   const {data:p}=await sb.from("commercial_policies").select("*").eq("representada_id",representadaId).eq("active",true).order("valid_from",{ascending:false}).limit(1).maybeSingle();
    title.textContent=r?.name||"Representada";
    box.innerHTML='<div class="policy-grid"><div class="policy-box"><span>Pedido mínimo</span><strong>'+(p?.min_order_value!=null?"R$ "+Number(p.min_order_value).toLocaleString("pt-BR",{minimumFractionDigits:2}):"A cadastrar")+'</strong></div><div class="policy-box"><span>Prazo de pagamento</span><strong>'+esc(p?.payment_terms||"A cadastrar")+'</strong></div><div class="policy-box"><span>Frete</span><strong>'+esc(p?.freight_policy||"A cadastrar")+'</strong></div><div class="policy-box"><span>Previsão de entrega</span><strong>'+(p?.delivery_estimate_days?esc(p.delivery_estimate_days+" dias"):"A cadastrar")+'</strong></div></div><p class="muted">'+esc(p?.notes||"")+'</p>';
- } else if(profile.role==="representante"){
+ } else if(role==="representante"){
    title.textContent="Carteira e pedidos sob sua responsabilidade";
    box.innerHTML='<p class="muted">Neste painel você acompanha pedidos vinculados ao seu usuário e pode abrir demandas comerciais, financeiras ou cadastrais.</p>';
  } else {
@@ -93,10 +102,10 @@ async function loadRepresentativeCatalogs(){
  else if(profile.role==="cliente"){title.textContent="Catálogos comerciais";help.textContent="Abra os catálogos publicados das representadas diretamente no seu painel."}
  else {title.textContent="Seus catálogos publicados";help.textContent="Materiais comerciais associados à sua representada."}
  let req=sb.from("catalogs").select("id,title,catalog_type,year,representada_id,representadas(name)").eq("published",true).order("created_at",{ascending:false}).limit(100);
- if(profile.role==="representada"&&profile.representada_id)req=req.eq("representada_id",profile.representada_id);
+ if(profile.role==="representada"&&profile.representada_id)req=req.eq("representada_id",representadaId);
  const {data,error}=await req;if(error){box.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
  const rows=data||[];
- box.innerHTML=rows.length?rows.map(c=>'<div class="list-item"><strong>'+esc(c.title)+'</strong><small>'+esc(c.representadas?.name||"")+' · '+esc(c.year||"")+' · '+esc(c.catalog_type)+'</small><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px">'+(profile.role==="representante"?'<button class="btn btn-small" data-cat-wa="'+c.id+'">WhatsApp</button><button class="btn btn-small btn-outline" data-cat-mail="'+c.id+'">E-mail</button>':'<button class="btn btn-small" data-cat-open="'+c.id+'">Abrir catálogo</button>')+'</div></div>').join(""):'<p class="muted">Nenhum catálogo publicado.</p>';
+ box.innerHTML=rows.length?rows.map(c=>'<div class="list-item"><strong>'+esc(c.title)+'</strong><small>'+esc(c.representadas?.name||"")+' · '+esc(c.year||"")+' · '+esc(c.catalog_type)+'</small><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px">'+(role==="representante"?'<button class="btn btn-small" data-cat-wa="'+c.id+'">WhatsApp</button><button class="btn btn-small btn-outline" data-cat-mail="'+c.id+'">E-mail</button>':'<button class="btn btn-small" data-cat-open="'+c.id+'">Abrir catálogo</button>')+'</div></div>').join(""):'<p class="muted">Nenhum catálogo publicado.</p>';
  async function link(id,channel){const {data:r,error:e}=await sb.functions.invoke("catalog-share",{body:{catalog_id:id,channel,expires_days:30}});if(e)throw e;return (cfg.siteUrl||location.origin)+r.path}
  document.querySelectorAll("[data-cat-wa]").forEach(b=>b.onclick=async()=>{try{const c=rows.find(x=>x.id===b.dataset.catWa),u=await link(c.id,"whatsapp");window.open("https://wa.me/?text="+encodeURIComponent("Catálogo "+c.title+" — Biasuz Representações\n"+u),"_blank")}catch(e){alert(e.message)}});
  document.querySelectorAll("[data-cat-mail]").forEach(b=>b.onclick=async()=>{try{const c=rows.find(x=>x.id===b.dataset.catMail),u=await link(c.id,"email");location.href="mailto:?subject="+encodeURIComponent("Catálogo "+c.title+" — Biasuz")+"&body="+encodeURIComponent("Segue o catálogo comercial:\n\n"+u)}catch(e){alert(e.message)}});
@@ -114,5 +123,5 @@ async function loadRequests(){
  const rows=data||[];document.getElementById("requestCount").textContent=rows.filter(x=>["aberta","em_analise"].includes(x.status)).length;
  document.getElementById("requestsList").innerHTML=error?'<p class="form-status err">'+esc(error.message)+'</p>':rows.length?rows.map(r=>'<div class="list-item"><strong>'+esc(r.title)+'</strong><small>'+new Date(r.created_at).toLocaleString("pt-BR")+'</small><div class="pill">'+esc(r.status)+'</div><p>'+esc(r.description)+'</p>'+(r.admin_response?'<p><strong>Resposta Biasuz:</strong> '+esc(r.admin_response)+'</p>':'')+'</div>').join(""):'<p class="muted">Nenhuma demanda aberta.</p>';
 }
-document.getElementById("requestForm").addEventListener("submit",async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("requestStatus");st.textContent="Enviando...";const {data:{user}}=await sb.auth.getUser();const row={user_id:user.id,role:profile.role,customer_id:profile.customer_id||null,representada_id:profile.representada_id||null,request_type:d.request_type,title:d.title,description:d.description};const {error}=await sb.from("portal_requests").insert(row);if(error){st.className="form-status err";st.textContent=error.message;return}st.className="form-status ok";st.textContent="Demanda enviada.";e.currentTarget.reset();await loadRequests()});
+document.getElementById("requestForm").addEventListener("submit",async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("requestStatus");st.textContent="Enviando...";const {data:{user}}=await sb.auth.getUser();const row={user_id:user.id,role:effectiveRole(),customer_id:profile.customer_id||null,representada_id:profile.representada_id||null,request_type:d.request_type,title:d.title,description:d.description};const {error}=await sb.from("portal_requests").insert(row);if(error){st.className="form-status err";st.textContent=error.message;return}st.className="form-status ok";st.textContent="Demanda enviada.";e.currentTarget.reset();await loadRequests()});
 window.BiasuzAuth?.init(sb,{role:wanted,statusId:"loginStatus",redirectPath:"/portal.html?role="+encodeURIComponent(wanted)});boot();
