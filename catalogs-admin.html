@@ -5,7 +5,7 @@
 <title>Catálogos • Biasuz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=20260924-6">
+<link rel="stylesheet" href="./styles.css?v=20260924-8">
 <style>
 body{background:#0e0f11;color:#f4f4f0}.shell{min-height:100vh;padding:28px 5vw}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.top h1{margin:5px 0 0;font-size:36px}.panel{background:#18191d;border:1px solid #2a2c31;border-radius:18px;padding:20px;margin-bottom:16px}.grid{display:grid;grid-template-columns:1.2fr 1fr .6fr .8fr;gap:10px}.panel input,.panel select,.panel textarea{width:100%;background:#101114;color:#fff;border:1px solid #35383f;border-radius:10px;padding:11px 12px;font:inherit}.panel label{display:grid;gap:6px;font-size:11px;font-weight:800}.catalogs{display:grid;gap:10px}.catalog{display:grid;grid-template-columns:1.6fr .9fr .8fr .8fr auto;gap:12px;align-items:center;border:1px solid #2d3036;background:#141519;border-radius:14px;padding:14px}.catalog strong{display:block}.catalog small{color:#9699a0}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#282a30;font-size:10px;font-weight:800}.review{color:#ffd95e}.published{color:#62d68b}.processing{color:#82b9ff}.error{color:#ff8a7e}.progress{height:8px;background:#0f1012;border-radius:999px;overflow:hidden;margin-top:10px}.progress i{display:block;height:100%;width:0;background:#f5c400}.candidates{display:grid;gap:7px;margin-top:12px}.candidate{border:1px solid #2c2e34;border-radius:10px;padding:10px;display:grid;grid-template-columns:1.4fr .7fr .5fr .5fr;gap:10px;font-size:12px}.muted{color:#999ca2}.status{font-size:12px;min-height:16px}.ok{color:#48ce7e}.err{color:#ff8578}@media(max-width:900px){.grid,.catalog{grid-template-columns:1fr 1fr}.catalog>div:first-child{grid-column:1/-1}.actions{justify-content:flex-start}}@media(max-width:600px){.grid,.catalog,.candidate{grid-template-columns:1fr}.top{flex-direction:column;align-items:flex-start}}
 </style>
@@ -40,8 +40,16 @@ body{background:#0e0f11;color:#f4f4f0}.shell{min-height:100vh;padding:28px 5vw}.
   <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><span class="eyebrow">Leitura automática</span><h2 id="candidateTitle" style="margin:5px 0">Candidatos</h2></div><button id="closeCandidates" class="btn btn-small btn-outline">Fechar</button></div>
   <div id="candidateList" class="candidates"></div>
  </section>
+
+ <section id="pricePanel" class="panel" hidden>
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><span class="eyebrow">Tabela extraída</span><h2 id="priceTitle" style="margin:5px 0">Preços em revisão</h2><p class="muted">Valores extraídos do PDF não entram no checkout até aprovação explícita.</p></div><button id="closePrices" class="btn btn-small btn-outline">Fechar</button></div>
+  <div id="priceTableMeta" class="muted"></div>
+  <div id="priceList" class="candidates"></div>
+  <div style="display:flex;justify-content:flex-end;margin-top:14px"><button id="activatePriceTable" class="btn" hidden>Aprovar e ativar no B2B</button></div>
+  <p id="priceStatus" class="status"></p>
+ </section>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="./config.js?v=20260924-6"></script>
-<script src="./catalogs-admin.js?v=20260924-6"></script>
+<script src="./config.js?v=20260924-8"></script>
+<script src="./catalogs-admin.js?v=20260924-8"></script>
 </body></html>
