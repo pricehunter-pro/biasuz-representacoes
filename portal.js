@@ -4,6 +4,7 @@ const wanted=(new URLSearchParams(location.search).get("role")||"cliente").toLow
 const roleNames={cliente:"Painel do Cliente",representada:"Painel da Representada",representante:"Painel do Representante",admin:"Painel do Administrador"};
 document.getElementById("loginTitle").textContent=roleNames[wanted]||"Acesso ao portal";
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function loginError(message){const m=String(message||"");if(/invalid login credentials/i.test(m))return "E-mail ou senha não conferem. Use “Esqueci minha senha” para criar uma nova senha.";if(/email not confirmed/i.test(m))return "Seu e-mail ainda precisa ser confirmado.";return m||"Não foi possível entrar."}
 let profile=null;
 
 function showPortal(on){document.getElementById("loginView").classList.toggle("hidden",on);document.getElementById("portalView").classList.toggle("hidden",!on)}
@@ -22,7 +23,7 @@ async function boot(){
  if(profile.role!==wanted&&profile.role!=="admin"){document.getElementById("loginStatus").textContent="Seu usuário não possui acesso a este painel.";await sb.auth.signOut();showPortal(false);return}
  showPortal(true);await loadPortal();
 }
-document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("loginStatus");st.textContent="Entrando...";const {error}=await sb.auth.signInWithPassword({email:d.email,password:d.password});if(error){st.textContent=error.message;st.className="form-status err";return}await boot()});
+document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("loginStatus");st.textContent="Entrando...";const {error}=await sb.auth.signInWithPassword({email:d.email,password:d.password});if(error){st.textContent=loginError(error.message);st.className="form-status err";return}await boot()});
 document.getElementById("logout").onclick=async()=>{await sb.auth.signOut();location.reload()};
 
 async function loadPortal(){
