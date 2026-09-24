@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css?v=20260924-4" />
 </head>
 <body>
   <header class="site-header">
@@ -24,12 +24,14 @@
         <a href="#contato">Contato</a>
       </nav>
     </div>
-    <div class="access-bar">
-      <span>Acessos:</span>
-      <a href="./portal.html?role=cliente">Painel do Cliente</a>
-      <a href="./portal.html?role=representada">Painel da Representada</a>
-      <a href="./portal.html?role=representante">Painel do Representante</a>
-      <a href="./admin.html">Painel do Administrador</a>
+    <div class="portal-nav">
+      <div class="portal-nav-inner">
+        <span class="portal-nav-label">Área de acesso</span>
+        <a class="portal-link portal-client" href="./portal.html?role=cliente"><b>Cliente</b><small>loja e pedidos</small></a>
+        <a class="portal-link" href="./portal.html?role=representada"><b>Representada</b><small>pedidos e demandas</small></a>
+        <a class="portal-link" href="./portal.html?role=representante"><b>Representante</b><small>carteira e pedidos</small></a>
+        <a class="portal-link portal-admin" href="./admin.html"><b>Administrador</b><small>gestão completa</small></a>
+      </div>
     </div>
   </header>
 
@@ -129,39 +131,49 @@
   </main>
 
   <footer class="site-footer">
+    <div class="footer-cta">
+      <div><span class="eyebrow">Biasuz Representações</span><h3>Indústria, representante e lojista conectados em uma única operação.</h3></div>
+      <a class="btn" href="https://wa.me/5575992268989?text=Ol%C3%A1%2C%20quero%20falar%20com%20a%20Biasuz%20Representa%C3%A7%C3%B5es." target="_blank" rel="noopener">Falar com a equipe</a>
+    </div>
     <div class="footer-grid">
       <div class="footer-about">
         <div class="brand"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>REPRESENTAÇÕES</small></span></div>
-        <p>28 anos conectando marcas e lojistas no Norte e Nordeste do Brasil.</p>
+        <p>Representação comercial multissegmento, aproximando indústrias e lojistas com acompanhamento de carteira, pedidos e oportunidades em todo o Nordeste.</p>
+        <div class="footer-social"><a href="https://www.instagram.com/biasuzrepresentacoes/" target="_blank" rel="noopener">Instagram · @biasuzrepresentacoes</a></div>
       </div>
-      <div>
-        <h4>Navegação</h4>
-        <a href="#top">Início</a><a href="#segmentos">Segmentos</a><a href="#marcas">Representadas</a><a href="#atuacao">Como trabalhamos</a><a href="#contato">Contato</a>
+      <div class="footer-col">
+        <h4>Para comprar</h4>
+        <a href="#marcas">Ver representadas</a>
+        <a href="./portal.html?role=cliente">Entrar na área do cliente</a>
+        <a href="#contato">Solicitar atendimento</a>
+        <a href="https://wa.me/5575992268989" target="_blank" rel="noopener">WhatsApp comercial</a>
       </div>
-      <div>
-        <h4>Painéis</h4>
-        <a href="./portal.html?role=cliente">Cliente</a><a href="./portal.html?role=representada">Representada</a><a href="./portal.html?role=representante">Representante</a><a href="./admin.html">Administrador</a>
+      <div class="footer-col">
+        <h4>Operação</h4>
+        <a href="./portal.html?role=representante">Painel do representante</a>
+        <a href="./portal.html?role=representada">Painel da representada</a>
+        <a href="./admin.html">Administração</a>
+        <a href="#atuacao">Como funcionam os pedidos</a>
       </div>
-      <div>
+      <div class="footer-col footer-contact">
         <h4>Contato</h4>
-        <a href="https://wa.me/5575992268989" target="_blank" rel="noopener">+55 75 99226-8989</a>
+        <strong>+55 75 99226-8989</strong>
         <a href="mailto:biasuzrepresentacoes@gmail.com">biasuzrepresentacoes@gmail.com</a>
-        <a href="https://www.instagram.com/biasuzrepresentacoes/" target="_blank" rel="noopener">@biasuzrepresentacoes</a>
+        <span>Atendimento comercial no Nordeste</span>
+        <span>Pet · Bazar · Jardinagem · Farma · Tech · Matco</span>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Biasuz Representações.</span>
-      <span>As marcas e logomarcas pertencem aos respectivos titulares e são exibidas para identificação comercial das empresas representadas.</span>
-      <span>Privacidade: dados enviados pelo formulário são utilizados para retorno comercial e gestão do relacionamento.</span>
+      <span>© 2026 Biasuz Representações</span>
+      <span>As condições comerciais e pedidos são individualizados por indústria representada.</span>
+      <a href="#contato">Privacidade e contato</a>
     </div>
   </footer>
 
-  <a class="whatsapp-float" href="https://wa.me/5575992268989?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Biasuz%20Representa%C3%A7%C3%B5es." target="_blank" rel="noopener" aria-label="Falar com a Biasuz pelo WhatsApp">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19.11 17.21c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.15-.42-2.19-1.35-.81-.72-1.35-1.61-1.51-1.88-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.26 0 1.33.97 2.62 1.11 2.8.14.18 1.91 2.91 4.62 4.08.65.28 1.15.45 1.54.57.65.21 1.24.18 1.71.11.52-.08 1.6-.66 1.83-1.29.23-.64.23-1.19.16-1.29-.07-.11-.25-.18-.52-.32z"/><path d="M16.03 3.2c-7.04 0-12.77 5.72-12.77 12.76 0 2.25.59 4.46 1.71 6.4L3.15 29l6.79-1.78a12.7 12.7 0 0 0 6.08 1.55h.01c7.04 0 12.77-5.72 12.77-12.76 0-3.41-1.33-6.62-3.74-9.03a12.68 12.68 0 0 0-9.03-3.78zm0 23.42h-.01a10.56 10.56 0 0 1-5.39-1.48l-.39-.23-4.03 1.06 1.08-3.93-.25-.4a10.54 10.54 0 0 1-1.62-5.62c0-5.83 4.75-10.58 10.59-10.58 2.83 0 5.49 1.1 7.49 3.1 2 2 3.1 4.66 3.1 7.49 0 5.84-4.75 10.59-10.57 10.59z"/></svg>
-  </a>
+  <a class="whatsapp-float" href="https://wa.me/5575992268989?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Biasuz%20Representa%C3%A7%C3%B5es." target="_blank" rel="noopener" aria-label="Falar com a Biasuz pelo WhatsApp"><span class="wa-dot">☎</span><b>WhatsApp</b></a>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-  <script src="./config.js"></script>
-  <script src="./app.js"></script>
+  <script src="./config.js?v=20260924-4"></script>
+  <script src="./app.js?v=20260924-4"></script>
 </body>
 </html>
