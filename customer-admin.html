@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cliente • Biasuz CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260924-27">
+<style>
+body{background:#0b0c0f;color:#f4f4f0}.shell{min-height:100vh;padding:28px 5vw}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.head h1{font-size:38px;margin:6px 0}.head p{color:#9398a0}.grid{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.panel{background:#16181d;border:1px solid #2a2e35;border-radius:18px;padding:20px;margin-bottom:14px}.info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.box{padding:13px;border:1px solid #2b2f36;border-radius:12px;background:#101216}.box span{font-size:10px;color:#888e97;text-transform:uppercase;letter-spacing:.1em}.box strong{display:block;margin-top:5px;overflow-wrap:anywhere}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}label{display:grid;gap:6px;font-size:11px;font-weight:800}input,select,textarea{width:100%;background:#0c0e12;color:#fff;border:1px solid #353a43;border-radius:10px;padding:11px;font:inherit}.list{display:grid;gap:8px}.item{padding:13px;border:1px solid #292d34;border-radius:12px;background:#111318}.item small{color:#90959e}.item p{margin:8px 0 0;color:#c3c6cc;line-height:1.55}.actions{display:flex;gap:8px;flex-wrap:wrap}.muted{color:#9297a0}.status{font-size:12px}.status.ok{color:#69dc90}.status.err{color:#ff8d82}@media(max-width:900px){.grid{grid-template-columns:1fr}.info{grid-template-columns:1fr 1fr}}@media(max-width:600px){.shell{padding:20px 4vw}.info,.form-grid{grid-template-columns:1fr}.head{flex-direction:column}}
+</style>
+</head><body>
+<main class="shell">
+ <header class="head"><div><a class="eyebrow" href="./admin.html">← Carteira / CRM</a><h1 id="title">Cliente</h1><p id="subtitle">Carregando cadastro...</p></div><div class="actions"><a id="waAction" class="btn btn-small" target="_blank" rel="noopener">WhatsApp</a><a id="emailAction" class="btn btn-small btn-outline">E-mail</a></div></header>
+ <section class="panel"><div id="customerInfo" class="info"></div></section>
+ <div class="grid">
+  <div>
+   <section class="panel"><span class="eyebrow">Relacionamento</span><h2>Histórico de contatos</h2><form id="interactionForm" class="form-grid"><label>Canal<select name="channel"><option>whatsapp</option><option>telefone</option><option>email</option><option>visita</option><option>outro</option></select></label><label>Direção<select name="direction"><option value="outbound">Biasuz → Cliente</option><option value="inbound">Cliente → Biasuz</option></select></label><label class="full">Resumo<textarea name="summary" rows="3" required placeholder="Ex.: apresentou catálogo Geonav e combinou retorno sexta-feira"></textarea></label><button class="btn full" type="submit">Registrar interação</button><p id="interactionStatus" class="status full"></p></form><div id="interactionRows" class="list" style="margin-top:16px"></div></section>
+   <section class="panel"><span class="eyebrow">Pedidos</span><h2>Histórico comercial</h2><div id="orderRows" class="list"></div></section>
+  </div>
+  <aside>
+   <section class="panel"><span class="eyebrow">Gestão</span><h2>Responsável e próxima ação</h2>
+    <form id="customerForm" class="form-grid">
+     <label class="full">Estágio<select name="lifecycle_stage"><option value="prospect">Prospect</option><option value="cliente">Cliente</option><option value="inativo">Inativo</option><option value="descartado">Descartado</option></select></label>
+     <label class="full">Vendedor<select name="salesperson_id" id="salespersonSelect"></select></label>
+     <label class="full">Região<select name="sales_region_id" id="regionSelect"></select></label>
+     <label class="full">Próxima ação<input name="next_action_at" type="datetime-local"></label>
+     <label class="full">Observações<textarea name="notes" rows="6"></textarea></label>
+     <button class="btn full" type="submit">Salvar alterações</button><p id="customerStatus" class="status full"></p>
+    </form>
+   </section>
+  </aside>
+ </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js?v=20260924-27"></script><script src="./customer-admin.js?v=20260924-27"></script>
+</body></html>
