@@ -18,7 +18,20 @@ body{background:#0e0f11;color:#f4f4f0}.manager{min-height:100vh;padding:28px 5vw
   </div>
 
   <section class="panel">
-    <div class="brand-picker"><select id="brandSelect"><option value="">Selecione uma representada</option></select><a id="openStore" class="btn btn-small" href="#" target="_blank">Abrir loja</a></div><div id="syncInfo" class="catalog-meta"></div>
+    <div class="brand-picker"><select id="brandSelect"><option value="">Selecione uma representada</option></select><div class="item-actions"><button id="syncCatalog" class="btn btn-small" type="button">Sincronizar site oficial</button><a id="openStore" class="btn btn-small btn-outline" href="#" target="_blank">Abrir loja</a></div></div>
+    <div id="syncInfo" class="catalog-meta"></div><p id="syncStatus" class="status"></p>
+    <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:800">+ Cadastrar nova representada</summary>
+      <form id="newBrandForm" style="margin-top:14px">
+        <div class="grid3">
+          <label>Nome da representada<input name="name" required></label>
+          <label>Site oficial<input name="official_url" type="url" required placeholder="https://..."></label>
+          <label>Instagram<input name="instagram_url" type="url" placeholder="https://instagram.com/..."></label>
+        </div>
+        <label>Segmentos <input name="segments" placeholder="Pet, Bazar, Tech"></label>
+        <label>Descrição<textarea name="description" rows="2"></textarea></label>
+        <button class="btn" type="submit">Cadastrar representada</button><p id="newBrandStatus" class="status"></p>
+      </form>
+    </details>
   </section>
 
   <div id="workspace" class="hidden">
