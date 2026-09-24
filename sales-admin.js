@@ -1,7 +1,7 @@
 const cfg=window.BIASUZ_CONFIG||{},sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 const money=v=>"R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
-let sellers=[],brands=[],regions=[],performance=[];
+let sellers=[],brands=[],regions=[],performance=[],repProfiles=[];
 async function auth(){const {data:{user}}=await sb.auth.getUser();if(!user||user.app_metadata?.role!=="admin"){location.href="./admin.html";return false}return true}
 function setStatus(id,msg,kind=""){const el=document.getElementById(id);el.className="status "+kind;el.textContent=msg}
 function options(rows,value="id",label="name",blank="Selecione"){return '<option value="">'+blank+'</option>'+rows.map(x=>'<option value="'+esc(x[value])+'">'+esc(x[label])+'</option>').join("")}
@@ -15,13 +15,14 @@ async function boot(){
  await loadPerformance();
 }
 async function loadBase(){
- const [s,b,r]=await Promise.all([
+ const [s,b,r,p]=await Promise.all([
   sb.from("salespeople").select("*").order("name"),
   sb.from("representadas").select("id,name,slug").eq("active",true).order("name"),
-  sb.from("sales_regions").select("*").eq("active",true).order("code")
+  sb.from("sales_regions").select("*").eq("active",true).order("code"),
+  sb.from("portal_profiles").select("user_id,display_name,role,active").eq("role","representante").eq("active",true).order("display_name")
  ]);
- if(s.error)throw s.error;if(b.error)throw b.error;if(r.error)throw r.error;
- sellers=s.data||[];brands=b.data||[];regions=r.data||[];
+ if(s.error)throw s.error;if(b.error)throw b.error;if(r.error)throw r.error;if(p.error)throw p.error;
+ sellers=s.data||[];brands=b.data||[];regions=r.data||[];repProfiles=p.data||[];
  document.getElementById("goalSeller").innerHTML=options(sellers);
  document.getElementById("goalBrand").innerHTML=options(brands,"id","name","Todas");
  document.getElementById("ruleBrand").innerHTML=options(brands);
@@ -39,8 +40,10 @@ async function loadKpis(){
  document.getElementById("kSellers").textContent=s.count||0;document.getElementById("kAssigned").textContent=(c.count||0).toLocaleString("pt-BR");document.getElementById("kOrders").textContent=o.count||0;document.getElementById("kCommission").textContent=money((cm.data||[]).reduce((a,x)=>a+Number(x.expected_amount||0),0))
 }
 function renderSellers(){
- document.getElementById("sellerRows").innerHTML=sellers.length?sellers.map(s=>'<div class="row"><div><strong>'+esc(s.name)+'</strong><br><small>'+esc(s.email||"Sem e-mail")+' · '+esc(s.phone||"Sem telefone")+'</small></div><div><small>Comissão padrão</small><br><strong>'+Number(s.default_commission_rate||0).toLocaleString("pt-BR")+"%</strong></div><div><span class="badge '+(s.active?"ok":"warn")+'">'+(s.active?"Ativo":"Inativo")+'</span></div><div class="action-row"><button class="btn btn-small btn-outline" data-toggle-seller="'+s.id+'">'+(s.active?"Desativar":"Ativar")+'</button></div></div>').join(""):'<p class="muted">Nenhum vendedor cadastrado.</p>';
+ const profileOpts=s=>'<option value="">Sem acesso vinculado</option>'+repProfiles.map(p=>'<option value="'+p.user_id+'" '+(s.user_id===p.user_id?"selected":"")+'>'+esc(p.display_name||p.user_id)+'</option>').join("");
+ document.getElementById("sellerRows").innerHTML=sellers.length?sellers.map(s=>'<div class="row"><div><strong>'+esc(s.name)+'</strong><br><small>'+esc(s.email||"Sem e-mail")+' · '+esc(s.phone||"Sem telefone")+'</small><div style="margin-top:8px"><select data-seller-profile="'+s.id+'">'+profileOpts(s)+'</select></div></div><div><small>Comissão padrão</small><br><strong>'+Number(s.default_commission_rate||0).toLocaleString("pt-BR")+"%</strong></div><div><span class="badge '+(s.active?"ok":"warn")+'">'+(s.active?"Ativo":"Inativo")+'</span></div><div class="action-row"><button class="btn btn-small btn-outline" data-link-seller="'+s.id+'">Vincular acesso</button><button class="btn btn-small btn-outline" data-toggle-seller="'+s.id+'">'+(s.active?"Desativar":"Ativar")+'</button></div></div>').join(""):'<p class="muted">Nenhum vendedor cadastrado.</p>';
  document.querySelectorAll("[data-toggle-seller]").forEach(b=>b.onclick=async()=>{const s=sellers.find(x=>x.id===b.dataset.toggleSeller);await sb.from("salespeople").update({active:!s.active,updated_at:new Date().toISOString()}).eq("id",s.id);await loadBase();await loadKpis()});
+ document.querySelectorAll("[data-link-seller]").forEach(b=>b.onclick=async()=>{const id=b.dataset.linkSeller,sel=document.querySelector('[data-seller-profile="'+id+'"]'),user_id=sel?.value||null;const {error}=await sb.from("salespeople").update({user_id,updated_at:new Date().toISOString()}).eq("id",id);if(error)return alert(error.message);await loadBase();alert(user_id?"Acesso do representante vinculado.":"Vínculo de acesso removido.");});
 }
 async function renderSellerSummary(){
  const box=document.getElementById("sellerSummary"),counts=[];
