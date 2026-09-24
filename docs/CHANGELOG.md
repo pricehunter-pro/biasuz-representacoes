@@ -2,6 +2,19 @@
 
 ## 2026-09-24
 
+### Acesso, identidade e landing institucional
+- Layout de acesso refinado com logomarcas de Google, Discord, Telegram e WhatsApp.
+- Redirecionamentos de autenticação do frontend fixados para o domínio de produção.
+- Nova página `auth-action.html` para tratar tokens e links expirados no domínio Biasuz.
+- Recuperação de senha ganhou mensagens em português e suporte via WhatsApp.
+- Templates de e-mail de recuperação, link mágico e confirmação preparados com identidade Biasuz.
+- Logs confirmaram tentativas de senha rejeitadas com `invalid_credentials` e links antigos redirecionando para `localhost:3000`.
+- Landing page simplificada para apresentação institucional.
+- Seção de representadas trocada por mural somente de logomarcas, sem cards comerciais, catálogo, política ou botões de pedido.
+- Rodapé recebeu ícones de WhatsApp, Instagram e e-mail.
+- Nova Prévia Master somente leitura permite ao administrador revisar os ambientes Cliente, Representada e Representante sem alterar identidade/permissões.
+
+
 ### Gestão comercial e hardening
 - Conceitos centrais do Dudu Catálogos adaptados ao Biasuz: vendedores, regiões, metas, performance, comissões e campanhas.
 - Carteira de 7.382 clientes/prospects vinculada ao vendedor inicial e às regiões por UF.
