@@ -27,7 +27,7 @@ async function loadPortal(){
  document.getElementById("portalTitle").textContent=roleNames[profile.role]||"Portal";
  document.getElementById("profileName").textContent=profile.display_name||"Usuário Biasuz";
  document.getElementById("profileRole").textContent=roleNames[profile.role]||profile.role;
- await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores()]);
+ await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores(),loadNotifications()]);
 }
 async function loadStores(){
  const section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
@@ -60,6 +60,13 @@ async function loadOrders(){
  const {data,error}=await sb.from("orders").select("id,order_number,status,total,created_at,representada_id").order("created_at",{ascending:false}).limit(100);
  const rows=data||[];document.getElementById("orderCount").textContent=rows.length;
  document.getElementById("ordersList").innerHTML=error?'<p class="form-status err">'+esc(error.message)+'</p>':rows.length?rows.map(o=>'<div class="list-item"><strong>Pedido #'+esc(o.order_number)+'</strong><small>'+new Date(o.created_at).toLocaleDateString("pt-BR")+'</small><div class="pill">'+esc(o.status)+'</div><p>Total: R$ '+Number(o.total||0).toLocaleString("pt-BR",{minimumFractionDigits:2})+'</p></div>').join(""):'<p class="muted">Nenhum pedido disponível para este acesso.</p>';
+}
+async function loadNotifications(){
+ const {data,error}=await sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(50);
+ const rows=data||[];document.getElementById("notificationCount").textContent=rows.filter(x=>!x.read_at).length;
+ const box=document.getElementById("notificationsList");
+ box.innerHTML=error?'<p class="form-status err">'+esc(error.message)+'</p>':rows.length?rows.map(n=>'<div class="list-item"><strong>'+esc(n.title)+'</strong><small>'+new Date(n.created_at).toLocaleString("pt-BR")+'</small><p>'+esc(n.body||"")+'</p>'+(n.read_at?'':'<button class="btn btn-small" data-read="'+n.id+'">Marcar como lida</button>')+'</div>').join(""):'<p class="muted">Nenhuma notificação pendente.</p>';
+ document.querySelectorAll("[data-read]").forEach(b=>b.onclick=async()=>{await sb.from("notifications").update({read_at:new Date().toISOString()}).eq("id",b.dataset.read);await loadNotifications()});
 }
 async function loadRequests(){
  const {data,error}=await sb.from("portal_requests").select("*").order("created_at",{ascending:false}).limit(100);
