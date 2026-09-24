@@ -67,9 +67,10 @@ async function loadCatalogLibrary(){
 }
 async function downloadCatalog(id){const c=catalogLibrary.find(x=>x.id===id);if(!c?.storage_path)return;const {data,error}=await sb.storage.from("catalogs").createSignedUrl(c.storage_path,3600);if(error){alert(error.message);return}window.open(data.signedUrl,"_blank")}
 async function shareCatalog(id,channel,mode){
- const c=catalogLibrary.find(x=>x.id===id);const {data,error}=await sb.functions.invoke("catalog-share",{body:{catalog_id:id,channel,expires_hours:720}});if(error||!data?.url){alert(error?.message||"Não foi possível gerar o link.");return}
- const msg="Olá! Segue o catálogo "+c.title+" da "+(c.representadas?.name||"Biasuz Representações")+": "+data.url;
- if(mode==="copy"){await navigator.clipboard.writeText(data.url);alert("Link copiado.");return}
+ const c=catalogLibrary.find(x=>x.id===id);const {data,error}=await sb.functions.invoke("catalog-share",{body:{catalog_id:id,channel,expires_days:30}});if(error||!data?.path){alert(error?.message||"Não foi possível gerar o link.");return}
+ const url=(cfg.siteUrl||location.origin)+data.path;
+ const msg="Olá! Segue o catálogo "+c.title+" da "+(c.representadas?.name||"Biasuz Representações")+": "+url;
+ if(mode==="copy"){await navigator.clipboard.writeText(url);alert("Link copiado. Validade: 30 dias.");return}
  if(mode==="wa"){window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");return}
  if(mode==="email"){location.href="mailto:?subject="+encodeURIComponent(c.title)+"&body="+encodeURIComponent(msg)}
 }
