@@ -11,7 +11,7 @@ document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>activate(b.dataset.vi
 async function boot(){
  if(!await auth())return;
  const now=new Date(),m=String(now.getMonth()+1).padStart(2,"0");document.getElementById("perfMonth").value=now.getFullYear()+"-"+m;
- await Promise.all([loadBase(),loadKpis(),loadGoals(),loadRules(),loadCommissions()]);
+ await Promise.all([loadBase(),loadKpis(),loadGoals(),loadCampaigns(),loadRules(),loadCommissions()]);
  await loadPerformance();
 }
 async function loadBase(){
@@ -25,7 +25,7 @@ async function loadBase(){
  sellers=s.data||[];brands=b.data||[];regions=r.data||[];repProfiles=p.data||[];
  document.getElementById("goalSeller").innerHTML=options(sellers);
  document.getElementById("goalBrand").innerHTML=options(brands,"id","name","Todas");
- document.getElementById("ruleBrand").innerHTML=options(brands);
+ document.getElementById("ruleBrand").innerHTML=options(brands);document.getElementById("campaignBrand").innerHTML=options(brands,"id","name","Todas");
  document.getElementById("ruleSeller").innerHTML=options(sellers,"id","name","Todos / regra geral");
  renderSellers();renderRegions();await renderSellerSummary();
 }
@@ -61,6 +61,40 @@ async function loadGoals(){
  document.querySelectorAll("[data-del-goal]").forEach(b=>b.onclick=async()=>{if(!confirm("Excluir esta meta?"))return;await sb.from("sales_goals").delete().eq("id",b.dataset.delGoal);loadGoals()})
 }
 document.getElementById("goalForm").onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));setStatus("goalStatus","Salvando...");const {error}=await sb.from("sales_goals").insert({salesperson_id:d.salesperson_id,representada_id:d.representada_id||null,period_start:d.period_start,period_end:d.period_end,target_value:Number(d.target_value||0),target_orders:Number(d.target_orders||0),notes:d.notes||null});if(error)return setStatus("goalStatus",error.message,"err");e.currentTarget.reset();setStatus("goalStatus","Meta cadastrada.","ok");loadGoals()};
+
+async function previewCampaignAudience(){
+ const form=document.getElementById("campaignForm"),d=Object.fromEntries(new FormData(form)),box=document.getElementById("campaignPreview");
+ let totalReq=sb.from("customers").select("*",{count:"exact",head:true}).neq("lifecycle_stage","descartado");
+ if(d.state)totalReq=totalReq.eq("state",d.state);if(d.segment)totalReq=totalReq.eq("segment",d.segment);
+ const total=await totalReq;
+ let eligibleReq=sb.from("customers").select("*",{count:"exact",head:true}).neq("lifecycle_stage","descartado");
+ if(d.state)eligibleReq=eligibleReq.eq("state",d.state);if(d.segment)eligibleReq=eligibleReq.eq("segment",d.segment);
+ if(d.channel==="whatsapp"||d.channel==="multicanal")eligibleReq=eligibleReq.eq("whatsapp_marketing_allowed",true).is("whatsapp_opt_out_at",null).not("phone1","is",null);
+ else eligibleReq=eligibleReq.not("email","is",null);
+ const eligible=await eligibleReq,totalCount=total.count||0,eligibleCount=eligible.count||0;
+ form.dataset.totalAudience=String(totalCount);form.dataset.eligibleAudience=String(eligibleCount);
+ box.innerHTML='<strong>'+eligibleCount.toLocaleString("pt-BR")+' elegíveis</strong> de '+totalCount.toLocaleString("pt-BR")+' contatos na carteira. '+(d.channel==="whatsapp"&&eligibleCount===0?'<span class="status err">Nenhum cliente importado possui opt-in de WhatsApp registrado; disparo automático continuará bloqueado.</span>':'');
+}
+document.getElementById("previewCampaign").onclick=previewCampaignAudience;
+document.getElementById("campaignForm").onsubmit=async e=>{
+ e.preventDefault();const form=e.currentTarget,d=Object.fromEntries(new FormData(form));if(form.dataset.totalAudience==null)await previewCampaignAudience();
+ setStatus("campaignStatus","Salvando campanha...");
+ const brand=brands.find(x=>x.id===d.representada_id);
+ const {error}=await sb.from("campaigns").insert({
+  name:d.name,representada_id:d.representada_id||null,brand:brand?.name||null,segment:d.segment||null,state:d.state||null,
+  channel:d.channel||"whatsapp",description:d.description||null,message_template:d.message_template,status:"rascunho",
+  scheduled_at:d.scheduled_at?new Date(d.scheduled_at).toISOString():null,total_audience_count:Number(form.dataset.totalAudience||0),
+  eligible_audience_count:Number(form.dataset.eligibleAudience||0)
+ });
+ if(error)return setStatus("campaignStatus",error.message,"err");
+ form.reset();delete form.dataset.totalAudience;delete form.dataset.eligibleAudience;document.getElementById("campaignPreview").textContent="Defina os filtros para calcular a audiência.";setStatus("campaignStatus","Campanha salva em rascunho.","ok");loadCampaigns();
+};
+async function loadCampaigns(){
+ const {data,error}=await sb.from("campaigns").select("*,representadas(name)").order("created_at",{ascending:false}).limit(100),box=document.getElementById("campaignRows");
+ if(error){box.innerHTML='<p class="status err">'+esc(error.message)+'</p>';return}
+ const rows=data||[];box.innerHTML=rows.length?rows.map(c=>'<div class="row"><div><strong>'+esc(c.name)+'</strong><br><small>'+esc(c.representadas?.name||c.brand||"Todas as representadas")+' · '+esc(c.segment||"todos os segmentos")+' · '+esc(c.state||"todos os estados")+'</small></div><div><small>Elegíveis</small><br><strong>'+Number(c.eligible_audience_count||0).toLocaleString("pt-BR")+' / '+Number(c.total_audience_count||0).toLocaleString("pt-BR")+'</strong></div><div><span class="badge '+(c.status==="encerrada"?"":"warn")+'">'+esc(c.status)+'</span></div><div class="action-row"><button class="btn btn-small btn-outline" data-copy-campaign="'+c.id+'">Copiar mensagem</button></div></div>').join(""):'<p class="muted">Nenhuma campanha cadastrada.</p>';
+ document.querySelectorAll("[data-copy-campaign]").forEach(b=>b.onclick=async()=>{const c=rows.find(x=>x.id===b.dataset.copyCampaign);await navigator.clipboard.writeText(c.message_template);alert("Mensagem copiada.");});
+}
 
 async function loadRules(){
  const {data,error}=await sb.from("commission_rules").select("*,salespeople(name),representadas(name)").order("created_at",{ascending:false}).limit(100);const box=document.getElementById("ruleRows");if(error){box.innerHTML='<p class="status err">'+esc(error.message)+'</p>';return}
