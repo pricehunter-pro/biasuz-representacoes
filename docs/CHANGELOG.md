@@ -2,6 +2,19 @@
 
 ## 2026-09-24
 
+### Evolução visual dos acessos e portais
+- Telas de acesso transformadas em experiência orientada por perfil, com apresentação do que cada portal oferece antes do login.
+- Botão de exibir/ocultar senha adicionado a todos os campos de senha, inclusive recuperação e primeiro acesso.
+- Painel Administrador reorganizado com sidebar persistente, navegação por módulos, boas-vindas e tour guiado.
+- Portais Cliente, Representada e Representante reorganizados com sidebar específica por papel, atalhos, tour guiado e cartões com contraste reforçado.
+- Acesso master do administrador corrigido para realmente renderizar a experiência do papel solicitado em `portal.html?role=...`.
+- Botões de topo e ações secundárias ganharam contraste maior; linhas, textos, números, formulários e estados vazios foram reforçados visualmente.
+- Lojas do cliente passaram a usar logomarca cadastrada ou ícone do domínio oficial como fallback, eliminando iniciais genéricas.
+- Landing institucional ganhou seção “Quem somos”, melhor hierarquia visual e organização por história, cobertura, segmentos, marcas, processo e contato.
+- Páginas administrativas secundárias passaram a compartilhar um dock de navegação entre Central, Lojas, Gestão Comercial, Revisão PDF e Diagnóstico.
+- Quality checks permaneceram ativos durante toda a refatoração e validaram as alterações de JavaScript/HTML.
+
+
 ### Acesso, identidade e landing institucional
 - Layout de acesso refinado com logomarcas de Google, Discord, Telegram e WhatsApp.
 - Redirecionamentos de autenticação do frontend fixados para o domínio de produção.
