@@ -13,14 +13,15 @@ Plataforma comercial da Biasuz Representações para conectar indústrias, repre
 Leia nesta ordem:
 
 1. `AGENTS.md`
-2. `docs/PROJECT_OVERVIEW.md`
-3. `docs/ARCHITECTURE.md`
-4. `docs/DATA_MODEL.md`
-5. `docs/AUTHENTICATION.md`
-6. `docs/CATALOG_PIPELINE.md`
-7. `docs/DEPLOYMENT_VPS.md`
-8. `docs/OPERATIONS.md`
-9. `docs/CHANGELOG.md`
+2. `docs/PROJECT_HISTORY.md`
+3. `docs/PROJECT_OVERVIEW.md`
+4. `docs/ARCHITECTURE.md`
+5. `docs/DATA_MODEL.md`
+6. `docs/AUTHENTICATION.md`
+7. `docs/CATALOG_PIPELINE.md`
+8. `docs/DEPLOYMENT_VPS.md`
+9. `docs/OPERATIONS.md`
+10. `docs/CHANGELOG.md`
 
 ## Módulos principais
 
