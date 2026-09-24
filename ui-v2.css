@@ -103,3 +103,13 @@ linear-gradient(135deg,#f8f8f5 0%,#efeee9 58%,#e8e6df 100%)!important;color:#111
 .about-cards article>span{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f5c400;color:#111;font-weight:900;font-size:11px}
 .about-cards h3{font-size:20px;margin:28px 0 8px}.about-cards p{margin:0;color:#70757d;line-height:1.65;font-size:12px}
 @media(max-width:980px){.institutional-about{grid-template-columns:1fr}.about-cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:680px){.about-cards{grid-template-columns:1fr}.about-cards article{min-height:auto}}
+
+/* Administrator subpage navigation */
+.admin-subpage-v2{background:#090b0e!important}
+.subpage-dock{position:sticky;top:10px;z-index:60;display:flex;gap:7px;align-items:center;flex-wrap:wrap;width:max-content;max-width:100%;margin:0 0 22px;padding:7px;border:1px solid #2c323b;border-radius:15px;background:rgba(13,16,21,.92);backdrop-filter:blur(16px);box-shadow:0 16px 44px rgba(0,0,0,.24)}
+.subpage-dock a{display:inline-flex;align-items:center;gap:7px;padding:9px 11px;border-radius:9px;color:#b8bec7;font-size:11px;font-weight:800;border:1px solid transparent}
+.subpage-dock a:hover{color:#111;background:#f5c400;border-color:#f5c400}.subpage-dock svg{width:16px;height:16px}
+.admin-subpage-v2 .panel{border-color:#2d333c!important;background:linear-gradient(180deg,#171a20,#111419)!important}
+.admin-subpage-v2 .top h1,.admin-subpage-v2 .manager-head h1,.admin-subpage-v2 .head h1{letter-spacing:-.035em}
+.admin-subpage-v2 .btn-outline{color:#e1e5ea!important;border-color:#3a424e!important}.admin-subpage-v2 .btn-outline:hover{border-color:#f5c400!important;color:#fff!important}
+@media(max-width:700px){.subpage-dock{position:static;width:100%;overflow-x:auto;flex-wrap:nowrap}.subpage-dock a{white-space:nowrap}}
