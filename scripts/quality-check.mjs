@@ -49,6 +49,11 @@ for(const [htmlFile,jsFiles] of Object.entries(pairs)){
     if(!fs.existsSync(path.join(root,asset)))err(htmlFile+" references missing local asset "+asset);
   }
 }
+for(const f of fs.readdirSync(root).filter(x=>/\.js$/i.test(x))){
+ const t=fs.readFileSync(path.join(root,f),"utf8");
+ try{new vm.Script(t,{filename:f});ok(f+" global syntax")}
+ catch(e){err(f+" global syntax: "+e.message)}
+}
 for(const f of fs.readdirSync(root).filter(x=>/\.(js|html)$/i.test(x))){
  const t=fs.readFileSync(path.join(root,f),"utf8");
  if(/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|\bservice_role\b\s*[:=]/i.test(t))err(f+" appears to contain an administrative Supabase secret reference");
