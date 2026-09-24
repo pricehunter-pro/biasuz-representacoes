@@ -113,3 +113,37 @@ linear-gradient(135deg,#f8f8f5 0%,#efeee9 58%,#e8e6df 100%)!important;color:#111
 .admin-subpage-v2 .top h1,.admin-subpage-v2 .manager-head h1,.admin-subpage-v2 .head h1{letter-spacing:-.035em}
 .admin-subpage-v2 .btn-outline{color:#e1e5ea!important;border-color:#3a424e!important}.admin-subpage-v2 .btn-outline:hover{border-color:#f5c400!important;color:#fff!important}
 @media(max-width:700px){.subpage-dock{position:static;width:100%;overflow-x:auto;flex-wrap:nowrap}.subpage-dock a{white-space:nowrap}}
+
+/* v5 readability, promotions and compact commerce */
+.dashboard-sidebar-bottom>a{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid #2b313a;border-radius:11px;color:#cfd4da;font-size:11px;font-weight:800}
+.dashboard-sidebar-bottom>a:hover{border-color:#f5c400;color:#fff}
+.dashboard-sidebar-bottom svg{width:18px!important;height:18px!important;flex:none}
+.dashboard-help button{display:flex!important;align-items:center!important;gap:8px!important;width:100%!important;padding:9px 10px!important;border:1px solid #303640!important;border-radius:9px!important;background:#161b22!important;color:#fff!important;font:inherit!important;font-size:10px!important;font-weight:800!important;cursor:pointer}
+.dashboard-help button svg{width:16px!important;height:16px!important}
+.dashboard-main{font-size:13px}
+.dashboard-main .eyebrow{font-size:10px!important}
+.dashboard-main .portal-card p,.dashboard-main .list-item p,.dashboard-main .muted{font-size:12px;line-height:1.6}
+.dashboard-main .list-item strong{font-size:13px}
+.dashboard-main .list-item small{font-size:10px;color:#9da5b0}
+.dashboard-main .portal-card h2{font-size:20px;letter-spacing:-.02em}
+.dashboard-main .portal-card h3{font-size:24px!important}
+.store-tools{display:flex;gap:8px;align-items:center;min-width:min(100%,380px)}
+.store-tools input{min-width:210px}
+.store-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.store-card{min-height:210px!important;background:#12161c!important;border-color:#303641!important}
+.store-logo{height:104px!important;padding:16px!important}
+.store-logo img{max-width:86%!important;max-height:68px!important;object-fit:contain!important}
+.store-card-body h3{font-size:14px!important}.store-card-body p{font-size:10px!important;min-height:30px}
+.promotion-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.promotion-card{position:relative;overflow:hidden;border:1px solid #333943;border-radius:18px;background:linear-gradient(145deg,#161a20,#101318);padding:20px;min-height:220px;display:flex;flex-direction:column}
+.promotion-card:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-65px;top:-70px;background:radial-gradient(circle,rgba(245,196,0,.20),transparent 68%)}
+.promotion-brand{font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:#f5c400;font-weight:900}
+.promotion-card h3{font-size:20px!important;margin:10px 0 8px}.promotion-card p{flex:1;color:#aab1ba;line-height:1.6}.promotion-meta{font-size:10px;color:#8d949f;margin:8px 0 12px}
+.promotion-card .btn{width:max-content}.empty-state{grid-column:1/-1;border:1px dashed #343a44;border-radius:16px;padding:24px;display:grid;gap:5px;color:#9198a3}.empty-state strong{color:#e8eaed}
+.insight-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px}.insight-panel{border:1px solid #2d333c;background:#101318;border-radius:16px;padding:17px}
+.bar-list{display:grid;gap:11px;margin-top:14px}.bar-row>div{display:flex;justify-content:space-between;gap:12px;margin-bottom:5px}.bar-row strong,.bar-row span{font-size:11px}.bar-row i{display:block;height:8px;background:#242a32;border-radius:99px;overflow:hidden}.bar-row i b{display:block;height:100%;background:linear-gradient(90deg,#f5c400,#ffe16d);border-radius:inherit}
+.promo-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.promo-full{grid-column:1/-1}
+.auth-stage .auth-premium,.auth-stage .portal-login,.auth-stage .login{width:min(100%,560px)!important;max-width:560px!important}
+.auth-provider span{font-size:13px!important}.auth-provider small{font-size:9px!important}.auth-stage .auth-premium h1{font-size:36px!important}
+@media(max-width:1200px){.store-grid,.promotion-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.insight-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.store-section-head{align-items:flex-start!important;flex-direction:column}.store-tools{width:100%;min-width:0;flex-direction:column;align-items:stretch}.store-tools input{min-width:0}.store-grid,.promotion-grid{grid-template-columns:1fr!important}.promo-form-grid{grid-template-columns:1fr}.promo-full{grid-column:auto}}
