@@ -146,10 +146,25 @@ window.BiasuzUI=(function(){
   const app=role==="admin"?document.getElementById("appView"):document.getElementById("portalView");
   if(app&&!app.classList.contains("hidden")&&!localStorage.getItem("biasuz-tour-"+role))setTimeout(start,900);
  }
+ function enhanceAdminSubpage(){
+  const page=location.pathname.split("/").pop(),roots={
+   "sales-admin.html":".sales-shell","commercial-admin.html":".manager","catalog-review.html":".review","health-admin.html":".shell","customer-admin.html":".shell"
+  };
+  const sel=roots[page];if(!sel)return;const root=document.querySelector(sel);if(!root||root.querySelector(".subpage-dock"))return;
+  document.body.classList.add("admin-subpage-v2");
+  const dock=document.createElement("nav");dock.className="subpage-dock";dock.innerHTML=
+   '<a href="./admin.html">'+SVG.home+'<span>Central</span></a>'+
+   '<a href="./commercial-admin.html">'+SVG.box+'<span>Lojas</span></a>'+
+   '<a href="./sales-admin.html">'+SVG.chart+'<span>Comercial</span></a>'+
+   '<a href="./catalog-review.html">'+SVG.file+'<span>Revisão PDF</span></a>'+
+   '<a href="./health-admin.html">'+SVG.settings+'<span>Diagnóstico</span></a>'+
+   '<a href="./index.html" target="_blank">'+SVG.eye+'<span>Ver site</span></a>';
+  root.insertBefore(dock,root.firstChild);
+ }
  function init(){
   enhanceAccess();enhancePasswords();
   const app=document.getElementById("appView"),portal=document.getElementById("portalView");
-  if(app)transformAdmin();if(portal)transformPortal();
+  if(app)transformAdmin();if(portal)transformPortal();enhanceAdminSubpage();
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
  return {init,enhancePasswords};
