@@ -16,7 +16,8 @@ const pairs={
   "catalogs-admin.html":["catalogs-admin.js"],
   "reset-password.html":["reset-password.js"],
   "sales-admin.html":["sales-admin.js"],
-  "customer-admin.html":["customer-admin.js"]
+  "customer-admin.html":["customer-admin.js"],
+  "health-admin.html":["health-admin.js"]
 };
 const optionalSharedIds=new Set([
   "toggleSignup","signupPanel","createAccount","signupName","signupEmail","signupPassword","requestAccess"
