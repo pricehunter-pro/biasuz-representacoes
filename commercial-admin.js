@@ -23,7 +23,7 @@ async function selectBrand(all){
  document.getElementById("workspace").classList.toggle("hidden",!brand);
  if(!brand)return;
  document.getElementById("openStore").href="./store.html?slug="+encodeURIComponent(brand.slug);
- productPage=0;await Promise.all([loadPolicy(),loadProducts(),loadPromos(),loadOrders(),loadSyncInfo()]);
+ productPage=0;await Promise.all([loadPolicy(),loadProducts(),loadPromos(),loadOrders(),loadSyncInfo()]);renderBrandLogo();
 }
 async function loadPolicy(){
  const {data}=await sb.from("commercial_policies").select("*").eq("representada_id",brand.id).eq("active",true).order("valid_from",{ascending:false}).limit(1).maybeSingle();
@@ -80,6 +80,22 @@ async function loadOrders(){
  document.getElementById("orderRows").innerHTML=(data||[]).map(o=>'<div class="item"><div><strong>Pedido #'+esc(o.order_number)+'</strong><br><small>'+new Date(o.created_at).toLocaleString("pt-BR")+'</small></div><div>'+money(o.total)+'</div><div>'+esc(o.status)+'</div><div></div><select data-order="'+o.id+'"><option value="enviado">enviado</option><option value="em_analise">em_analise</option><option value="aprovado">aprovado</option><option value="faturado">faturado</option><option value="expedido">expedido</option><option value="entregue">entregue</option><option value="cancelado">cancelado</option></select></div>').join("")||'<p class="muted">Nenhum pedido desta representada.</p>';
  document.querySelectorAll("[data-order]").forEach(s=>{s.value=(data||[]).find(x=>x.id===s.dataset.order)?.status||"enviado";s.onchange=async()=>{await sb.from("orders").update({status:s.value}).eq("id",s.dataset.order)}})
 }
+function renderBrandLogo(){
+ const box=document.getElementById("brandLogoPreview");if(!box||!brand)return;
+ box.innerHTML=brand.logo_url?'<img src="'+esc(brand.logo_url)+'" alt="Logomarca '+esc(brand.name)+'" style="max-width:100%;max-height:84px;width:auto;height:auto;object-fit:contain">':'<span class="muted">Sem logomarca cadastrada</span>';
+}
+document.getElementById("uploadBrandLogo").onclick=async()=>{
+ if(!brand)return;const file=document.getElementById("brandLogoFile").files[0],st=document.getElementById("brandLogoStatus");if(!file){st.className="status err";st.textContent="Selecione um arquivo de imagem.";return}
+ if(file.size>5*1024*1024){st.className="status err";st.textContent="Use uma imagem de até 5 MB.";return}
+ st.className="status";st.textContent="Enviando logomarca...";
+ const ext=(file.name.split(".").pop()||"png").toLowerCase().replace(/[^a-z0-9]/g,"")||"png",path="logos/"+brand.slug+"."+ext;
+ const {error:ue}=await sb.storage.from("brand-assets").upload(path,file,{contentType:file.type||"image/png",upsert:true,cacheControl:"3600"});
+ if(ue){st.className="status err";st.textContent=ue.message;return}
+ const {data:u}=sb.storage.from("brand-assets").getPublicUrl(path),url=u.publicUrl+"?v="+Date.now();
+ const {error:de}=await sb.from("representadas").update({logo_url:url}).eq("id",brand.id);
+ if(de){st.className="status err";st.textContent=de.message;return}
+ brand.logo_url=url;renderBrandLogo();st.className="status ok";st.textContent="Logomarca atualizada.";
+};
 document.getElementById("syncCatalog").onclick=async()=>{
  if(!brand)return;const st=document.getElementById("syncStatus");st.className="status";st.textContent="Sincronizando "+brand.name+"...";
  const {data,error}=await sb.functions.invoke("catalog-sync",{body:{slug:brand.slug,max_pages:900}});
