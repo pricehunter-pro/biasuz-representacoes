@@ -29,8 +29,29 @@ async function loadPortal(){
  document.getElementById("portalTitle").textContent=roleNames[profile.role]||"Portal";
  document.getElementById("profileName").textContent=profile.display_name||"Usuário Biasuz";
  document.getElementById("profileRole").textContent=roleNames[profile.role]||profile.role;
- await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores(),loadNotifications(),loadRepresentativeCatalogs()]);
+ await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores(),loadNotifications(),loadRepresentativeCatalogs(),loadRepresentativeWorkspace()]);
 }
+async function loadRepresentativeWorkspace(){
+ const section=document.getElementById("representativeWorkspace");if(profile.role!=="representante"){section.classList.add("hidden");return}
+ section.classList.remove("hidden");const {data:{user}}=await sb.auth.getUser();
+ const {data:seller,error:se}=await sb.from("salespeople").select("*").eq("user_id",user.id).eq("active",true).maybeSingle();
+ if(se||!seller){document.getElementById("repGoalList").innerHTML='<p class="muted">Seu acesso ainda não foi vinculado a um cadastro de vendedor. O administrador pode fazer o vínculo em Gestão Comercial.</p>';return}
+ const now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1),monthKey=monthStart.toISOString().slice(0,10);
+ const [cc,perf,goals,comm]=await Promise.all([
+  sb.from("customers").select("*",{count:"exact",head:true}).eq("salesperson_id",seller.id),
+  sb.from("sales_performance_monthly").select("*").eq("salesperson_id",seller.id).eq("month_start",monthKey).maybeSingle(),
+  sb.from("sales_goals").select("*,representadas(name)").eq("salesperson_id",seller.id).lte("period_start",now.toISOString().slice(0,10)).gte("period_end",now.toISOString().slice(0,10)).order("period_start",{ascending:false}),
+  sb.from("commissions").select("expected_amount,status").eq("salesperson_id",seller.id).in("status",["prevista","aprovada"])
+ ]);
+ const sales=Number(perf.data?.sales_total||0),expected=(comm.data||[]).reduce((a,x)=>a+Number(x.expected_amount||0),0),goalRows=goals.data||[],overall=goalRows.find(g=>!g.representada_id)||goalRows[0],target=Number(overall?.target_value||0),pct=target?Math.min(100,Math.round(sales/target*100)):0;
+ document.getElementById("repCustomerCount").textContent=(cc.count||0).toLocaleString("pt-BR");
+ document.getElementById("repSalesMonth").textContent="R$ "+sales.toLocaleString("pt-BR",{minimumFractionDigits:2});
+ document.getElementById("repGoalMonth").textContent=target?"R$ "+target.toLocaleString("pt-BR",{minimumFractionDigits:2}):"R$ 0,00";
+ document.getElementById("repGoalProgress").textContent=target?pct+"% atingido":"Nenhuma meta definida.";
+ document.getElementById("repCommission").textContent="R$ "+expected.toLocaleString("pt-BR",{minimumFractionDigits:2});
+ document.getElementById("repGoalList").innerHTML=goalRows.length?goalRows.map(g=>'<div class="list-item"><strong>'+esc(g.representadas?.name||"Meta geral")+'</strong><small>'+new Date(g.period_start+"T12:00:00").toLocaleDateString("pt-BR")+" a "+new Date(g.period_end+"T12:00:00").toLocaleDateString("pt-BR")+'</small><p>Meta: R$ '+Number(g.target_value||0).toLocaleString("pt-BR",{minimumFractionDigits:2})+' · '+Number(g.target_orders||0)+' pedidos</p></div>').join(""):'<p class="muted">Nenhuma meta vigente cadastrada.</p>';
+}
+
 async function loadStores(){
  const section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
  if(profile.role!=="cliente"){section.classList.add("hidden");return}
