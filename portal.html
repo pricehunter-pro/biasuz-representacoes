@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal • Biasuz Representações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+<style>
+.portal-shell{min-height:100vh;background:#0f1012;color:#f4f4f0;padding:28px 5vw}.portal-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.portal-head h1{margin:4px 0 0;font-size:34px}.portal-login{max-width:430px;margin:8vh auto;background:#191a1e;border:1px solid #2c2e33;border-radius:20px;padding:28px}.portal-login label,.request-form label{display:grid;gap:7px;margin:12px 0;font-size:12px;font-weight:800}.portal-login input,.request-form input,.request-form textarea,.request-form select{width:100%;background:#101114;color:#fff;border:1px solid #34363d;border-radius:10px;padding:12px;font:inherit}.portal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.portal-card{background:#191a1e;border:1px solid #2c2e33;border-radius:18px;padding:20px}.portal-card h3{margin:0 0 8px}.portal-card p{color:#a4a6ac;line-height:1.6}.portal-main{display:grid;grid-template-columns:1.5fr .75fr;gap:16px}.list{display:grid;gap:9px}.list-item{border:1px solid #2d3036;background:#15161a;border-radius:13px;padding:14px}.list-item strong{display:block}.list-item small{color:#9699a0}.pill{display:inline-flex;border:1px solid #363941;border-radius:999px;padding:5px 8px;font-size:11px;margin-top:7px}.policy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.policy-box{background:#141519;border:1px solid #292c31;border-radius:12px;padding:14px}.policy-box span{display:block;color:#8f9299;font-size:11px}.policy-box strong{display:block;margin-top:5px}.hidden{display:none!important}.muted{color:#9b9da4}@media(max-width:900px){.portal-grid{grid-template-columns:1fr 1fr}.portal-main{grid-template-columns:1fr}}@media(max-width:600px){.portal-grid,.policy-grid{grid-template-columns:1fr}.portal-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="portal-shell">
+<section id="loginView" class="portal-login">
+  <a class="brand" href="./index.html"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>REPRESENTAÇÕES</small></span></a>
+  <h1 id="loginTitle">Acesso ao portal</h1><p class="muted" id="loginHelp">Entre com o usuário liberado pela Biasuz.</p>
+  <form id="loginForm"><label>E-mail<input name="email" type="email" required></label><label>Senha<input name="password" type="password" required></label><button class="btn" type="submit">Entrar</button><p id="loginStatus" class="form-status"></p></form>
+</section>
+
+<section id="portalView" class="hidden">
+  <div class="portal-head"><div><a href="./index.html" class="eyebrow">← Biasuz Representações</a><h1 id="portalTitle">Portal</h1></div><button id="logout" class="btn btn-outline">Sair</button></div>
+  <div class="portal-grid">
+    <div class="portal-card"><span class="eyebrow">Perfil</span><h3 id="profileName">—</h3><p id="profileRole">—</p></div>
+    <div class="portal-card"><span class="eyebrow">Pedidos</span><h3 id="orderCount">0</h3><p>Pedidos vinculados ao seu acesso.</p></div>
+    <div class="portal-card"><span class="eyebrow">Demandas</span><h3 id="requestCount">0</h3><p>Solicitações abertas ou em análise.</p></div>
+    <div class="portal-card"><span class="eyebrow">WhatsApp</span><h3>Atendimento direto</h3><a class="btn btn-small" href="https://wa.me/5575992268989" target="_blank" rel="noopener">Falar com a Biasuz</a></div>
+  </div>
+
+  <div class="portal-main">
+    <div>
+      <section class="portal-card" id="contextCard"><span class="eyebrow">Situação</span><h2 id="contextTitle">Seu painel</h2><div id="contextContent"></div></section>
+      <section class="portal-card"><span class="eyebrow">Pedidos</span><h2>Histórico e acompanhamento</h2><div id="ordersList" class="list"></div></section>
+      <section class="portal-card"><span class="eyebrow">Demandas</span><h2>Suas solicitações</h2><div id="requestsList" class="list"></div></section>
+    </div>
+    <aside>
+      <section class="portal-card">
+        <span class="eyebrow">Nova demanda</span><h2>Solicitar atendimento</h2>
+        <form id="requestForm" class="request-form">
+          <label>Tipo<select name="request_type"><option value="comercial">Comercial</option><option value="pedido">Pedido</option><option value="financeiro">Financeiro</option><option value="cadastro">Cadastro</option><option value="marketing">Marketing</option><option value="geral">Geral</option></select></label>
+          <label>Assunto<input name="title" required placeholder="Ex.: consultar prazo do pedido"></label>
+          <label>Descrição<textarea name="description" rows="5" required placeholder="Descreva sua solicitação"></textarea></label>
+          <button class="btn" type="submit">Enviar demanda</button><p id="requestStatus" class="form-status"></p>
+        </form>
+      </section>
+    </aside>
+  </div>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js"></script><script src="./portal.js"></script>
+</body></html>
