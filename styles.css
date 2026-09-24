@@ -75,3 +75,14 @@ body{background:var(--cloud)}
 .whatsapp-float{width:auto;height:58px;border-radius:999px;padding:0 18px 0 12px;display:flex;gap:8px;font-size:12px;font-weight:800}.wa-dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.18)}
 @media(max-width:1000px){.platform-showcase{grid-template-columns:1fr}.showcase-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.hero{min-height:auto}.hero h1{font-size:52px}.platform-showcase{border-radius:0;margin:0;padding:64px 5vw!important}.showcase-grid{grid-template-columns:1fr}.footer-cta{align-items:flex-start;flex-direction:column}.whatsapp-float b{display:none}.whatsapp-float{width:56px;padding:0;justify-content:center}}
+
+/* institutional landing v33 */
+.brands-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;align-items:stretch}
+.brand-logo-tile{min-height:132px;background:#fff;border:1px solid #2d3036;border-radius:18px;display:grid;place-items:center;padding:22px;transition:.2s;box-shadow:0 14px 32px rgba(0,0,0,.12)}
+.brand-logo-tile:hover{transform:translateY(-3px);border-color:#f5c400;box-shadow:0 20px 44px rgba(0,0,0,.22)}
+.brand-logo-tile img{display:block;max-width:88%;max-height:72px;width:auto;height:auto;object-fit:contain}
+.footer-social-icons{display:flex!important;gap:10px!important;align-items:center;margin-top:16px}
+.footer-social-icons a{width:42px;height:42px;border:1px solid #2e3239;border-radius:12px;background:#121419;display:grid!important;place-items:center!important;padding:0!important}
+.footer-social-icons img{width:20px;height:20px;display:block}.mail-icon{font-size:19px;color:#f5c400;line-height:1}
+.wa-dot img{width:19px;height:19px;display:block}
+@media(max-width:1200px){.brands-grid{grid-template-columns:repeat(5,1fr)}}@media(max-width:950px){.brands-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:720px){.brands-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.brands-grid{grid-template-columns:repeat(2,1fr)}.brand-logo-tile{min-height:110px;padding:16px}}
