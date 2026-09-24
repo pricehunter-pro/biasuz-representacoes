@@ -129,3 +129,9 @@ Na Carteira, usar **Abrir** para consultar/editar responsável, região, estági
 ## 15. Qualidade de código
 
 Todo push executa `.github/workflows/quality.yml`. Falha de sintaxe ou referência estrutural básica deve ser corrigida antes de considerar a mudança concluída. GitHub Pages não é o deploy de produção; o workflow Pages é apenas manual/legado.
+
+## 16. Diagnóstico
+
+Use **Admin > Diagnóstico** para conferir pendências automáticas de logomarcas, imagens, preços B2B, catálogos em revisão, provedores de login, vínculos de representantes, metas, regras de comissão e consentimentos de WhatsApp.
+
+O diagnóstico é operacional; para auditoria de banco continue rodando os Advisors do Supabase após migrations.
