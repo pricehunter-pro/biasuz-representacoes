@@ -39,7 +39,7 @@ async function load(){
   sb.from("product_prices").select("*").eq("representada_id",brand.id).eq("active",true)
  ]);
  policy=pol.data||null;products=prod.data||[];(prc.data||[]).forEach(x=>prices.set(x.product_id,x));
- renderPolicy(prom.data||[]);buildFilters();loadCartLocal();renderProducts();renderCart();
+ renderPolicy(prom.data||[]);await loadCatalogMaterials();buildFilters();loadCartLocal();renderProducts();renderCart();
 }
 function renderPolicy(promos){
  document.getElementById("policyStrip").innerHTML=[
@@ -49,6 +49,15 @@ function renderPolicy(promos){
   ["Entrega",policy?.delivery_estimate_days?policy.delivery_estimate_days+" dias":"A confirmar"]
  ].map(x=>'<div class="policy-item"><span>'+esc(x[0])+'</span><strong>'+esc(x[1])+'</strong></div>').join("");
  document.getElementById("promoStrip").innerHTML=promos.map(p=>'<article class="promo-chip"><strong>'+esc(p.title)+'</strong><div>'+esc(p.description||"Consulte as regras da promoção.")+'</div></article>').join("");
+}
+async function loadCatalogMaterials(){
+ const section=document.getElementById("materialsSection"),box=document.getElementById("catalogMaterials");
+ const {data,error}=await sb.from("catalogs").select("id,title,description,catalog_type,year,page_count").eq("representada_id",brand.id).eq("published",true).order("year",{ascending:false}).order("created_at",{ascending:false});
+ if(error||!data?.length){section.hidden=true;return}
+ section.hidden=false;
+ const labels={general:"Catálogo",campaign:"Campanha",price_list:"Tabela comercial",launches:"Lançamentos",technical:"Material técnico",material:"Material comercial"};
+ box.innerHTML=data.map(c=>'<article class="material-card"><span class="material-type">'+esc(labels[c.catalog_type]||"Catálogo")+'</span><h3>'+esc(c.title)+'</h3><p>'+esc([c.year,c.page_count?c.page_count+" páginas":null,c.description].filter(Boolean).join(" · "))+'</p><div class="material-actions"><button class="btn btn-small" data-open-catalog="'+c.id+'">Abrir PDF</button></div></article>').join("");
+ document.querySelectorAll("[data-open-catalog]").forEach(b=>b.onclick=async()=>{const old=b.textContent;b.disabled=true;b.textContent="Abrindo...";try{const {data:r,error:e}=await sb.functions.invoke("catalog-share",{body:{action:"access",catalog_id:b.dataset.openCatalog}});if(e)throw e;if(!r?.signed_url)throw new Error("Link indisponível");window.open(r.signed_url,"_blank")}catch(e){alert(e.message||"Não foi possível abrir o catálogo.")}finally{b.disabled=false;b.textContent=old}});
 }
 function buildFilters(){
  const groups=[...new Set(products.map(p=>p.group_name).filter(Boolean))].sort(),cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
