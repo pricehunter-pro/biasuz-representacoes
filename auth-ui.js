@@ -52,7 +52,7 @@ window.BiasuzAuth=(function(){
   });
   document.getElementById("verifyWhatsappOtp")?.addEventListener("click",async()=>{
    const phone=document.getElementById("whatsappPhone")?.value?.replace(/\D/g,""),token=document.getElementById("whatsappOtp")?.value?.trim();if(!phone||!token)return;
-   const normalized=phone.startsWith("55")?"+"+phone:"+55"+phone;const {error}=await sb.auth.verifyOtp({phone:normalized,token,type:"sms"});
+   const normalized=phone.startsWith("55")?("+"+phone):("+55"+phone);const {error}=await sb.auth.verifyOtp({phone:normalized,token,type:"sms"});
    if(error)return setStatus(st,error.message,"err");location.reload();
   });
   return {settings:s,providers};
