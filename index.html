@@ -8,12 +8,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=20260924-34" />
-<link rel="stylesheet" href="./ui-v2.css?v=20260924-3">
+  <link rel="stylesheet" href="./styles.css?v=20260924-35" />
+<link rel="stylesheet" href="./ui-v2.css?v=20260924-8">
 </head>
 <body class="landing-v4">
-  <header class="site-header">
-    <div class="nav">
+  <header class="site-header landing-header-v5">
+    <div class="portal-nav portal-nav-top">
+      <div class="portal-nav-inner">
+        <span class="portal-nav-label">Acessar painel</span>
+        <a class="portal-link portal-client" href="./portal.html?role=cliente"><b>Cliente</b><small>lojas, promoções e pedidos</small></a>
+        <a class="portal-link" href="./portal.html?role=representada"><b>Representada</b><small>resultados e pedidos</small></a>
+        <a class="portal-link" href="./portal.html?role=representante"><b>Representante</b><small>carteira e performance</small></a>
+        <a class="portal-link portal-admin" href="./admin.html"><b>Administrador</b><small>gestão completa</small></a>
+      </div>
+    </div>
+    <div class="nav institutional-nav-row">
       <a class="brand" href="#top" aria-label="Biasuz Representações">
         <span class="brand-mark">B</span>
         <span><strong>BIASUZ</strong><small>REPRESENTAÇÕES</small></span>
@@ -21,19 +30,11 @@
       <nav class="main-nav">
         <a href="#sobre">Sobre a Biasuz</a>
         <a href="#segmentos">Segmentos</a>
+        <a href="#destaques">Destaques</a>
         <a href="#marcas">Representadas</a>
         <a href="#atuacao">Como trabalhamos</a>
         <a href="#contato">Contato</a>
       </nav>
-    </div>
-    <div class="portal-nav">
-      <div class="portal-nav-inner">
-        <span class="portal-nav-label">Área de acesso</span>
-        <a class="portal-link portal-client" href="./portal.html?role=cliente"><b>Cliente</b><small>loja e pedidos</small></a>
-        <a class="portal-link" href="./portal.html?role=representada"><b>Representada</b><small>pedidos e demandas</small></a>
-        <a class="portal-link" href="./portal.html?role=representante"><b>Representante</b><small>carteira e pedidos</small></a>
-        <a class="portal-link portal-admin" href="./admin.html"><b>Administrador</b><small>gestão completa</small></a>
-      </div>
     </div>
   </header>
 
@@ -63,6 +64,17 @@
         </div>
         <p>Atendimento a lojistas, distribuidores e redes regionais com relacionamento próximo e acompanhamento comercial.</p>
       </div>
+    </section>
+
+    <section id="destaques" class="brand-carousel-section" aria-label="Destaques das empresas representadas">
+      <div class="brand-carousel-head">
+        <div><span class="eyebrow">Destaques do portfólio</span><h2>Marcas em movimento no varejo.</h2></div>
+        <div class="carousel-controls"><button id="brandPrev" type="button" aria-label="Destaque anterior">←</button><button id="brandNext" type="button" aria-label="Próximo destaque">→</button></div>
+      </div>
+      <div class="brand-carousel-window">
+        <div id="brandCarousel" class="brand-carousel-track"></div>
+      </div>
+      <div id="brandCarouselDots" class="brand-carousel-dots" aria-label="Navegação dos destaques"></div>
     </section>
 
     <section id="sobre" class="section institutional-about">
@@ -194,7 +206,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
   <script src="./config.js?v=20260924-33"></script>
-  <script src="./app.js?v=20260924-35"></script>
-  <script src="./ui-v2.js?v=20260924-2"></script>
+  <script src="./app.js?v=20260924-41"></script>
+  <script src="./ui-v2.js?v=20260924-7"></script>
 </body>
 </html>
