@@ -1,7 +1,15 @@
 window.BiasuzAuth=(function(){
  const cfg=window.BIASUZ_CONFIG||{};
+ const CANONICAL_SITE="https://bia.dunihub.online";
  function setStatus(el,msg,kind=""){if(!el)return;el.className="form-status "+kind;el.textContent=msg}
- function redirectUrl(path){return (cfg.siteUrl||location.origin)+(path.startsWith("/")?path:"/"+path)}
+ function redirectUrl(path){const base=(cfg.siteUrl&&cfg.siteUrl.startsWith("https://")?cfg.siteUrl:CANONICAL_SITE).replace(/\/$/,"");return base+(path.startsWith("/")?path:"/"+path)}
+ function friendlyError(message){
+  const m=String(message||"");
+  if(/invalid login credentials/i.test(m))return "E-mail ou senha não conferem. Use “Esqueci minha senha” para criar uma nova senha.";
+  if(/email not confirmed/i.test(m))return "Seu e-mail ainda precisa ser confirmado. Solicite um novo link de acesso.";
+  if(/expired|otp_expired/i.test(m))return "Este link expirou. Solicite um novo link e use sempre o e-mail mais recente.";
+  return m||"Não foi possível concluir a autenticação.";
+ }
  async function settings(){
   try{
    const r=await fetch(cfg.supabaseUrl+"/auth/v1/settings",{headers:{apikey:cfg.supabasePublishableKey}});
@@ -29,7 +37,7 @@ window.BiasuzAuth=(function(){
   async function oauth(provider){
    setStatus(st,"Abrindo autenticação...");
    const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:redirectUrl(target)}});
-   if(error)setStatus(st,error.message,"err")
+   if(error)setStatus(st,friendlyError(error.message),"err")
   }
   document.getElementById("googleLogin")?.addEventListener("click",()=>providerReady.google?oauth("google"):setStatus(st,"Google está integrado no site. Falta somente cadastrar o Client ID e o Client Secret no Supabase Auth.",""));
   document.getElementById("discordLogin")?.addEventListener("click",()=>providerReady.discord?oauth("discord"):setStatus(st,"Discord está integrado no site. Falta somente cadastrar o aplicativo OAuth no Supabase Auth.",""));
@@ -48,7 +56,7 @@ window.BiasuzAuth=(function(){
     email,
     options:{shouldCreateUser:true,emailRedirectTo:redirectUrl(target)}
    });
-   if(error)return setStatus(st,error.message,"err");
+   if(error)return setStatus(st,friendlyError(error.message),"err");
    setStatus(st,"Link enviado. Se o e-mail estiver vinculado à sua empresa, o painel será liberado automaticamente.","ok");
   });
 
@@ -58,7 +66,7 @@ window.BiasuzAuth=(function(){
    if(!email)return setStatus(st,"Digite seu e-mail acima para recuperar a senha.","err");
    setStatus(st,"Enviando recuperação...");
    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl("/reset-password.html")});
-   if(error)return setStatus(st,error.message,"err");
+   if(error)return setStatus(st,friendlyError(error.message),"err");
    setStatus(st,"E-mail de recuperação enviado. Verifique também o spam.","ok");
   });
 
@@ -69,7 +77,7 @@ window.BiasuzAuth=(function(){
    const normalized=phone.startsWith("55")?("+"+phone):("+55"+phone);
    setStatus(st,"Enviando código pelo WhatsApp...");
    const {error}=await sb.auth.signInWithOtp({phone:normalized,options:{channel:"whatsapp",shouldCreateUser:true}});
-   if(error)return setStatus(st,error.message,"err");
+   if(error)return setStatus(st,friendlyError(error.message),"err");
    document.getElementById("otpRow")?.classList.remove("hidden");
    setStatus(st,"Código enviado pelo WhatsApp.","ok");
   });
@@ -78,7 +86,7 @@ window.BiasuzAuth=(function(){
    if(!phone||!token)return setStatus(st,"Informe telefone e código.","err");
    const normalized=phone.startsWith("55")?("+"+phone):("+55"+phone);
    const {error}=await sb.auth.verifyOtp({phone:normalized,token,type:"sms"});
-   if(error)return setStatus(st,error.message,"err");
+   if(error)return setStatus(st,friendlyError(error.message),"err");
    location.href=redirectUrl(target);
   });
 
