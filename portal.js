@@ -63,10 +63,10 @@ async function loadStores(){
  const role=effectiveRole(),section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
  if(role!=="cliente"){section.classList.add("hidden");return}
  section.classList.remove("hidden");
- const {data,error}=await sb.from("representadas").select("id,name,slug,segments,logo_url,products_count").eq("active",true).order("name");
+ const {data,error}=await sb.from("representadas").select("id,name,slug,segments,logo_url,official_url,products_count").eq("active",true).order("name");
  if(error){grid.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
- const initials=n=>String(n||"").split(/\s+/).slice(0,3).map(x=>x[0]).join("").toUpperCase();
- grid.innerHTML=(data||[]).map(r=>'<article class="store-card"><div class="store-logo">'+(r.logo_url?'<img src="'+esc(r.logo_url)+'" alt="Logomarca '+esc(r.name)+'" onerror="this.remove();this.parentElement.innerHTML=\'<span class=&quot;store-logo-fallback&quot;>'+esc(initials(r.name))+'</span>\'">':'<span class="store-logo-fallback">'+esc(initials(r.name))+'</span>')+'</div><div class="store-card-body"><h3>'+esc(r.name)+'</h3><p>'+esc((r.segments||[]).join(" • "))+' · '+Number(r.products_count||0)+' produtos cadastrados</p><a class="btn btn-small" href="./store.html?slug='+encodeURIComponent(r.slug)+'">Entrar na loja</a></div></article>').join("");
+ const fallbackLogo=url=>"https://www.google.com/s2/favicons?domain_url="+encodeURIComponent(url||"https://bia.dunihub.online")+"&sz=256";
+ grid.innerHTML=(data||[]).map(r=>'<article class="store-card"><div class="store-logo"><img src="'+esc(r.logo_url||fallbackLogo(r.official_url))+'" alt="Logomarca '+esc(r.name)+'" loading="lazy"></div><div class="store-card-body"><h3>'+esc(r.name)+'</h3><p>'+esc((r.segments||[]).join(" • "))+' · '+Number(r.products_count||0)+' produtos cadastrados</p><a class="btn btn-small" href="./store.html?slug='+encodeURIComponent(r.slug)+'">Entrar na loja</a></div></article>').join("");
 }
 async function loadContext(){
  const role=effectiveRole(),box=document.getElementById("contextContent"),title=document.getElementById("contextTitle");
