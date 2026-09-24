@@ -34,7 +34,8 @@ Deno.serve(async(req:Request)=>{
     if(!jwt)return Response.json({ok:false,error:"Unauthorized"},{status:401});
     const {data:{user},error:ue}=await db.auth.getUser(jwt);
     if(ue||!user)return Response.json({ok:false,error:"Unauthorized"},{status:401});
-    const {data:cat,error:ce}=await db.from("catalogs").select("id,title,published,storage_bucket,storage_path").eq("id",body.catalog_id).single();if(ce)throw ce;
+    const {data:cat,error:ce}=await db.from("catalogs").select("id,title,published,visibility,storage_bucket,storage_path").eq("id",body.catalog_id).single();if(ce)throw ce;
+    if(cat.visibility==="internal")return Response.json({ok:false,error:"Catálogo interno/confidencial: compartilhamento externo bloqueado."},{status:403});
     if(body.action==="access"){
       if(!cat.published)return Response.json({ok:false,error:"Catalog not published"},{status:403});
       if(!user)return Response.json({ok:false,error:"Unauthorized"},{status:401});
