@@ -23,34 +23,28 @@ const fallbackBrands=[
 const descriptions={Pet:"Produtos, acessórios e soluções para o mercado pet.",Bazar:"Utilidades, presentes e itens para o varejo.",Jardinagem:"Produtos para cultivo, casa e jardim.",Farma:"Oportunidades para canais farmacêuticos e especializados.",Tech:"Tecnologia, acessórios e conectividade.",Matco:"Soluções para material de construção e canais relacionados."};
 const cfg=window.BIASUZ_CONFIG||{};
 const sb=(cfg.supabaseUrl&&cfg.supabasePublishableKey&&window.supabase)?window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey):null;
-let brands=fallbackBrands,active="Todas";
+let brands=fallbackBrands;
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-const initials=name=>name.split(/\s+/).slice(0,3).map(x=>x[0]).join("").toUpperCase();
+const logoFallback=url=>"https://www.google.com/s2/favicons?domain_url="+encodeURIComponent(url||"https://bia.dunihub.online")+"&sz=256";
 function waLink(brand){const n=(cfg.whatsappNumber||"5575992268989").replace(/\D/g,"");const msg=encodeURIComponent("Olá, sou lojista e tenho interesse comercial em "+brand+" através da Biasuz Representações.");return "https://wa.me/"+n+"?text="+msg}
 function renderBrands(){
- const grid=document.getElementById("brandsGrid");
- grid.innerHTML=brands.filter(b=>active==="Todas"||b.segments.includes(active)).map(b=>
- '<article class="brand-card"><div><div class="brand-logo">'+
- (b.logo?'<img loading="lazy" src="'+esc(b.logo)+'" alt="Logomarca '+esc(b.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span style="display:none">'+esc(initials(b.name))+'</span>':'<span>'+esc(initials(b.name))+'</span>')+
- '</div><h3>'+esc(b.name)+'</h3><p>'+esc(b.segments.join(" • "))+'</p></div><div class="brand-actions">'+
- '<a href="./brand.html?slug='+encodeURIComponent(b.slug)+'">Catálogo e política</a>'+
- '<a href="'+esc(b.url)+'" target="_blank" rel="noopener">Site oficial</a>'+
- '<a class="primary" href="'+waLink(b.name)+'" target="_blank" rel="noopener">WhatsApp</a></div></article>'
- ).join("");
+ const grid=document.getElementById("brandsGrid");if(!grid)return;
+ grid.innerHTML=brands.map(b=>{
+   const src=b.logo||logoFallback(b.url);
+   return '<a class="brand-logo-tile" href="'+esc(b.url)+'" target="_blank" rel="noopener" title="'+esc(b.name)+'" aria-label="Abrir site oficial da '+esc(b.name)+'"><img loading="lazy" src="'+esc(src)+'" alt="Logomarca '+esc(b.name)+'" onerror="this.closest(\'a\').style.display=\'none\'"></a>';
+ }).join("");
  const bs=document.getElementById("brandSelect");
- bs.innerHTML='<option value="">Todas / ainda não sei</option>'+[...brands].sort((a,b)=>a.name.localeCompare(b.name)).map(b=>'<option>'+esc(b.name)+'</option>').join("");
+ if(bs)bs.innerHTML='<option value="">Todas / ainda não sei</option>'+[...brands].sort((a,b)=>a.name.localeCompare(b.name)).map(b=>'<option>'+esc(b.name)+'</option>').join("");
 }
 async function loadBrands(){
- if(!sb){const metric=document.getElementById("metricBrands");if(metric)metric.textContent=brands.length;const marquee=document.getElementById("brandMarquee");if(marquee)marquee.innerHTML=brands.map(b=>'<span class="brand-pill">'+esc(b.name)+'</span>').join("");renderBrands();return}
+ if(!sb){const metric=document.getElementById("metricBrands");if(metric)metric.textContent=brands.length;renderBrands();return}
  const {data,error}=await sb.from("representadas").select("name,slug,official_url,segments,active,logo_url").eq("active",true).order("name");
  if(!error&&data?.length) brands=data.map(b=>({name:b.name,slug:b.slug,url:b.official_url,segments:b.segments||[],logo:(b.logo_url&&!b.logo_url.includes("google.com/s2/favicons"))?b.logo_url:null}));
  const metric=document.getElementById("metricBrands");if(metric)metric.textContent=brands.length;
- const marquee=document.getElementById("brandMarquee");if(marquee)marquee.innerHTML=brands.map(b=>'<a class="brand-pill" href="./brand.html?slug='+encodeURIComponent(b.slug)+'">'+esc(b.name)+'</a>').join("");
+ 
  renderBrands();
 }
 document.getElementById("segmentCards").innerHTML=segments.map(s=>'<article class="segment-card"><strong>'+s+'</strong><p>'+descriptions[s]+'</p></article>').join("");
-const filters=document.getElementById("filters");
-["Todas",...segments].forEach(s=>{const b=document.createElement("button");b.className="filter"+(s==="Todas"?" active":"");b.textContent=s;b.onclick=()=>{active=s;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.textContent===s));renderBrands()};filters.appendChild(b)});
 const ss=document.getElementById("segmentSelect");ss.innerHTML='<option value="">Selecione</option>'+segments.map(s=>'<option>'+s+'</option>').join("");
 document.getElementById("leadForm").addEventListener("submit",async e=>{
  e.preventDefault();const form=e.currentTarget,status=document.getElementById("formStatus");status.className="form-status";status.textContent="Enviando...";
