@@ -2,6 +2,22 @@
 
 ## 2026-09-24
 
+### Promoções, dashboards e WhatsApp assistido
+- Painel do Cliente ganhou menu **Promoções**, busca de representadas e visualização compacta das lojas.
+- Promoções agora podem ser liberadas pelo Administrador ou pela própria Representada, com período, tipo e link para loja/produto/catálogo.
+- Painel da Representada ganhou indicadores de pedidos, valor mensal, positivações, ticket médio, status e pedidos recentes.
+- Painel do Representante ganhou velocímetro de atingimento da meta e ranking da carteira por cidade.
+- Painel do Administrador ganhou visão executiva com pedidos do mês, valor, positivações, gauge de carteira ativa e rankings por estado, cidade, marca e estágio.
+- CRM ganhou filtros específicos por CNAE/atividade, cidade, endereço/bairro/CEP, e-mail, WhatsApp, UF e estágio.
+- Fluxo de **WhatsApp assistido** implantado na ficha do cliente com templates, rascunho, revisão humana, confirmação e fila auditável `whatsapp_outbox`.
+- Edge Function `evolution-send` implantada para Evolution API; o envio fica bloqueado até a configuração segura dos Secrets da instância.
+- Landing reorganizada com acessos aos portais acima do menu institucional e nova seção móvel de destaques das representadas.
+- Gestão das Lojas ganhou upload de banner oficial por representada e edição do texto usado na landing.
+- Foram integradas as logomarcas fornecidas para ALVA, EVO, Família de Estimação, Farex, Geonav, German Hart, Jambo Pet e Maccabi.
+- Guia de ativação de Google, Discord, Telegram OIDC e WhatsApp OTP adicionado em `docs/AUTH_PROVIDERS_SETUP.md`.
+- Índices da fila de WhatsApp e revogação explícita de acesso anônimo aos RPCs de dashboard adicionados em migration de hardening.
+
+
 ### Evolução visual dos acessos e portais
 - Telas de acesso transformadas em experiência orientada por perfil, com apresentação do que cada portal oferece antes do login.
 - Botão de exibir/ocultar senha adicionado a todos os campos de senha, inclusive recuperação e primeiro acesso.
