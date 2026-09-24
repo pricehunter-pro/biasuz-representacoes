@@ -11,7 +11,7 @@
 .store-section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:20px}.store-section-head h2{margin:7px 0 4px}.store-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.store-card{border:1px solid #2e3036;background:#141519;border-radius:16px;overflow:hidden;transition:.2s}.store-card:hover{transform:translateY(-3px);border-color:#f5c400}.store-logo{height:108px;background:#fff;display:grid;place-items:center;padding:18px}.store-logo img{max-width:100%;max-height:70px;object-fit:contain}.store-logo-fallback{font-size:20px;font-weight:900;color:#111}.store-card-body{padding:15px}.store-card-body h3{margin:0 0 5px}.store-card-body p{font-size:11px;margin:0 0 13px}.store-card .btn{width:100%}@media(max-width:1000px){.store-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.store-grid{grid-template-columns:1fr}}
 .auth-premium{max-width:500px!important;background:linear-gradient(180deg,#111318,#0b0d11)!important;border:1px solid #2b3038!important;box-shadow:0 45px 110px rgba(0,0,0,.5);padding:34px!important}.auth-brand{margin-bottom:22px}.auth-kicker{display:inline-flex;color:#f5c400;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.auth-premium h1{font-size:38px!important;letter-spacing:-.04em;margin:10px 0 6px}.auth-social{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:24px 0}.auth-provider{min-height:52px;border:1px solid #323740;background:#12151a;color:#fff;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;font:inherit;text-align:left;cursor:pointer}.auth-provider:hover{border-color:#f5c400}.auth-provider b{display:none}.provider-logo{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #e7e7e7}.provider-logo img{display:block;width:18px;height:18px;object-fit:contain}.auth-provider[data-auth-provider="whatsapp"] .provider-logo img,.auth-provider[data-auth-provider="telegram"] .provider-logo img,.auth-provider[data-auth-provider="discord"] .provider-logo img{width:19px;height:19px}.auth-provider span{font-size:12px;font-weight:800}.auth-provider small{font-size:8px;color:#818793;text-transform:uppercase}.auth-disabled{opacity:.64}.auth-divider{height:1px;background:#2b2f36;margin:25px 0;position:relative}.auth-divider span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0d0f13;padding:0 10px;color:#777d87;font-size:9px;text-transform:uppercase;letter-spacing:.14em}.auth-forgot{float:right;color:#aab0ba;font-size:10px;font-weight:600}.auth-main-btn{width:100%;margin-top:5px}.auth-magic{width:100%;border:0;background:transparent;color:#f5c400;font:inherit;font-size:11px;font-weight:800;padding:13px;cursor:pointer}.auth-phone{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px}.auth-bottom{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px;text-align:center;color:#858b94;font-size:11px}.auth-bottom button{border:0;background:transparent;color:#f5c400;cursor:pointer}.auth-premium label{position:relative}@media(max-width:600px){.auth-social{grid-template-columns:1fr}.auth-premium{padding:24px!important}}
 </style>
-<link rel="stylesheet" href="./ui-v2.css?v=20260924-2">
+<link rel="stylesheet" href="./ui-v2.css?v=20260924-5">
 </head>
 <body>
 <div class="portal-shell">
@@ -66,8 +66,44 @@
    </section>
 
   <section id="storesSection" class="portal-card hidden">
-    <div class="store-section-head"><div><span class="eyebrow">Lojas das representadas</span><h2>Escolha uma indústria para comprar</h2><p class="muted">Cada loja possui catálogo, preços, promoções e política comercial próprios. Cada pedido é finalizado separadamente.</p></div></div>
-    <div id="storeGrid" class="store-grid"></div>
+    <div class="store-section-head">
+      <div><span class="eyebrow">Lojas das representadas</span><h2>Escolha uma indústria para comprar</h2><p class="muted">Cada loja possui catálogo, preços, promoções e política comercial próprios. Cada pedido é finalizado separadamente.</p></div>
+      <div class="store-tools"><input id="storeSearch" placeholder="Buscar representada"><button id="toggleStores" class="btn btn-small btn-outline" type="button">Ver todas</button></div>
+    </div>
+    <div id="storeGrid" class="store-grid store-grid-compact"></div>
+  </section>
+
+  <section id="promotionsSection" class="portal-card hidden">
+    <div class="store-section-head"><div><span class="eyebrow">Promoções</span><h2>Oportunidades liberadas para você</h2><p class="muted">Campanhas, produtos e condições promocionais publicados pela Biasuz ou pela própria representada.</p></div></div>
+    <div id="promotionsGrid" class="promotion-grid"></div>
+  </section>
+
+  <section id="representadaWorkspace" class="portal-card hidden">
+    <div class="store-section-head"><div><span class="eyebrow">Resultados da representada</span><h2>Pedidos, faturamento e positivações</h2><p class="muted">Indicadores exclusivos da indústria vinculada ao seu acesso.</p></div></div>
+    <div class="portal-grid" style="margin-bottom:14px">
+      <div class="portal-card"><span class="eyebrow">Pedidos no mês</span><h3 id="brandOrdersMonth">0</h3><p>Pedidos registrados no período.</p></div>
+      <div class="portal-card"><span class="eyebrow">Valor no mês</span><h3 id="brandSalesMonth">R$ 0,00</h3><p>Volume financeiro dos pedidos.</p></div>
+      <div class="portal-card"><span class="eyebrow">Positivações</span><h3 id="brandPositiveMonth">0</h3><p>Clientes distintos com pedido válido.</p></div>
+      <div class="portal-card"><span class="eyebrow">Ticket médio</span><h3 id="brandTicketMonth">R$ 0,00</h3><p>Média dos pedidos válidos.</p></div>
+    </div>
+    <div class="insight-grid">
+      <div class="insight-panel"><span class="eyebrow">Status dos pedidos</span><div id="brandStatusChart" class="bar-list"></div></div>
+      <div class="insight-panel"><span class="eyebrow">Pedidos recentes</span><div id="brandRecentOrders" class="list"></div></div>
+    </div>
+  </section>
+
+  <section id="representadaPromoManager" class="portal-card hidden">
+    <span class="eyebrow">Gestão promocional</span><h2>Publicar nova promoção</h2>
+    <p class="muted">A promoção fica visível no Painel do Cliente enquanto estiver ativa e dentro do período definido.</p>
+    <form id="representadaPromoForm" class="request-form promo-form-grid">
+      <label>Título<input name="title" required placeholder="Ex.: Semana de lançamentos"></label>
+      <label>Início<input name="starts_at" type="datetime-local"></label>
+      <label>Fim<input name="ends_at" type="datetime-local"></label>
+      <label>Tipo<select name="kind"><option value="campaign">Campanha</option><option value="product">Produto promocional</option><option value="catalog">Catálogo promocional</option><option value="condition">Condição comercial</option></select></label>
+      <label class="promo-full">Descrição<textarea name="description" rows="4" placeholder="Descreva a condição, benefício e regras"></textarea></label>
+      <label class="promo-full">Link opcional<input name="link_url" type="url" placeholder="Link para loja, produto ou catálogo"></label>
+      <button class="btn promo-full" type="submit">Publicar promoção</button><p id="representadaPromoStatus" class="form-status promo-full"></p>
+    </form>
   </section>
   <div class="portal-main">
     <div>
@@ -91,5 +127,5 @@
 </section>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260924-37"></script><script src="./portal.js?v=20260924-38"></script><script src="./ui-v2.js?v=20260924-2"></script>
+<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260924-37"></script><script src="./portal.js?v=20260924-39"></script><script src="./ui-v2.js?v=20260924-4"></script>
 </body></html>
