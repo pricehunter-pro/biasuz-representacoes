@@ -208,3 +208,10 @@ linear-gradient(135deg,#f8f8f5 0%,#efeee9 58%,#e8e6df 100%)!important;color:#111
 .brand-banner-manager{margin-top:18px;padding-top:18px;border-top:1px solid #2d333c}
 .brand-banner-preview{height:180px;border-radius:16px;background:linear-gradient(135deg,#101318,#20242b);border:1px solid #303641;display:grid;place-items:center;overflow:hidden;padding:12px;margin-bottom:10px}
 .brand-banner-preview img{display:block;width:100%;height:100%;object-fit:cover;border-radius:10px}
+
+/* v10 representative visual analytics */
+.rep-insights{margin-top:14px;grid-template-columns:.6fr 1.4fr}
+.big-gauge{--gauge:0%;width:180px;height:180px;margin:18px auto 4px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#f5c400 var(--gauge),#2a3038 0);position:relative}
+.big-gauge:after{content:"";position:absolute;inset:18px;border-radius:50%;background:#11151a;box-shadow:inset 0 0 0 1px #303640}
+.big-gauge>div{position:relative;z-index:2;text-align:center}.big-gauge strong{display:block;font-size:34px;color:#fff}.big-gauge span{font-size:10px;color:#969da8;text-transform:uppercase;letter-spacing:.12em}
+@media(max-width:850px){.rep-insights{grid-template-columns:1fr}}
