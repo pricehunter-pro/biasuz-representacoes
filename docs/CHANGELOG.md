@@ -2,6 +2,22 @@
 
 ## 2026-09-24
 
+### Gestão comercial e hardening
+- Conceitos centrais do Dudu Catálogos adaptados ao Biasuz: vendedores, regiões, metas, performance, comissões e campanhas.
+- Carteira de 7.382 clientes/prospects vinculada ao vendedor inicial e às regiões por UF.
+- Nova tela `sales-admin.html` com vendedores, metas, performance, campanhas, regras e comissões.
+- Portal do Representante ampliado com carteira, vendas mensais, meta e comissão prevista.
+- Nova ficha CRM `customer-admin.html` com responsável, região, próxima ação, interações e pedidos.
+- Novo painel `health-admin.html` com diagnóstico de dados, autenticação, catálogos e prontidão comercial.
+- Audiência de campanhas calcula elegibilidade e respeita consentimento/opt-out para WhatsApp.
+- Progresso de metas corrigido para usar pedidos válidos do período.
+- RLS corrigida para impedir leitura global da carteira por representantes e leitura indevida de itens de pedidos.
+- Política legada de catálogos que poderia contornar confidencialidade removida.
+- Índices adicionados para novas FKs do módulo comercial.
+- Workflow de GitHub Pages removido do deploy automático; produção continua em VPS/EasyPanel.
+- CI de qualidade criado e já capturou/corrigiu uma regressão real de sintaxe JavaScript.
+
+
 ### Continuidade 14h
 - Landing page elevada para uma linguagem visual premium em grafite/obsidiana + amarelo Biasuz.
 - Nova seção de plataforma comercial conectada.
