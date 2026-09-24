@@ -8,7 +8,7 @@
 
 .auth-premium{max-width:500px!important;background:linear-gradient(180deg,#111318,#0b0d11)!important;border:1px solid #2b3038!important;box-shadow:0 45px 110px rgba(0,0,0,.5);padding:34px!important}.auth-brand{margin-bottom:22px}.auth-kicker{display:inline-flex;color:#f5c400;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.auth-premium h1{font-size:38px!important;letter-spacing:-.04em;margin:10px 0 6px}.auth-social{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:24px 0}.auth-provider{min-height:52px;border:1px solid #323740;background:#12151a;color:#fff;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;font:inherit;text-align:left;cursor:pointer}.auth-provider:hover{border-color:#f5c400}.auth-provider b{display:none}.provider-logo{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #e7e7e7}.provider-logo img{display:block;width:18px;height:18px;object-fit:contain}.auth-provider[data-auth-provider="whatsapp"] .provider-logo img,.auth-provider[data-auth-provider="telegram"] .provider-logo img,.auth-provider[data-auth-provider="discord"] .provider-logo img{width:19px;height:19px}.auth-provider span{font-size:12px;font-weight:800}.auth-provider small{font-size:8px;color:#818793;text-transform:uppercase}.auth-disabled{opacity:.64}.auth-divider{height:1px;background:#2b2f36;margin:25px 0;position:relative}.auth-divider span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0d0f13;padding:0 10px;color:#777d87;font-size:9px;text-transform:uppercase;letter-spacing:.14em}.auth-forgot{float:right;color:#aab0ba;font-size:10px!important;font-weight:600}.auth-main-btn{width:100%;margin-top:5px}.auth-magic{width:100%;border:0;background:transparent;color:#f5c400;font:inherit;font-size:11px;font-weight:800;padding:13px;cursor:pointer}.auth-phone{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px}.auth-bottom{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px;text-align:center;color:#858b94;font-size:11px}.auth-bottom button{border:0;background:transparent;color:#f5c400;cursor:pointer}.auth-premium label{position:relative}@media(max-width:600px){.auth-social{grid-template-columns:1fr}.auth-premium{padding:24px!important}}
 </style>
-<link rel="stylesheet" href="./ui-v2.css?v=20260924-2">
+<link rel="stylesheet" href="./ui-v2.css?v=20260924-6">
 </head>
 <body>
 <div class="admin-shell">
@@ -38,6 +38,20 @@
  <div class="admin-top"><div><span class="eyebrow">Biasuz Representações</span><h1>Central comercial</h1></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-outline" href="./master-preview.html">Visualizar portais</a><a class="btn btn-outline" href="./reset-password.html?mode=change">Minha senha</a><button id="logout" class="btn btn-outline">Sair</button></div></div>
  <div class="tabs"><button class="tab active" data-tab="leads">Leads</button><button class="tab" data-tab="customers">Carteira</button><button class="tab" data-tab="catalog">Representadas</button><button class="tab" data-tab="catalogs">Catálogos & PDFs</button><a class="tab" href="./catalog-review.html">Revisar extrações</a><a class="tab" href="./commercial-admin.html">Gestão das Lojas</a><a class="tab" href="./sales-admin.html">Gestão Comercial</a><a class="tab" href="./health-admin.html">Diagnóstico</a><button class="tab" data-tab="import">Importar CSV</button></div>
  <div class="kpis"><div class="kpi"><span>Leads</span><strong id="kLeads">0</strong></div><div class="kpi"><span>Carteira</span><strong id="kCustomers">0</strong></div><div class="kpi"><span>Representadas</span><strong id="kBrands">0</strong></div><div class="kpi"><span>Produtos</span><strong id="kProducts">0</strong></div></div>
+ <section class="admin-insights">
+   <div class="insight-metrics">
+     <article><span>Pedidos no mês</span><strong id="insOrders">0</strong></article>
+     <article><span>Valor no mês</span><strong id="insSales">R$ 0,00</strong></article>
+     <article><span>Positivações</span><strong id="insPositives">0</strong></article>
+     <article class="gauge-card"><span>Carteira ativa</span><div id="adminGauge" class="mini-gauge"><b>0%</b></div></article>
+   </div>
+   <div class="ranking-grid">
+     <article><span class="eyebrow">Estados</span><h3>Carteira por UF</h3><div id="adminStateRanking" class="rank-list"></div></article>
+     <article><span class="eyebrow">Cidades</span><h3>Top cidades</h3><div id="adminCityRanking" class="rank-list"></div></article>
+     <article><span class="eyebrow">Portfólio</span><h3>Produtos por marca</h3><div id="adminBrandRanking" class="rank-list"></div></article>
+     <article><span class="eyebrow">Funil</span><h3>Estágio da carteira</h3><div id="adminStageRanking" class="rank-list"></div></article>
+   </div>
+ </section>
 
  <section id="tab-leads" class="tabview">
   <div class="admin-card"><div class="toolbar"><input id="leadSearch" placeholder="Buscar empresa, nome ou telefone"><select id="leadState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="leadSegment"><option value="">Todos os segmentos</option><option>Pet</option><option>Bazar</option><option>Jardinagem</option><option>Farma</option><option>Tech</option><option>Matco</option></select><button class="btn btn-small" id="reloadLeads">Atualizar</button></div><div id="leadRows" class="rows"></div></div>
@@ -62,7 +76,18 @@
         <button class="btn btn-small" type="submit">Cadastrar cliente</button><p id="newCustomerStatus" class="form-status"></p>
       </form>
     </details>
-    <div class="toolbar"><input id="customerSearch" placeholder="Buscar CNPJ, razão social, fantasia, cidade ou telefone"><select id="customerState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="customerStage"><option value="">Todos</option><option value="prospect">Prospects</option><option value="cliente">Clientes</option><option value="inativo">Inativos</option><option value="descartado">Descartados</option></select><button class="btn btn-small" id="reloadCustomers">Buscar</button></div><div id="customerRows" class="rows"></div><div class="pager"><button id="prevCustomers" class="btn btn-outline btn-small">Anterior</button><span id="customerPage" class="muted">1</span><button id="nextCustomers" class="btn btn-outline btn-small">Próxima</button></div></div>
+    <div class="customer-filter-grid">
+  <input id="customerSearch" placeholder="CNPJ, razão social ou fantasia">
+  <input id="customerCnae" placeholder="CNAE ou atividade">
+  <input id="customerCity" placeholder="Cidade">
+  <input id="customerAddress" placeholder="Endereço / bairro / CEP">
+  <input id="customerEmail" placeholder="E-mail">
+  <input id="customerWhatsapp" placeholder="WhatsApp / telefone">
+  <select id="customerState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select>
+  <select id="customerStage"><option value="">Todos os estágios</option><option value="prospect">Prospects</option><option value="cliente">Clientes</option><option value="inativo">Inativos</option><option value="descartado">Descartados</option></select>
+  <button class="btn btn-small" id="reloadCustomers">Aplicar filtros</button>
+  <button class="btn btn-small btn-outline" id="clearCustomerFilters" type="button">Limpar</button>
+ </div><div id="customerRows" class="rows"></div><div class="pager"><button id="prevCustomers" class="btn btn-outline btn-small">Anterior</button><span id="customerPage" class="muted">1</span><button id="nextCustomers" class="btn btn-outline btn-small">Próxima</button></div></div>
  </section>
 
  <section id="tab-catalog" class="tabview hidden">
@@ -105,5 +130,5 @@
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260924-37"></script><script src="./admin.js?v=20260924-38"></script><script src="./ui-v2.js?v=20260924-2"></script>
+<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260924-37"></script><script src="./admin.js?v=20260924-40"></script><script src="./ui-v2.js?v=20260924-5"></script>
 </body></html>
