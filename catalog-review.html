@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Revisão de Catálogos • Biasuz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260924-5">
+<style>
+body{background:#0e0f11;color:#f4f4f0}.review{min-height:100vh;padding:28px 5vw}.head{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:20px}.panel{background:#18191d;border:1px solid #2b2d32;border-radius:18px;padding:20px;margin-bottom:16px}.toolbar{display:grid;grid-template-columns:1.2fr .8fr .7fr auto;gap:9px}.toolbar input,.toolbar select{width:100%;background:#101114;color:#fff;border:1px solid #35383f;border-radius:10px;padding:11px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}.stat{background:#131418;border:1px solid #2c2e33;border-radius:13px;padding:14px}.stat span{font-size:10px;color:#9699a0;text-transform:uppercase;letter-spacing:.08em}.stat strong{display:block;font-size:24px;margin-top:4px}.rows{display:grid;gap:8px}.row{display:grid;grid-template-columns:1.5fr .65fr .65fr .65fr 1fr auto;gap:10px;align-items:center;border:1px solid #2b2e34;border-radius:13px;padding:13px;background:#141519}.row small{color:#979aa0}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#292b31;font-size:11px}.badge.review{background:#4b3411;color:#ffd86c}.badge.matched,.badge.created{background:#14331f;color:#7ce29d}.actions{display:flex;gap:6px;flex-wrap:wrap}.pager{display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-top:12px}.price-box{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}.muted{color:#9699a0}.ok{color:#42c77a}.err{color:#ff8275}@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.toolbar,.row,.price-box{grid-template-columns:1fr 1fr}.row>div:first-child{grid-column:1/-1}}@media(max-width:620px){.stats,.toolbar,.row,.price-box{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="review">
+ <div class="head"><div><a href="./admin.html" class="eyebrow">← Painel do Administrador</a><h1>Revisão de Catálogos</h1><p class="muted">Valide o que foi extraído dos PDFs antes de publicar preços e produtos na loja B2B.</p></div><a class="btn btn-outline" href="./commercial-admin.html">Gestão das Lojas</a></div>
+ <section class="panel">
+  <div class="toolbar">
+   <select id="catalogSelect"><option value="">Selecione um catálogo</option></select>
+   <select id="statusFilter"><option value="">Todos os status</option><option value="review">Para revisão</option><option value="matched">Associados</option><option value="created">Criados</option><option value="ignored">Ignorados</option></select>
+   <input id="search" placeholder="Buscar produto, SKU ou código">
+   <button id="reload" class="btn btn-small">Atualizar</button>
+  </div>
+  <div class="stats"><div class="stat"><span>Candidatos</span><strong id="sCandidates">0</strong></div><div class="stat"><span>Revisão</span><strong id="sReview">0</strong></div><div class="stat"><span>Associados</span><strong id="sMatched">0</strong></div><div class="stat"><span>Criados</span><strong id="sCreated">0</strong></div><div class="stat"><span>Preços em rascunho</span><strong id="sPrices">0</strong></div></div>
+ </section>
+ <section class="panel">
+   <div id="rows" class="rows"><p class="muted">Selecione um catálogo.</p></div>
+   <div class="pager"><button id="prev" class="btn btn-small btn-outline">Anterior</button><span id="pageInfo" class="muted">—</span><button id="next" class="btn btn-small btn-outline">Próxima</button></div>
+ </section>
+ <section class="panel">
+  <span class="eyebrow">Tabela de preços</span><h2>Publicação comercial</h2>
+  <p class="muted">Preços encontrados no PDF ficam em rascunho. Ao publicar, eles passam a alimentar a loja B2B desta representada.</p>
+  <div class="price-box"><select id="priceTableSelect"><option value="">Nenhuma tabela em rascunho</option></select><input id="priceTableName" placeholder="Nome da tabela"><button id="publishPrices" class="btn">Publicar tabela B2B</button></div>
+  <p id="priceStatus" class="muted"></p>
+ </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js?v=20260924-5"></script><script src="./catalog-review.js?v=20260924-5"></script>
+</body></html>
