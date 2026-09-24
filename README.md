@@ -25,13 +25,14 @@ Leia nesta ordem:
 
 ## Módulos principais
 
-- Landing page pública premium
+- Landing page pública institucional premium, com representadas exibidas em mural de logomarcas
 - Captação de leads e CTA de WhatsApp
 - Vitrine de representadas por segmento
 - Portal do Cliente
 - Portal da Representada
 - Portal do Representante
 - Painel do Administrador / CRM
+- Prévia Master somente leitura dos ambientes Cliente, Representada e Representante
 - Gestão Comercial: vendedores, regiões, carteira, metas, performance e comissões
 - Planejador de campanhas com audiência elegível e consentimento
 - Ficha completa do cliente com histórico de interações, responsável, região e próxima ação
@@ -68,3 +69,7 @@ O deploy é feito a partir do repositório na VPS/EasyPanel que atende `bia.duni
 A carteira importada possui 7.382 clientes/prospects atribuídos ao vendedor inicial e às regiões por UF. O banco ainda não possui pedidos enviados, portanto metas, performance e comissões começam zerados e passam a ser calculados com a operação real.
 
 O módulo de campanhas permite planejar e calcular a audiência, mas não realiza disparos automáticos enquanto a integração de WhatsApp/Evolution e os consentimentos necessários não estiverem validados.
+
+## Autenticação em produção
+
+O frontend força redirecionamentos para `https://bia.dunihub.online` e inclui `auth-action.html` para validar links de acesso/recuperação no domínio da Biasuz. Templates de recuperação, link mágico e confirmação com identidade Biasuz estão em `supabase/email-templates/`. A ativação desses templates e do remetente personalizado depende das configurações de Auth/SMTP do projeto Supabase hospedado.
