@@ -1,6 +1,7 @@
 const cfg=window.BIASUZ_CONFIG||{},sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 const slug=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const parseMoney=v=>{let x=String(v??"").trim().replace(/R\$\s*/gi,"").replace(/\s/g,"");if(x.includes(",")&&x.includes("."))x=x.replace(/\./g,"").replace(",",".");else if(x.includes(","))x=x.replace(",",".");const n=Number(x);return Number.isFinite(n)?n:NaN};
 let brands=[],catalogs=[];
 const ocrCount=s=>{const v=s?.ocr_required_pages??s?.ocr_needed_pages??s?.ocr_required_remaining??0;return Array.isArray(v)?v.length:Number(v||0)};
 async function auth(){const {data:{user}}=await sb.auth.getUser();if(!user||user.app_metadata?.role!=="admin"){location.href="./admin.html";return false}return true}
@@ -75,7 +76,7 @@ async function showPrices(catalogId){
  activePriceItems=items||[];meta.textContent=(activePriceTable.status==="published"?"ATIVA":"RASCUNHO")+" · "+activePriceItems.length+" produtos · "+(activePriceTable.notes||"");
  list.innerHTML=ie?'<p class="err">'+esc(ie.message)+'</p>':activePriceItems.length?activePriceItems.map(x=>'<div class="candidate"><div><strong>'+esc(x.products?.name||x.source_text||"Produto")+'</strong><small>'+esc(x.products?.sku||"Sem SKU")+' · página '+esc(x.source_page||"—")+'</small></div><div>R$ '+Number(x.price).toLocaleString("pt-BR",{minimumFractionDigits:2})+'</div><div>'+Math.round(Number(x.confidence||0)*100)+'%</div><div><button class="btn btn-small btn-outline" data-edit-price="'+x.id+'">Editar</button></div></div>').join(""):'<p class="muted">Nenhum valor em rascunho.</p>';
  btn.hidden=!activePriceItems.length||activePriceTable.status==="published";
- document.querySelectorAll("[data-edit-price]").forEach(b=>b.onclick=async()=>{const it=activePriceItems.find(x=>x.id===b.dataset.editPrice),raw=prompt("Preço revisado para "+(it.products?.name||"produto"),String(it.price).replace(".",","));if(raw===null)return;const n=Number(String(raw).replace(".","").replace(",","."));if(!Number.isFinite(n)||n<0)return alert("Preço inválido.");const {error}=await sb.from("price_table_items").update({price:n,confidence:1}).eq("id",it.id);if(error)alert(error.message);else showPrices(catalogId)});
+ document.querySelectorAll("[data-edit-price]").forEach(b=>b.onclick=async()=>{const it=activePriceItems.find(x=>x.id===b.dataset.editPrice),raw=prompt("Preço revisado para "+(it.products?.name||"produto"),String(it.price).replace(".",","));if(raw===null)return;const n=parseMoney(raw);if(!Number.isFinite(n)||n<0)return alert("Preço inválido.");const {error}=await sb.from("price_table_items").update({price:n,confidence:1}).eq("id",it.id);if(error)alert(error.message);else showPrices(catalogId)});
  panel.scrollIntoView({behavior:"smooth"});
 }
 document.getElementById("activatePriceTable").onclick=async()=>{
