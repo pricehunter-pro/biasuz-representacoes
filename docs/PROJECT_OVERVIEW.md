@@ -16,6 +16,11 @@ A Biasuz Representações precisava sair de uma presença institucional simples 
 10. Compartilhamento de catálogos por WhatsApp/e-mail.
 11. Autenticação facilitada e recuperação de senha.
 12. Base preparada para Evolution API, automações e integrações futuras.
+13. Gestão Comercial com vendedores, regiões e carteira atribuída.
+14. Metas, performance e comissões previstas.
+15. Planejador de campanhas segmentadas com controle de elegibilidade.
+16. Ficha CRM completa do cliente com interações e próxima ação.
+17. CI de qualidade no GitHub para impedir regressões básicas de frontend.
 
 ## Perfis
 
@@ -26,10 +31,10 @@ Consulta lojas por representada, preços comerciais permitidos, promoções, pol
 Consulta sua operação, políticas, pedidos, catálogos e demandas vinculadas.
 
 ### Representante
-Acompanha carteira, pedidos, catálogos e pode compartilhar materiais com clientes.
+Acompanha somente a carteira atribuída, pedidos, metas, performance, comissões previstas e catálogos; pode compartilhar materiais com clientes quando autorizado.
 
 ### Administrador
-Gerencia CRM, clientes, representadas, produtos, preços, políticas, promoções, catálogos, importações e revisões.
+Gerencia CRM, clientes, representadas, produtos, preços, políticas, promoções, catálogos, importações, revisões, vendedores, regiões, metas, regras de comissão e campanhas.
 
 ## Representadas
 
@@ -38,3 +43,7 @@ O núcleo inicial continha 19 marcas. Catálogos reais recebidos posteriormente 
 ## Princípio central
 
 A plataforma não é um marketplace que mistura fornecedores. Ela é uma central de relacionamento e pedidos B2B em que cada indústria mantém suas próprias regras comerciais.
+
+## Conceitos incorporados do Dudu Catálogos
+
+Foram adaptados ao tenant Biasuz os módulos que reforçam a operação comercial real: Vendedores, Regiões, Metas & Performance, Comissões previstas e Campanhas. Multi-tenant, Marketplace, IA Comercial, Agenda e automações omnichannel continuam como evolução futura; não foram misturados ao núcleo operacional atual.
