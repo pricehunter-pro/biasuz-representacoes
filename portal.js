@@ -62,15 +62,21 @@ async function loadOrders(){
  document.getElementById("ordersList").innerHTML=error?'<p class="form-status err">'+esc(error.message)+'</p>':rows.length?rows.map(o=>'<div class="list-item"><strong>Pedido #'+esc(o.order_number)+'</strong><small>'+new Date(o.created_at).toLocaleDateString("pt-BR")+'</small><div class="pill">'+esc(o.status)+'</div><p>Total: R$ '+Number(o.total||0).toLocaleString("pt-BR",{minimumFractionDigits:2})+'</p></div>').join(""):'<p class="muted">Nenhum pedido disponível para este acesso.</p>';
 }
 async function loadRepresentativeCatalogs(){
- const section=document.getElementById("repCatalogsSection"),box=document.getElementById("repCatalogsList");
- if(profile.role!=="representante"){section.classList.add("hidden");return}
+ const section=document.getElementById("repCatalogsSection"),box=document.getElementById("repCatalogsList"),title=document.getElementById("catalogSectionTitle"),help=document.getElementById("catalogSectionHelp");
+ if(!["cliente","representante","representada"].includes(profile.role)){section.classList.add("hidden");return}
  section.classList.remove("hidden");
- const {data,error}=await sb.from("catalogs").select("id,title,catalog_type,year,representadas(name)").eq("published",true).order("created_at",{ascending:false}).limit(100);
- if(error){box.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
- box.innerHTML=(data||[]).length?(data||[]).map(c=>'<div class="list-item"><strong>'+esc(c.title)+'</strong><small>'+esc(c.representadas?.name||"")+' · '+esc(c.year||"")+'</small><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px"><button class="btn btn-small" data-cat-wa="'+c.id+'">WhatsApp</button><button class="btn btn-small btn-outline" data-cat-mail="'+c.id+'">E-mail</button></div></div>').join(""):'<p class="muted">Nenhum catálogo publicado.</p>';
+ if(profile.role==="representante"){title.textContent="Catálogos para compartilhar";help.textContent="Gere um link temporário e envie ao cliente pelo WhatsApp ou e-mail."}
+ else if(profile.role==="cliente"){title.textContent="Catálogos comerciais";help.textContent="Abra os catálogos publicados das representadas diretamente no seu painel."}
+ else {title.textContent="Seus catálogos publicados";help.textContent="Materiais comerciais associados à sua representada."}
+ let req=sb.from("catalogs").select("id,title,catalog_type,year,representada_id,representadas(name)").eq("published",true).order("created_at",{ascending:false}).limit(100);
+ if(profile.role==="representada"&&profile.representada_id)req=req.eq("representada_id",profile.representada_id);
+ const {data,error}=await req;if(error){box.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
+ const rows=data||[];
+ box.innerHTML=rows.length?rows.map(c=>'<div class="list-item"><strong>'+esc(c.title)+'</strong><small>'+esc(c.representadas?.name||"")+' · '+esc(c.year||"")+' · '+esc(c.catalog_type)+'</small><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px">'+(profile.role==="representante"?'<button class="btn btn-small" data-cat-wa="'+c.id+'">WhatsApp</button><button class="btn btn-small btn-outline" data-cat-mail="'+c.id+'">E-mail</button>':'<button class="btn btn-small" data-cat-open="'+c.id+'">Abrir catálogo</button>')+'</div></div>').join(""):'<p class="muted">Nenhum catálogo publicado.</p>';
  async function link(id,channel){const {data:r,error:e}=await sb.functions.invoke("catalog-share",{body:{catalog_id:id,channel,expires_days:30}});if(e)throw e;return (cfg.siteUrl||location.origin)+r.path}
- document.querySelectorAll("[data-cat-wa]").forEach(b=>b.onclick=async()=>{try{const c=(data||[]).find(x=>x.id===b.dataset.catWa),u=await link(c.id,"whatsapp");window.open("https://wa.me/?text="+encodeURIComponent("Catálogo "+c.title+" — Biasuz Representações\n"+u),"_blank")}catch(e){alert(e.message)}});
- document.querySelectorAll("[data-cat-mail]").forEach(b=>b.onclick=async()=>{try{const c=(data||[]).find(x=>x.id===b.dataset.catMail),u=await link(c.id,"email");location.href="mailto:?subject="+encodeURIComponent("Catálogo "+c.title+" — Biasuz")+"&body="+encodeURIComponent("Segue o catálogo comercial:\n\n"+u)}catch(e){alert(e.message)}});
+ document.querySelectorAll("[data-cat-wa]").forEach(b=>b.onclick=async()=>{try{const c=rows.find(x=>x.id===b.dataset.catWa),u=await link(c.id,"whatsapp");window.open("https://wa.me/?text="+encodeURIComponent("Catálogo "+c.title+" — Biasuz Representações\n"+u),"_blank")}catch(e){alert(e.message)}});
+ document.querySelectorAll("[data-cat-mail]").forEach(b=>b.onclick=async()=>{try{const c=rows.find(x=>x.id===b.dataset.catMail),u=await link(c.id,"email");location.href="mailto:?subject="+encodeURIComponent("Catálogo "+c.title+" — Biasuz")+"&body="+encodeURIComponent("Segue o catálogo comercial:\n\n"+u)}catch(e){alert(e.message)}});
+ document.querySelectorAll("[data-cat-open]").forEach(b=>b.onclick=async()=>{try{const {data:r,error:e}=await sb.functions.invoke("catalog-share",{body:{catalog_id:b.dataset.catOpen,action:"access"}});if(e||!r?.signed_url)throw e||new Error("Catálogo indisponível.");window.open(r.signed_url,"_blank")}catch(e){alert(e.message||e)}});
 }
 async function loadNotifications(){
  const {data,error}=await sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(50);
