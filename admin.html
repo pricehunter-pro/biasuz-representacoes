@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Biasuz • CRM Comercial</title><link rel="stylesheet" href="./styles.css?v=20260924-4">
 <style>
-.admin-shell{min-height:100vh;background:#0e0f11;color:#f4f4f0;padding:30px 5vw}.admin-top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.admin-top h1{margin:0;font-size:34px}.admin-card{background:#18191d;border:1px solid #292b31;border-radius:18px;padding:22px;margin-bottom:16px}.login{max-width:420px;margin:8vh auto}.login input,.toolbar select,.toolbar input,.admin-card textarea,.admin-card input,.admin-card select{width:100%;background:#101114;color:white;border:1px solid #34363d;border-radius:10px;padding:12px;font:inherit}.login label{display:grid;gap:7px;margin-bottom:14px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid #34363d;background:#15161a;color:#bbb;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.tab.active{background:#f5c400;color:#111;border-color:#f5c400}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.kpi{background:#18191d;border:1px solid #292b31;border-radius:16px;padding:18px}.kpi span{color:#9699a0;font-size:12px}.kpi strong{display:block;font-size:30px;margin-top:5px}.toolbar{display:grid;grid-template-columns:1fr 180px 180px auto;gap:10px;margin-bottom:14px}.rows{display:grid;gap:8px}.row{display:grid;grid-template-columns:1.4fr 1.2fr .7fr .8fr .8fr auto;gap:10px;align-items:center;padding:14px;border:1px solid #2d3035;border-radius:12px;background:#15161a}.row small{color:#95979d}.row select{background:#0f1012;color:white;border:1px solid #34363d;border-radius:8px;padding:8px}.muted{color:#9b9da4}.hidden{display:none!important}.progress{height:10px;background:#0f1012;border-radius:999px;overflow:hidden;margin:12px 0}.progress>i{display:block;height:100%;width:0;background:#f5c400}.import-box{display:grid;gap:14px;max-width:760px}.catalog-row{grid-template-columns:1.4fr 1fr .8fr .8fr auto}.pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:14px}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#27292e;color:#d3d4d6;font-size:11px;font-weight:800}@media(max-width:950px){.kpis{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.row,.catalog-row{grid-template-columns:1fr 1fr}.row>div:first-child{grid-column:1/-1}}@media(max-width:600px){.kpis{grid-template-columns:1fr}.row,.catalog-row{grid-template-columns:1fr}}
+.admin-shell{min-height:100vh;background:#0e0f11;color:#f4f4f0;padding:30px 5vw}.admin-top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.admin-top h1{margin:0;font-size:34px}.admin-card{background:#18191d;border:1px solid #292b31;border-radius:18px;padding:22px;margin-bottom:16px}.login{max-width:420px;margin:8vh auto}.login input,.toolbar select,.toolbar input,.admin-card textarea,.admin-card input,.admin-card select{width:100%;background:#101114;color:white;border:1px solid #34363d;border-radius:10px;padding:12px;font:inherit}.login label{display:grid;gap:7px;margin-bottom:14px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid #34363d;background:#15161a;color:#bbb;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.tab.active{background:#f5c400;color:#111;border-color:#f5c400}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.kpi{background:#18191d;border:1px solid #292b31;border-radius:16px;padding:18px}.kpi span{color:#9699a0;font-size:12px}.kpi strong{display:block;font-size:30px;margin-top:5px}.toolbar{display:grid;grid-template-columns:1fr 180px 180px auto;gap:10px;margin-bottom:14px}.rows{display:grid;gap:8px}.row{display:grid;grid-template-columns:1.4fr 1.2fr .7fr .8fr .8fr auto;gap:10px;align-items:center;padding:14px;border:1px solid #2d3035;border-radius:12px;background:#15161a}.row small{color:#95979d}.row select{background:#0f1012;color:white;border:1px solid #34363d;border-radius:8px;padding:8px}.muted{color:#9b9da4}.hidden{display:none!important}.progress{height:10px;background:#0f1012;border-radius:999px;overflow:hidden;margin:12px 0}.progress>i{display:block;height:100%;width:0;background:#f5c400}.import-box{display:grid;gap:14px;max-width:760px}.catalog-row{grid-template-columns:1.4fr 1fr .8fr .8fr auto}.catalog-upload{display:grid;grid-template-columns:1.1fr 1.5fr .8fr .7fr;gap:10px;align-items:end}.catalog-library-row{display:grid;grid-template-columns:1.7fr .8fr .7fr 1.3fr;gap:12px;padding:15px;border:1px solid #2d3035;border-radius:14px;background:#15161a;align-items:center}.catalog-actions{display:flex;gap:7px;flex-wrap:wrap}.catalog-progress{height:8px;background:#0f1012;border-radius:99px;overflow:hidden;margin-top:8px}.catalog-progress i{display:block;height:100%;background:#f5c400;width:0}.pdf-drop{border:1px dashed #4a4d55;border-radius:14px;padding:15px;background:#111216}.catalog-stats{font-size:11px;color:#a4a6ac;margin-top:5px}.pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:14px}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#27292e;color:#d3d4d6;font-size:11px;font-weight:800}@media(max-width:950px){.kpis{grid-template-columns:1fr 1fr}.toolbar,.catalog-upload{grid-template-columns:1fr}.row,.catalog-row,.catalog-library-row{grid-template-columns:1fr 1fr}.row>div:first-child{grid-column:1/-1}}@media(max-width:600px){.kpis{grid-template-columns:1fr}.row,.catalog-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -16,7 +16,7 @@
 </section>
 <section id="appView" class="hidden">
  <div class="admin-top"><div><span class="eyebrow">Biasuz Representações</span><h1>Central comercial</h1></div><button id="logout" class="btn btn-outline">Sair</button></div>
- <div class="tabs"><button class="tab active" data-tab="leads">Leads</button><button class="tab" data-tab="customers">Carteira</button><button class="tab" data-tab="catalog">Representadas</button><a class="tab" href="./commercial-admin.html">Gestão das Lojas</a><button class="tab" data-tab="import">Importar CSV</button></div>
+ <div class="tabs"><button class="tab active" data-tab="leads">Leads</button><button class="tab" data-tab="customers">Carteira</button><button class="tab" data-tab="catalog">Representadas</button><button class="tab" data-tab="catalogs">Catálogos & PDFs</button><a class="tab" href="./commercial-admin.html">Gestão das Lojas</a><button class="tab" data-tab="import">Importar CSV</button></div>
  <div class="kpis"><div class="kpi"><span>Leads</span><strong id="kLeads">0</strong></div><div class="kpi"><span>Carteira</span><strong id="kCustomers">0</strong></div><div class="kpi"><span>Representadas</span><strong id="kBrands">0</strong></div><div class="kpi"><span>Produtos</span><strong id="kProducts">0</strong></div></div>
 
  <section id="tab-leads" class="tabview">
@@ -49,6 +49,28 @@
   <div class="admin-card"><div id="brandRows" class="rows"></div></div>
  </section>
 
+ <section id="tab-catalogs" class="tabview hidden">
+  <div class="admin-card">
+   <div><span class="eyebrow">Biblioteca comercial inteligente</span><h2>Catálogos & PDFs</h2><p class="muted">Envie um PDF. O arquivo fica armazenado, a camada de texto é lida automaticamente e páginas sem texto entram no OCR. Produtos com código/SKU confiável são associados ou cadastrados; preços detectados permanecem em revisão antes de virarem preço B2B.</p></div>
+   <form id="catalogUploadForm" class="pdf-drop">
+    <div class="catalog-upload">
+      <label>Representada<select id="catalogBrand" required><option value="">Selecione</option></select></label>
+      <label>Título<input id="catalogTitle" required placeholder="Ex.: Catálogo Jambo 2026"></label>
+      <label>Tipo<select id="catalogType"><option value="general">Catálogo geral</option><option value="campaign">Campanha</option><option value="price_list">Tabela/condição comercial</option><option value="launches">Lançamentos</option><option value="technical">Técnico</option><option value="material">Material comercial</option></select></label>
+      <label>Ano<input id="catalogYear" type="number" min="2020" max="2100" value="2026"></label>
+    </div>
+    <input id="catalogPdf" type="file" accept="application/pdf,.pdf" required>
+    <button class="btn" type="submit">Enviar, ler e cadastrar</button>
+    <div class="catalog-progress"><i id="catalogProgressBar"></i></div>
+    <p id="catalogUploadStatus" class="form-status"></p>
+   </form>
+  </div>
+  <div class="admin-card">
+   <div class="section-title"><div><span class="eyebrow">Biblioteca</span><h2>Catálogos armazenados</h2></div><button id="reloadCatalogs" class="btn btn-small btn-outline">Atualizar</button></div>
+   <div id="catalogLibraryRows" class="rows"></div>
+  </div>
+ </section>
+
  <section id="tab-import" class="tabview hidden">
   <div class="admin-card import-box"><div><span class="eyebrow">Carga de carteira</span><h2>Importar clientes/prospects</h2><p class="muted">Selecione o CSV original. O navegador processa localmente e envia ao Supabase em lotes autenticados. Nenhuma chave administrativa fica no arquivo ou no navegador.</p></div>
    <input id="csvFile" type="file" accept=".csv,text/csv">
@@ -60,5 +82,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="./config.js?v=20260924-4"></script><script src="./admin.js?v=20260924-4"></script>
 </body></html>
