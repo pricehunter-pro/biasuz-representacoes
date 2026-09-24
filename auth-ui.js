@@ -82,6 +82,21 @@ window.BiasuzAuth=(function(){
    location.href=redirectUrl(target);
   });
 
+  document.getElementById("toggleSignup")?.addEventListener("click",e=>{
+   e.preventDefault();document.getElementById("signupPanel")?.classList.toggle("hidden");
+  });
+  document.getElementById("createAccount")?.addEventListener("click",async()=>{
+   const name=document.getElementById("signupName")?.value?.trim();
+   const email=document.getElementById("signupEmail")?.value?.trim();
+   const password=document.getElementById("signupPassword")?.value||"";
+   if(!email||password.length<8)return setStatus(st,"Informe um e-mail válido e uma senha com pelo menos 8 caracteres.","err");
+   setStatus(st,"Criando seu acesso...");
+   const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name||email.split("@")[0]},emailRedirectTo:redirectUrl(target)}});
+   if(error)return setStatus(st,error.message,"err");
+   if(data?.session){setStatus(st,"Conta criada. Entrando...","ok");setTimeout(()=>location.href=redirectUrl(target),500)}
+   else setStatus(st,"Conta criada. Confira seu e-mail para confirmar o acesso. Se seu e-mail já estiver na carteira Biasuz, o perfil será vinculado automaticamente.","ok");
+  });
+
   document.getElementById("requestAccess")?.addEventListener("click",e=>{
    e.preventDefault();
    const email=login?.querySelector('[name="email"]')?.value?.trim()||"";
