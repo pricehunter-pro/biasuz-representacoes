@@ -27,7 +27,16 @@ async function loadPortal(){
  document.getElementById("portalTitle").textContent=roleNames[profile.role]||"Portal";
  document.getElementById("profileName").textContent=profile.display_name||"Usuário Biasuz";
  document.getElementById("profileRole").textContent=roleNames[profile.role]||profile.role;
- await Promise.all([loadContext(),loadOrders(),loadRequests()]);
+ await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores()]);
+}
+async function loadStores(){
+ const section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
+ if(profile.role!=="cliente"){section.classList.add("hidden");return}
+ section.classList.remove("hidden");
+ const {data,error}=await sb.from("representadas").select("id,name,slug,segments,logo_url,products_count").eq("active",true).order("name");
+ if(error){grid.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
+ const initials=n=>String(n||"").split(/\s+/).slice(0,3).map(x=>x[0]).join("").toUpperCase();
+ grid.innerHTML=(data||[]).map(r=>'<article class="store-card"><div class="store-logo">'+(r.logo_url?'<img src="'+esc(r.logo_url)+'" alt="Logomarca '+esc(r.name)+'" onerror="this.remove();this.parentElement.innerHTML=\'<span class=&quot;store-logo-fallback&quot;>'+esc(initials(r.name))+'</span>\'">':'<span class="store-logo-fallback">'+esc(initials(r.name))+'</span>')+'</div><div class="store-card-body"><h3>'+esc(r.name)+'</h3><p>'+esc((r.segments||[]).join(" • "))+' · '+Number(r.products_count||0)+' produtos cadastrados</p><a class="btn btn-small" href="./store.html?slug='+encodeURIComponent(r.slug)+'">Entrar na loja</a></div></article>').join("");
 }
 async function loadContext(){
  const box=document.getElementById("contextContent"),title=document.getElementById("contextTitle");
