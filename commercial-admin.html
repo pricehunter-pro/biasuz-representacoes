@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestão das Lojas • Biasuz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260924-4">
+<style>
+body{background:#0e0f11;color:#f4f4f0}.manager{min-height:100vh;padding:28px 5vw}.manager-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}.manager-head h1{margin:5px 0 0;font-size:36px}.panel{background:#18191d;border:1px solid #2a2c31;border-radius:18px;padding:20px;margin-bottom:16px}.brand-picker{display:grid;grid-template-columns:1fr auto;gap:10px}.panel input,.panel select,.panel textarea{width:100%;background:#101114;color:#fff;border:1px solid #35383f;border-radius:10px;padding:11px 12px;font:inherit}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.panel label{display:grid;gap:6px;font-size:11px;font-weight:800;margin-bottom:10px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:10px}.section-title h2{margin:0}.rows{display:grid;gap:8px}.item{border:1px solid #2d3036;background:#141519;border-radius:12px;padding:13px;display:grid;grid-template-columns:1.4fr .8fr .8fr .7fr auto;gap:10px;align-items:center}.item small{color:#9699a0}.promo{grid-template-columns:1.2fr 1.4fr .7fr auto}.status{font-size:12px;min-height:16px}.ok{color:#42c77a}.err{color:#ff8275}.muted{color:#999ca2}.hidden{display:none!important}@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}.item,.promo{grid-template-columns:1fr 1fr}.item>div:first-child{grid-column:1/-1}}@media(max-width:600px){.brand-picker,.item,.promo{grid-template-columns:1fr}.manager-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="manager">
+  <div class="manager-head">
+    <div><a class="eyebrow" href="./admin.html">← Painel do Administrador</a><h1>Gestão das Lojas</h1></div>
+    <a class="btn btn-outline" href="./index.html">Ver site</a>
+  </div>
+
+  <section class="panel">
+    <div class="brand-picker"><select id="brandSelect"><option value="">Selecione uma representada</option></select><a id="openStore" class="btn btn-small" href="#" target="_blank">Abrir loja</a></div>
+  </section>
+
+  <div id="workspace" class="hidden">
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Condições</span><h2>Política comercial</h2></div></div>
+      <form id="policyForm">
+        <div class="grid3">
+          <label>Pedido mínimo (R$)<input name="min_order_value" type="number" step="0.01" min="0"></label>
+          <label>Quantidade mínima total<input name="min_order_units" type="number" step="1" min="0"></label>
+          <label>Prazo de entrega (dias)<input name="delivery_estimate_days" type="number" step="1" min="0"></label>
+        </div>
+        <div class="grid2">
+          <label>Prazo/condição de pagamento<input name="payment_terms" placeholder="Ex.: 28/42/56 dias"></label>
+          <label>Política de frete<input name="freight_policy" placeholder="Ex.: CIF acima de R$ ..."></label>
+        </div>
+        <label>Observações<textarea name="notes" rows="3"></textarea></label>
+        <button class="btn" type="submit">Salvar política</button><p id="policyStatus" class="status"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Catálogo</span><h2>Novo produto</h2></div></div>
+      <form id="productForm">
+        <div class="grid3">
+          <label>Nome<input name="name" required></label>
+          <label>SKU<input name="sku"></label>
+          <label>Grupo<input name="group_name" placeholder="Ex.: Brinquedos"></label>
+          <label>Categoria<input name="category" placeholder="Ex.: Cães"></label>
+          <label>Subcategoria<input name="subcategory" placeholder="Ex.: Mordedores"></label>
+          <label>Embalagem<input name="package_info" placeholder="Ex.: caixa c/ 6"></label>
+          <label>Unidade<input name="unit_label" placeholder="un., cx., pct."></label>
+          <label>Preço (R$)<input name="price" type="number" step="0.01" min="0" required></label>
+          <label>Preço promocional (R$)<input name="promo_price" type="number" step="0.01" min="0"></label>
+          <label>Qtd. mínima<input name="min_quantity" type="number" step="0.001" min="0.001" value="1"></label>
+          <label>URL da imagem<input name="image_url" type="url"></label>
+          <label>URL do produto<input name="product_url" type="url"></label>
+        </div>
+        <label>Descrição<textarea name="description" rows="3"></textarea></label>
+        <button class="btn" type="submit">Cadastrar produto</button><p id="productStatus" class="status"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Produtos ativos</span><h2>Catálogo da loja</h2></div><button class="btn btn-small btn-outline" id="reloadProducts">Atualizar</button></div>
+      <div id="productRows" class="rows"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Campanhas</span><h2>Nova promoção</h2></div></div>
+      <form id="promoForm">
+        <div class="grid2"><label>Título<input name="title" required></label><label>Descrição<input name="description"></label></div>
+        <div class="grid2"><label>Início<input name="starts_at" type="datetime-local"></label><label>Fim<input name="ends_at" type="datetime-local"></label></div>
+        <button class="btn" type="submit">Criar promoção</button><p id="promoStatus" class="status"></p>
+      </form>
+      <div id="promoRows" class="rows"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Pedidos</span><h2>Pedidos desta representada</h2></div><button class="btn btn-small btn-outline" id="reloadOrders">Atualizar</button></div>
+      <div id="orderRows" class="rows"></div>
+    </section>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js?v=20260924-4"></script>
+<script src="./commercial-admin.js?v=20260924-4"></script>
+</body></html>
