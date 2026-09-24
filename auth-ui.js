@@ -46,7 +46,7 @@ window.BiasuzAuth=(function(){
   });
   document.getElementById("sendWhatsappOtp")?.addEventListener("click",async()=>{
    const phone=document.getElementById("whatsappPhone")?.value?.replace(/\D/g,"");if(!phone)return setStatus(st,"Informe o número com DDD.","err");
-   const normalized=phone.startsWith("55")?"+"+phone:"+55"+phone;setStatus(st,"Enviando código pelo WhatsApp...");
+   const normalized=phone.startsWith("55")?("+"+phone):("+55"+phone);setStatus(st,"Enviando código pelo WhatsApp...");
    const {error}=await sb.auth.signInWithOtp({phone:normalized,options:{channel:"whatsapp",shouldCreateUser:false}});
    if(error)return setStatus(st,error.message,"err");document.getElementById("otpRow")?.classList.remove("hidden");setStatus(st,"Código enviado pelo WhatsApp.","ok");
   });
