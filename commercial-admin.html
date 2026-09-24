@@ -5,7 +5,7 @@
 <title>Gestão das Lojas • Biasuz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=20260924-4">
+<link rel="stylesheet" href="./styles.css?v=20260924-23">
 <style>
 body{background:#0e0f11;color:#f4f4f0}.manager{min-height:100vh;padding:28px 5vw}.manager-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}.manager-head h1{margin:5px 0 0;font-size:36px}.panel{background:#18191d;border:1px solid #2a2c31;border-radius:18px;padding:20px;margin-bottom:16px}.brand-picker{display:grid;grid-template-columns:1fr auto;gap:10px}.panel input,.panel select,.panel textarea{width:100%;background:#101114;color:#fff;border:1px solid #35383f;border-radius:10px;padding:11px 12px;font:inherit}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.panel label{display:grid;gap:6px;font-size:11px;font-weight:800;margin-bottom:10px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:10px}.section-title h2{margin:0}.rows{display:grid;gap:8px}.item{border:1px solid #2d3036;background:#141519;border-radius:12px;padding:13px;display:grid;grid-template-columns:1.7fr .8fr .8fr .8fr .8fr auto;gap:10px;align-items:center}.item-actions{display:flex;gap:6px;flex-wrap:wrap}.source-ref{color:#f5c400}.catalog-toolbar{display:grid;grid-template-columns:1fr 180px auto auto;gap:9px;margin-bottom:12px}.catalog-toolbar input,.catalog-toolbar select{margin:0}.catalog-meta{font-size:11px;color:#999ca2;margin-top:5px}.pager{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:12px}.item small{color:#9699a0}.promo{grid-template-columns:1.2fr 1.4fr .7fr auto}.status{font-size:12px;min-height:16px}.ok{color:#42c77a}.err{color:#ff8275}.muted{color:#999ca2}.hidden{display:none!important}@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}.catalog-toolbar{grid-template-columns:1fr 1fr}.item,.promo{grid-template-columns:1fr 1fr}.item>div:first-child{grid-column:1/-1}}@media(max-width:600px){.brand-picker,.item,.promo{grid-template-columns:1fr}.manager-head{align-items:flex-start;flex-direction:column}}
 </style>
@@ -20,6 +20,15 @@ body{background:#0e0f11;color:#f4f4f0}.manager{min-height:100vh;padding:28px 5vw
   <section class="panel">
     <div class="brand-picker"><select id="brandSelect"><option value="">Selecione uma representada</option></select><div class="item-actions"><button id="syncCatalog" class="btn btn-small" type="button">Sincronizar site oficial</button><a id="openStore" class="btn btn-small btn-outline" href="#" target="_blank">Abrir loja</a></div></div>
     <div id="syncInfo" class="catalog-meta"></div><p id="syncStatus" class="status"></p>
+   <div class="grid2" style="margin-top:14px">
+    <div><span class="eyebrow">Identidade visual</span><h3 style="margin:6px 0 8px">Logomarca da representada</h3><p class="muted">Envie PNG, JPG, WebP ou SVG limpo. O sistema preserva a proporção e centraliza a marca sem distorção.</p></div>
+    <div>
+      <div id="brandLogoPreview" style="height:120px;background:#fff;border-radius:14px;display:grid;place-items:center;padding:18px;margin-bottom:10px"><span class="muted">Sem logomarca</span></div>
+      <input id="brandLogoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+      <button id="uploadBrandLogo" class="btn btn-small" type="button" style="margin-top:8px">Enviar logomarca oficial</button>
+      <p id="brandLogoStatus" class="status"></p>
+    </div>
+   </div>
     <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:800">+ Cadastrar nova representada</summary>
       <form id="newBrandForm" style="margin-top:14px">
         <div class="grid3">
@@ -97,6 +106,6 @@ body{background:#0e0f11;color:#f4f4f0}.manager{min-height:100vh;padding:28px 5vw
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="./config.js?v=20260924-4"></script>
-<script src="./commercial-admin.js?v=20260924-4"></script>
+<script src="./config.js?v=20260924-23"></script>
+<script src="./commercial-admin.js?v=20260924-23"></script>
 </body></html>
