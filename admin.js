@@ -27,15 +27,16 @@ function openWA(phone,msg){let n=digits(phone);if(!n)return;if(n.length<=11)n="5
 
 async function loadCustomers(reset=false){
  if(reset)customerPage=0;
- const q=document.getElementById("customerSearch").value.trim(),uf=document.getElementById("customerState").value,stage=document.getElementById("customerStage").value,
- cnae=document.getElementById("customerCnae").value.trim(),city=document.getElementById("customerCity").value.trim(),address=document.getElementById("customerAddress").value.trim(),
- email=document.getElementById("customerEmail").value.trim(),phone=digits(document.getElementById("customerWhatsapp").value);
+ const safe=v=>String(v||"").trim().replace(/[(),]/g," ");
+ const q=safe(document.getElementById("customerSearch").value),uf=document.getElementById("customerState").value,stage=document.getElementById("customerStage").value,
+ cnae=safe(document.getElementById("customerCnae").value),city=safe(document.getElementById("customerCity").value),address=safe(document.getElementById("customerAddress").value),
+ email=safe(document.getElementById("customerEmail").value),phone=digits(document.getElementById("customerWhatsapp").value);
  let req=sb.from("customers").select("*").order("legal_name").range(customerPage*pageSize,customerPage*pageSize+pageSize-1);
  if(uf)req=req.eq("state",uf);if(stage)req=req.eq("lifecycle_stage",stage);
  if(q)req=req.or("cnpj.ilike.%"+q+"%,legal_name.ilike.%"+q+"%,trade_name.ilike.%"+q+"%");
  if(cnae)req=req.or("cnae_code.ilike.%"+cnae+"%,cnae_description.ilike.%"+cnae+"%,secondary_cnaes.ilike.%"+cnae+"%");
  if(city)req=req.ilike("city","%"+city+"%");
- if(address)req=req.or("street.ilike.%"+address+"%,district.ilike.%"+address+"%,zip_code.ilike.%"+digits(address)+"%");
+ if(address){const zip=digits(address),parts=["street.ilike.%"+address+"%","district.ilike.%"+address+"%"];if(zip)parts.push("zip_code.ilike.%"+zip+"%");req=req.or(parts.join(","))};
  if(email)req=req.ilike("email","%"+email+"%");
  if(phone)req=req.or("phone1.ilike.%"+phone+"%,phone2.ilike.%"+phone+"%");
  const {data,error}=await req;if(error){document.getElementById("customerRows").innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
