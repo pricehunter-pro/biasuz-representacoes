@@ -14,6 +14,8 @@ async function getProfile(){
 }
 async function boot(){
  const {data:{session}}=await sb.auth.getSession();if(!session){showPortal(false);return}
+ const {data:{user:authUser}}=await sb.auth.getUser();
+ if(authUser?.user_metadata?.must_change_password){location.href="./reset-password.html?mode=change";return}
  profile=await getProfile();
  if(!profile){await sb.auth.signOut();document.getElementById("loginStatus").textContent="Este usuário ainda não possui perfil liberado pela Biasuz.";showPortal(false);return}
  if(wanted==="admin"&&profile.role==="admin"){location.href="./admin.html";return}
@@ -91,4 +93,4 @@ async function loadRequests(){
  document.getElementById("requestsList").innerHTML=error?'<p class="form-status err">'+esc(error.message)+'</p>':rows.length?rows.map(r=>'<div class="list-item"><strong>'+esc(r.title)+'</strong><small>'+new Date(r.created_at).toLocaleString("pt-BR")+'</small><div class="pill">'+esc(r.status)+'</div><p>'+esc(r.description)+'</p>'+(r.admin_response?'<p><strong>Resposta Biasuz:</strong> '+esc(r.admin_response)+'</p>':'')+'</div>').join(""):'<p class="muted">Nenhuma demanda aberta.</p>';
 }
 document.getElementById("requestForm").addEventListener("submit",async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("requestStatus");st.textContent="Enviando...";const {data:{user}}=await sb.auth.getUser();const row={user_id:user.id,role:profile.role,customer_id:profile.customer_id||null,representada_id:profile.representada_id||null,request_type:d.request_type,title:d.title,description:d.description};const {error}=await sb.from("portal_requests").insert(row);if(error){st.className="form-status err";st.textContent=error.message;return}st.className="form-status ok";st.textContent="Demanda enviada.";e.currentTarget.reset();await loadRequests()});
-boot();
+window.BiasuzAuth?.init(sb,{role:wanted,statusId:"loginStatus"});boot();
