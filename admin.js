@@ -74,6 +74,10 @@ async function shareCatalog(id,channel,mode){
  if(mode==="wa"){window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");return}
  if(mode==="email"){location.href="mailto:?subject="+encodeURIComponent(c.title)+"&body="+encodeURIComponent(msg)}
 }
+async function sha256File(file){
+ const buf=await file.arrayBuffer(),hash=await crypto.subtle.digest("SHA-256",buf);
+ return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
 function tusUpload(file,path,onProgress){
  return new Promise(async(resolve,reject)=>{
   const {data:{session}}=await sb.auth.getSession();if(!session)return reject(new Error("Sessão expirada."));
@@ -91,8 +95,11 @@ async function ocrFallback(file,catalogId,pages,status,bar){
 }
 document.getElementById("catalogUploadForm").onsubmit=async e=>{
  e.preventDefault();const file=document.getElementById("catalogPdf").files[0],brandId=document.getElementById("catalogBrand").value,title=document.getElementById("catalogTitle").value.trim(),type=document.getElementById("catalogType").value,year=Number(document.getElementById("catalogYear").value)||null,st=document.getElementById("catalogUploadStatus"),bar=document.getElementById("catalogProgressBar");if(!file||!brandId||!title)return;
- const brand=catalogBrands.find(x=>x.id===brandId),stamp=Date.now(),slug=slugify(title)+"-"+String(stamp).slice(-6),path=brand.slug+"/"+year+"/"+stamp+"-"+slugify(file.name.replace(/\.pdf$/i,""))+".pdf";st.className="form-status";st.textContent="Preparando catálogo...";bar.style.width="2%";
- const {data:cat,error:ce}=await sb.from("catalogs").insert({representada_id:brandId,title,slug,catalog_type:type,year,source_type:"upload",file_name:file.name,mime_type:file.type||"application/pdf",size_bytes:file.size,storage_bucket:"catalogs",storage_path:path,status:"uploading",published:false}).select("*").single();if(ce){st.className="form-status err";st.textContent=ce.message;return}
+ const brand=catalogBrands.find(x=>x.id===brandId),stamp=Date.now(),slug=slugify(title)+"-"+String(stamp).slice(-6),path=brand.slug+"/"+year+"/"+stamp+"-"+slugify(file.name.replace(/\.pdf$/i,""))+".pdf";st.className="form-status";st.textContent="Calculando assinatura do arquivo...";bar.style.width="2%";
+ const fileHash=await sha256File(file);
+ const {data:dup}=await sb.from("catalogs").select("id,title,slug,representadas(name)").eq("file_sha256",fileHash).maybeSingle();
+ if(dup){st.className="form-status err";st.textContent="Este PDF já foi importado como “"+dup.title+"”. O sistema bloqueou a duplicação.";bar.style.width="0%";return}
+ const {data:cat,error:ce}=await sb.from("catalogs").insert({representada_id:brandId,title,slug,catalog_type:type,year,source_type:"upload",file_name:file.name,mime_type:file.type||"application/pdf",size_bytes:file.size,file_sha256:fileHash,storage_bucket:"catalogs",storage_path:path,status:"uploading",published:false}).select("*").single();if(ce){st.className="form-status err";st.textContent=ce.message;return}
  try{await tusUpload(file,path,p=>{bar.style.width=Math.max(3,Math.round(p*.65))+"%";st.textContent="Enviando PDF: "+p+"%"});await sb.from("catalogs").update({status:"uploaded"}).eq("id",cat.id);bar.style.width="70%";st.textContent="Lendo texto, produtos e códigos...";
  const {data,error}=await sb.functions.invoke("catalog-pdf-extract",{body:{catalog_id:cat.id}});if(error)throw error;bar.style.width="80%";if(data?.ocr_required_pages?.length){st.textContent="Texto extraído. Iniciando OCR em "+data.ocr_required_pages.length+" páginas...";await ocrFallback(file,cat.id,data.ocr_required_pages,st,bar)}
  bar.style.width="100%";st.className="form-status ok";st.textContent="Catálogo processado. "+Number(data?.candidates||0)+" itens detectados na primeira leitura. Revise apenas as exceções.";e.currentTarget.reset();await Promise.all([loadCatalogLibrary(),counts()]);
