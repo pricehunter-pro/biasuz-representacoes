@@ -178,7 +178,23 @@ Antes de alterar o projeto, ler:
 10. `docs/OPERATIONS.md`
 11. `docs/CHANGELOG.md`
 
-## 13. Visão futura
+## 13. Sétima fase — gestão comercial inspirada no Dudu Catálogos
+
+Foram incorporados ao núcleo Biasuz, sem migrar o projeto para SaaS multi-tenant:
+- vendedores;
+- regiões;
+- atribuição estruturada de carteira;
+- metas;
+- performance mensal;
+- regras e comissões previstas;
+- planejador de campanhas;
+- ficha CRM detalhada do cliente.
+
+A carteira importada foi estruturada com vendedor e região. O Portal do Representante passou a exibir carteira, vendas, meta e comissão do usuário vinculado.
+
+Durante essa etapa também foram corrigidas políticas RLS excessivamente amplas para clientes/pedidos/itens e foi criado CI de qualidade no GitHub. O workflow de GitHub Pages que falhava a cada push foi retirado do fluxo automático, pois o deploy real ocorre pela VPS/EasyPanel.
+
+## 14. Visão futura
 
 A base foi preparada para crescer em:
 - automação Evolution API;
