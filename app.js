@@ -41,9 +41,11 @@ function renderBrands(){
  bs.innerHTML='<option value="">Todas / ainda não sei</option>'+[...brands].sort((a,b)=>a.name.localeCompare(b.name)).map(b=>'<option>'+esc(b.name)+'</option>').join("");
 }
 async function loadBrands(){
- if(!sb){renderBrands();return}
+ if(!sb){const metric=document.getElementById("metricBrands");if(metric)metric.textContent=brands.length;const marquee=document.getElementById("brandMarquee");if(marquee)marquee.innerHTML=brands.map(b=>'<span class="brand-pill">'+esc(b.name)+'</span>').join("");renderBrands();return}
  const {data,error}=await sb.from("representadas").select("name,slug,official_url,segments,active,logo_url").eq("active",true).order("name");
- if(!error&&data?.length) brands=data.map(b=>({name:b.name,slug:b.slug,url:b.official_url,segments:b.segments||[],logo:b.logo_url||null}));
+ if(!error&&data?.length) brands=data.map(b=>({name:b.name,slug:b.slug,url:b.official_url,segments:b.segments||[],logo:(b.logo_url&&!b.logo_url.includes("google.com/s2/favicons"))?b.logo_url:null}));
+ const metric=document.getElementById("metricBrands");if(metric)metric.textContent=brands.length;
+ const marquee=document.getElementById("brandMarquee");if(marquee)marquee.innerHTML=brands.map(b=>'<a class="brand-pill" href="./brand.html?slug='+encodeURIComponent(b.slug)+'">'+esc(b.name)+'</a>').join("");
  renderBrands();
 }
 document.getElementById("segmentCards").innerHTML=segments.map(s=>'<article class="segment-card"><strong>'+s+'</strong><p>'+descriptions[s]+'</p></article>').join("");
