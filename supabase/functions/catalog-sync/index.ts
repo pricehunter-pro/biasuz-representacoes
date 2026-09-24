@@ -385,6 +385,12 @@ Deno.serve(async(req:Request)=>{
     const supaUrl=Deno.env.get("SUPABASE_URL");
     if(!secret||!supaUrl)throw new Error("Supabase service credentials unavailable");
     const db=createClient(supaUrl,secret,{auth:{persistSession:false,autoRefreshToken:false}});
+    const authHeader=req.headers.get("authorization")||"";
+    const token=authHeader.toLowerCase().startsWith("bearer ")?authHeader.slice(7):"";
+    if(!token)return Response.json({ok:false,error:"Unauthorized"},{status:401});
+    const {data:{user},error:authError}=await db.auth.getUser(token);
+    if(authError||!user)return Response.json({ok:false,error:"Unauthorized"},{status:401});
+    if(user.app_metadata?.role!=="admin")return Response.json({ok:false,error:"Admin role required"},{status:403});
     let q=db.from("representadas").select("*").eq("active",true).order("name");
     if(slug)q=q.eq("slug",slug);
     const {data:brands,error}=await q;if(error)throw error;
