@@ -26,6 +26,34 @@ Liga um usuário do Supabase Auth ao papel de acesso:
 
 Perfis de cliente podem ser vinculados automaticamente por e-mail ao cadastro de `customers`.
 
+## Gestão comercial
+
+### `salespeople`
+Cadastro mestre de vendedores/representantes, com vínculo opcional ao usuário autenticado, contato, situação e comissão padrão.
+
+### `sales_regions`
+Regiões comerciais. A implantação inicial possui Nordeste geral e os nove estados da região.
+
+### `salesperson_regions`
+Relação vendedor ↔ regiões.
+
+### `sales_goals`
+Metas por vendedor, período e opcionalmente por representada.
+
+### `commission_rules`
+Regras de comissão por representada e opcionalmente vendedor/produto, com vigência.
+
+### `commissions`
+Comissão por pedido, com base, percentual, valor previsto, aprovado, pago e estado.
+
+### `sales_performance_monthly`
+View de performance mensal: pedidos, vendas, ticket médio e comissões.
+
+Os campos `customers.salesperson_id` e `customers.sales_region_id` estruturam a carteira. `orders.salesperson_id` preserva a responsabilidade comercial no pedido.
+
+### `campaigns`
+Planejamento de campanha com representada, segmento, estado, canal, mensagem, agendamento e indicadores de audiência/envio/resposta/pedido.
+
 ## Produtos e lojas
 
 ### `products`
@@ -103,7 +131,7 @@ Auditoria de cada sincronização: plataforma detectada, produtos processados, i
 ## Relacionamento
 
 ### `interactions`
-Histórico de contato.
+Histórico de contato do CRM. A ficha do cliente permite registrar canal, direção e resumo, além de atualizar o último contato.
 
 ### `portal_requests`
 Demandas abertas por clientes, representantes e representadas.
@@ -124,3 +152,11 @@ O Supabase Auth é a fonte de identidade. Papéis são definidos em `app_metadat
 5. Não publicar material marcado como confidencial.
 6. Manter RLS em todas as tabelas sensíveis.
 7. Nunca colocar service key ou segredos no frontend.
+
+## RLS comercial
+
+- Representante não possui leitura global da carteira: somente clientes atribuídos ao seu `salespeople.user_id`.
+- Itens de pedido só são visíveis quando o usuário possui acesso ao pedido pai.
+- Representada só lê pedidos da própria indústria.
+- Cliente só lê seu próprio cadastro e pedidos.
+- Catálogos internos/confidenciais não são expostos pela política de leitura publicada.
