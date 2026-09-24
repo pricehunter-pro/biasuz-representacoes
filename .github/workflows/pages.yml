@@ -1,8 +1,8 @@
-name: Deploy Biasuz Site
+name: Legacy GitHub Pages (manual)
 
+# Production is deployed by the VPS/EasyPanel from main to bia.dunihub.online.
+# Keep Pages only as an optional manual preview; do not create a failing deploy on every commit.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -25,8 +25,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
