@@ -100,8 +100,8 @@ window.BiasuzUI=(function(){
   const app=document.getElementById("portalView");if(!app||app.dataset.uiV2)return;app.dataset.uiV2="1";if(app.parentElement)app.parentElement.style.padding="0";const role=currentRole();
   const old=[...app.childNodes],main=document.createElement("main");main.className="dashboard-main";old.forEach(n=>main.appendChild(n));
   const labels={
-   cliente:[["home","Início","contextCard"],["box","Lojas","storesSection"],["cart","Pedidos","ordersList"],["file","Catálogos","repCatalogsSection"],["bell","Notificações","notificationsList"],["help","Demandas","requestsList"]],
-   representada:[["home","Início","contextCard"],["cart","Pedidos","ordersList"],["file","Catálogos","repCatalogsSection"],["bell","Notificações","notificationsList"],["help","Demandas","requestsList"]],
+   cliente:[["home","Início","contextCard"],["box","Lojas","storesSection"],["chart","Promoções","promotionsSection"],["cart","Pedidos","ordersList"],["file","Catálogos","repCatalogsSection"],["bell","Notificações","notificationsList"],["help","Demandas","requestsList"]],
+   representada:[["home","Início","contextCard"],["chart","Resultados","representadaWorkspace"],["cart","Pedidos","ordersList"],["file","Catálogos","repCatalogsSection"],["bell","Notificações","notificationsList"],["help","Demandas","requestsList"]],
    representante:[["home","Visão geral","contextCard"],["chart","Minha operação","representativeWorkspace"],["cart","Pedidos","ordersList"],["file","Catálogos","repCatalogsSection"],["bell","Notificações","notificationsList"],["help","Demandas","requestsList"]]
   };
   const nav='<div class="dashboard-nav-group">Meu portal</div>'+labels[role].map(([i,l,id],idx)=>sideItem(i,l,'data-scroll-target="'+id+'"'+(idx===0?' class="active"':''))).join("")+'<div class="dashboard-nav-group">Conta</div>'+linkItem("settings","Alterar minha senha","./reset-password.html?mode=change");
@@ -127,9 +127,9 @@ window.BiasuzUI=(function(){
    {sel:".portal-grid",title:"Resumo rápido",text:"Os cartões mostram pedidos, demandas e notificações ligadas ao seu acesso."},
    {sel:"#contextCard",title:"Informações do seu perfil",text:"Aqui ficam os dados e condições mais importantes para o seu tipo de acesso."}
   ];
-  if(role==="cliente")common.push({sel:"#storesSection",title:"Lojas das representadas",text:"Escolha uma indústria para comprar. Cada loja, política e pedido funcionam separadamente."});
+  if(role==="cliente"){common.push({sel:"#storesSection",title:"Lojas das representadas",text:"Escolha uma indústria para comprar. A lista inicial é resumida para deixar o painel mais limpo."});common.push({sel:"#promotionsSection",title:"Promoções",text:"Campanhas e condições liberadas pela Biasuz ou pelas representadas aparecem aqui."})};
   if(role==="representante")common.push({sel:"#representativeWorkspace",title:"Sua operação comercial",text:"Acompanhe carteira, vendas, metas e comissões do período."});
-  if(role==="representada")common.push({sel:"#repCatalogsSection",title:"Catálogos e materiais",text:"Consulte os materiais comerciais publicados para sua operação."});
+  if(role==="representada"){common.push({sel:"#representadaWorkspace",title:"Resultados da sua indústria",text:"Acompanhe pedidos, valor movimentado, ticket médio e positivações do período."});common.push({sel:"#repCatalogsSection",title:"Catálogos e materiais",text:"Consulte os materiais comerciais publicados para sua operação."})};
   common.push({sel:"#requestForm",title:"Atendimento Biasuz",text:"Quando precisar, abra uma demanda e acompanhe a resposta pelo próprio portal."});
   return common;
  }
