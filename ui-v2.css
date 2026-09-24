@@ -203,3 +203,8 @@ linear-gradient(135deg,#f8f8f5 0%,#efeee9 58%,#e8e6df 100%)!important;color:#111
  .landing-header-v5 .main-nav{max-width:62vw}.landing-header-v5 .main-nav a{font-size:11px}
  .brand-carousel-section{padding:42px 4vw 48px}.brand-carousel-head{align-items:flex-start}.carousel-controls{display:none}.brand-slide{min-height:420px;padding:26px 22px}.brand-slide-logo{width:100%;height:96px}.brand-slide h3{font-size:38px}.brand-slide-actions .btn{width:100%}
 }
+
+/* v9 official brand asset management */
+.brand-banner-manager{margin-top:18px;padding-top:18px;border-top:1px solid #2d333c}
+.brand-banner-preview{height:180px;border-radius:16px;background:linear-gradient(135deg,#101318,#20242b);border:1px solid #303641;display:grid;place-items:center;overflow:hidden;padding:12px;margin-bottom:10px}
+.brand-banner-preview img{display:block;width:100%;height:100%;object-fit:cover;border-radius:10px}
