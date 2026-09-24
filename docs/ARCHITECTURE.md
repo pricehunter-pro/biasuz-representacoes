@@ -10,6 +10,7 @@ HTML/CSS/JavaScript publicado na VPS:
 - `commercial-admin.html` / `commercial-admin.js`
 - `sales-admin.html` / `sales-admin.js` — vendedores, regiões, metas, performance, campanhas e comissões
 - `customer-admin.html` / `customer-admin.js` — ficha CRM detalhada do cliente
+- `health-admin.html` / `health-admin.js` — diagnóstico operacional da plataforma
 - `store.html` / `store.js`
 - `brand.html` / `brand.js`
 - `catalog-review.html` / `catalog-review.js`
