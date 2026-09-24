@@ -5,7 +5,7 @@
 <title>Portal • Biasuz Representações</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=20260924-21">
+<link rel="stylesheet" href="./styles.css?v=20260924-22">
 <style>
 .portal-shell{min-height:100vh;background:#0f1012;color:#f4f4f0;padding:28px 5vw}.portal-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.portal-head h1{margin:4px 0 0;font-size:34px}.portal-login{max-width:430px;margin:8vh auto;background:#191a1e;border:1px solid #2c2e33;border-radius:20px;padding:28px}.portal-login label,.request-form label{display:grid;gap:7px;margin:12px 0;font-size:12px;font-weight:800}.portal-login input,.request-form input,.request-form textarea,.request-form select{width:100%;background:#101114;color:#fff;border:1px solid #34363d;border-radius:10px;padding:12px;font:inherit}.portal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.portal-card{background:#191a1e;border:1px solid #2c2e33;border-radius:18px;padding:20px}.portal-card h3{margin:0 0 8px}.portal-card p{color:#a4a6ac;line-height:1.6}.portal-main{display:grid;grid-template-columns:1.5fr .75fr;gap:16px}.list{display:grid;gap:9px}.list-item{border:1px solid #2d3036;background:#15161a;border-radius:13px;padding:14px}.list-item strong{display:block}.list-item small{color:#9699a0}.pill{display:inline-flex;border:1px solid #363941;border-radius:999px;padding:5px 8px;font-size:11px;margin-top:7px}.policy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.policy-box{background:#141519;border:1px solid #292c31;border-radius:12px;padding:14px}.policy-box span{display:block;color:#8f9299;font-size:11px}.policy-box strong{display:block;margin-top:5px}.hidden{display:none!important}.muted{color:#9b9da4}@media(max-width:900px){.portal-grid{grid-template-columns:1fr 1fr}.portal-main{grid-template-columns:1fr}}@media(max-width:600px){.portal-grid,.policy-grid{grid-template-columns:1fr}.portal-head{align-items:flex-start;flex-direction:column}}
 .store-section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:20px}.store-section-head h2{margin:7px 0 4px}.store-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.store-card{border:1px solid #2e3036;background:#141519;border-radius:16px;overflow:hidden;transition:.2s}.store-card:hover{transform:translateY(-3px);border-color:#f5c400}.store-logo{height:108px;background:#fff;display:grid;place-items:center;padding:18px}.store-logo img{max-width:100%;max-height:70px;object-fit:contain}.store-logo-fallback{font-size:20px;font-weight:900;color:#111}.store-card-body{padding:15px}.store-card-body h3{margin:0 0 5px}.store-card-body p{font-size:11px;margin:0 0 13px}.store-card .btn{width:100%}@media(max-width:1000px){.store-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.store-grid{grid-template-columns:1fr}}
@@ -34,7 +34,15 @@
     <p id="loginStatus" class="form-status"></p>
   </form>
   <div id="phoneAuthPanel" class="auth-phone hidden"><label>WhatsApp<input id="whatsappPhone" inputmode="tel" placeholder="(75) 99999-9999"></label><button id="sendWhatsappOtp" class="btn btn-small" type="button">Enviar código</button><div id="otpRow" class="hidden"><label>Código<input id="whatsappOtp" inputmode="numeric" maxlength="6"></label><button id="verifyWhatsappOtp" class="btn btn-small" type="button">Validar e entrar</button></div></div>
-  <div class="auth-bottom"><span>Primeiro acesso?</span> <button type="button" id="magicLoginBottom" onclick="document.getElementById('magicLogin').click()">Ativar por e-mail</button> <span>ou</span> <button type="button" id="requestAccess">pedir ajuda no WhatsApp</button>.</div>
+  <div id="signupPanel" class="auth-phone hidden">
+      <strong style="display:block;margin-bottom:8px">Criar acesso</strong>
+      <p class="muted" style="font-size:11px">Use o mesmo e-mail cadastrado na sua empresa. Se ele já estiver na carteira Biasuz, o perfil de cliente será vinculado automaticamente.</p>
+      <input id="signupName" placeholder="Seu nome" autocomplete="name">
+      <input id="signupEmail" type="email" placeholder="seu@email.com" autocomplete="email">
+      <input id="signupPassword" type="password" minlength="8" placeholder="Crie uma senha com 8+ caracteres" autocomplete="new-password">
+      <button id="createAccount" class="btn auth-main-btn" type="button">Criar minha conta</button>
+    </div>
+    <div class="auth-bottom"><span>Primeiro acesso?</span> <button type="button" id="magicLoginBottom" onclick="document.getElementById('magicLogin').click()">Ativar por e-mail</button> <span>ou</span> <button type="button" id="toggleSignup">pedir ajuda no WhatsApp</button>.</div>
 </section>
 <section id="portalView" class="hidden">
   <div class="portal-head"><div><a href="./index.html" class="eyebrow">← Biasuz Representações</a><h1 id="portalTitle">Portal</h1></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-outline" href="./reset-password.html?mode=change">Minha senha</a><button id="logout" class="btn btn-outline">Sair</button></div></div>
@@ -71,5 +79,5 @@
 </section>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="./config.js?v=20260924-21"></script><script src="./auth-ui.js?v=20260924-21"></script><script src="./portal.js?v=20260924-21"></script>
+<script src="./config.js?v=20260924-22"></script><script src="./auth-ui.js?v=20260924-22"></script><script src="./portal.js?v=20260924-22"></script>
 </body></html>
