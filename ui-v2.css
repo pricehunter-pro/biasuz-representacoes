@@ -94,3 +94,12 @@ linear-gradient(135deg,#f8f8f5 0%,#efeee9 58%,#e8e6df 100%)!important;color:#111
   .dashboard-main{padding:18px 14px 44px}.dashboard-topbar{align-items:flex-start;flex-direction:column}.dashboard-welcome{padding:21px}.dashboard-welcome h2{font-size:30px}
   .landing-v4 .segments{grid-template-columns:1fr}.landing-v4 .brands-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+.institutional-about{display:grid;grid-template-columns:.9fr 1.1fr;gap:54px;align-items:start;padding-top:82px!important;padding-bottom:82px!important}
+.institutional-about .about-lead h2{font-size:clamp(38px,4.2vw,66px);line-height:1.02;letter-spacing:-.045em;margin:12px 0 20px;max-width:760px}
+.institutional-about .about-lead p{color:#656a72;line-height:1.8;font-size:16px;max-width:680px}
+.about-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.about-cards article{min-height:220px;background:#fff;border:1px solid #deddd6;border-radius:20px;padding:24px;box-shadow:0 12px 34px rgba(25,25,18,.05)}
+.about-cards article>span{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f5c400;color:#111;font-weight:900;font-size:11px}
+.about-cards h3{font-size:20px;margin:28px 0 8px}.about-cards p{margin:0;color:#70757d;line-height:1.65;font-size:12px}
+@media(max-width:980px){.institutional-about{grid-template-columns:1fr}.about-cards{grid-template-columns:repeat(3,1fr)}}@media(max-width:680px){.about-cards{grid-template-columns:1fr}.about-cards article{min-height:auto}}
