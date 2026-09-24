@@ -1,6 +1,6 @@
 const cfg=window.BIASUZ_CONFIG||{}, statusEl=document.getElementById("loginStatus");
 const sb=(cfg.supabaseUrl&&cfg.supabasePublishableKey)?window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey):null;
-let leads=[],customerPage=0;const pageSize=100;
+let leads=[],customerPage=0,catalogBrands=[],catalogLibrary=[];const pageSize=100;
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 const digits=v=>String(v??"").replace(/\D/g,"");
 function showApp(on){document.getElementById("loginView").classList.toggle("hidden",on);document.getElementById("appView").classList.toggle("hidden",!on)}
@@ -37,7 +37,67 @@ async function loadCatalog(){
  const {data,error}=await sb.from("representadas").select("id,name,slug,segments,catalog_status,products_count,official_url").order("name");if(error)return;
  document.getElementById("brandRows").innerHTML=(data||[]).map(b=>'<div class="row catalog-row"><div><strong>'+esc(b.name)+'</strong><br><small>'+esc((b.segments||[]).join(" • "))+'</small></div><div><span class="badge">'+esc(b.catalog_status)+'</span></div><div>'+esc(b.products_count||0)+' produtos</div><div><a target="_blank" rel="noopener" href="'+esc(b.official_url)+'">Site oficial</a></div><a class="btn btn-small" target="_blank" href="./brand.html?slug='+encodeURIComponent(b.slug)+'">Catálogo</a></div>').join("");
 }
-async function refreshAll(){await Promise.all([counts(),loadLeads(),loadCustomers(true),loadCatalog()])}
+async function refreshAll(){await Promise.all([counts(),loadLeads(),loadCustomers(true),loadCatalog(),loadCatalogLibrary()])}
+
+
+const slugify=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+async function loadCatalogLibrary(){
+ const [{data:brands},{data:cats,error}]=await Promise.all([
+  sb.from("representadas").select("id,name,slug").eq("active",true).order("name"),
+  sb.from("catalogs").select("*,representadas(name,slug)").order("created_at",{ascending:false})
+ ]);
+ catalogBrands=brands||[];catalogLibrary=cats||[];
+ const sel=document.getElementById("catalogBrand");const current=sel.value;sel.innerHTML='<option value="">Selecione</option>'+catalogBrands.map(b=>'<option value="'+b.id+'" data-slug="'+esc(b.slug)+'">'+esc(b.name)+'</option>').join("");if(current)sel.value=current;
+ const box=document.getElementById("catalogLibraryRows");if(error){box.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
+ if(!catalogLibrary.length){box.innerHTML='<p class="muted">Nenhum catálogo armazenado.</p>';return}
+ const ids=catalogLibrary.map(c=>c.id);
+ const [linksRes,prodRes,candRes]=await Promise.all([
+  sb.from("catalog_share_links").select("catalog_id").in("catalog_id",ids),
+  sb.from("catalog_products").select("catalog_id").in("catalog_id",ids),
+  sb.from("catalog_product_candidates").select("catalog_id,status").in("catalog_id",ids)
+ ]);
+ const linkCount={},prodCount={},reviewCount={};for(const x of linksRes.data||[])linkCount[x.catalog_id]=(linkCount[x.catalog_id]||0)+1;for(const x of prodRes.data||[])prodCount[x.catalog_id]=(prodCount[x.catalog_id]||0)+1;for(const x of candRes.data||[])if(["pending","review"].includes(x.status))reviewCount[x.catalog_id]=(reviewCount[x.catalog_id]||0)+1;
+ box.innerHTML=catalogLibrary.map(c=>'<div class="catalog-library-row"><div><strong>'+esc(c.title)+'</strong><br><small>'+esc(c.representadas?.name||"")+' • '+esc(c.file_name||"PDF")+'</small><div class="catalog-stats">'+Number(c.page_count||0)+' páginas • '+Number(prodCount[c.id]||0)+' produtos vinculados • '+Number(reviewCount[c.id]||0)+' para revisão • '+Number(linkCount[c.id]||0)+' compartilhamentos</div></div><div><span class="badge">'+esc(c.status)+'</span><br><small>'+(c.published?'Publicado':'Interno')+'</small></div><div><small>'+esc(c.catalog_type)+'</small><br>'+esc(c.year||"")+'</div><div class="catalog-actions"><button class="btn btn-small" data-cat-download="'+c.id+'">Baixar</button><button class="btn btn-small btn-outline" data-cat-copy="'+c.id+'">Copiar link</button><button class="btn btn-small btn-outline" data-cat-wa="'+c.id+'">WhatsApp</button><button class="btn btn-small btn-outline" data-cat-email="'+c.id+'">E-mail</button><button class="btn btn-small btn-outline" data-cat-publish="'+c.id+'">'+(c.published?'Ocultar':'Publicar')+'</button><button class="btn btn-small btn-outline" data-cat-reprocess="'+c.id+'">Reler PDF</button></div></div>').join("");
+ document.querySelectorAll("[data-cat-download]").forEach(b=>b.onclick=()=>downloadCatalog(b.dataset.catDownload));
+ document.querySelectorAll("[data-cat-copy]").forEach(b=>b.onclick=()=>shareCatalog(b.dataset.catCopy,"link","copy"));
+ document.querySelectorAll("[data-cat-wa]").forEach(b=>b.onclick=()=>shareCatalog(b.dataset.catWa,"whatsapp","wa"));
+ document.querySelectorAll("[data-cat-email]").forEach(b=>b.onclick=()=>shareCatalog(b.dataset.catEmail,"email","email"));
+ document.querySelectorAll("[data-cat-publish]").forEach(b=>b.onclick=async()=>{const c=catalogLibrary.find(x=>x.id===b.dataset.catPublish);await sb.from("catalogs").update({published:!c.published,status:!c.published?"published":"review"}).eq("id",c.id);await loadCatalogLibrary()});
+ document.querySelectorAll("[data-cat-reprocess]").forEach(b=>b.onclick=async()=>{const c=catalogLibrary.find(x=>x.id===b.dataset.catReprocess),st=document.getElementById("catalogUploadStatus");st.textContent="Relendo "+c.title+"...";const {data,error}=await sb.functions.invoke("catalog-pdf-extract",{body:{catalog_id:c.id}});st.className="form-status "+(error?"err":"ok");st.textContent=error?error.message:"Leitura concluída: "+Number(data?.candidates||0)+" candidatos. Páginas para OCR: "+Number(data?.ocr_required_pages?.length||0);await loadCatalogLibrary()});
+}
+async function downloadCatalog(id){const c=catalogLibrary.find(x=>x.id===id);if(!c?.storage_path)return;const {data,error}=await sb.storage.from("catalogs").createSignedUrl(c.storage_path,3600);if(error){alert(error.message);return}window.open(data.signedUrl,"_blank")}
+async function shareCatalog(id,channel,mode){
+ const c=catalogLibrary.find(x=>x.id===id);const {data,error}=await sb.functions.invoke("catalog-share",{body:{catalog_id:id,channel,expires_hours:720}});if(error||!data?.url){alert(error?.message||"Não foi possível gerar o link.");return}
+ const msg="Olá! Segue o catálogo "+c.title+" da "+(c.representadas?.name||"Biasuz Representações")+": "+data.url;
+ if(mode==="copy"){await navigator.clipboard.writeText(data.url);alert("Link copiado.");return}
+ if(mode==="wa"){window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");return}
+ if(mode==="email"){location.href="mailto:?subject="+encodeURIComponent(c.title)+"&body="+encodeURIComponent(msg)}
+}
+function tusUpload(file,path,onProgress){
+ return new Promise(async(resolve,reject)=>{
+  const {data:{session}}=await sb.auth.getSession();if(!session)return reject(new Error("Sessão expirada."));
+  const upload=new tus.Upload(file,{endpoint:cfg.supabaseUrl+"/storage/v1/upload/resumable",retryDelays:[0,1000,3000,5000],headers:{authorization:"Bearer "+session.access_token,"x-upsert":"true"},metadata:{bucketName:"catalogs",objectName:path,contentType:file.type||"application/pdf",cacheControl:"3600"},removeFingerprintOnSuccess:true,onError:reject,onProgress:(sent,total)=>onProgress?.(Math.round(sent/total*100)),onSuccess:()=>resolve(true)});
+  upload.findPreviousUploads().then(prev=>{if(prev.length)upload.resumeFromPreviousUpload(prev[0]);upload.start()}).catch(()=>upload.start());
+ })
+}
+async function ocrFallback(file,catalogId,pages,status,bar){
+ if(!pages?.length||!window.pdfjsLib||!window.Tesseract)return;
+ pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+ const pdf=await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+ let worker=null;try{worker=await Tesseract.createWorker("por")}catch{worker=await Tesseract.createWorker("eng")}
+ let batch=[];for(let i=0;i<pages.length;i++){const n=Number(pages[i]);status.textContent="OCR inteligente: página "+n+" ("+(i+1)+"/"+pages.length+")";const page=await pdf.getPage(n),vp=page.getViewport({scale:1.6}),canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");canvas.width=Math.round(vp.width);canvas.height=Math.round(vp.height);await page.render({canvasContext:ctx,viewport:vp}).promise;const r=await worker.recognize(canvas);const previewPath="previews/"+catalogId+"/page-"+String(n).padStart(3,"0")+".jpg";const blob=await new Promise(ok=>canvas.toBlob(ok,"image/jpeg",.82));if(blob)await sb.storage.from("catalogs").upload(previewPath,blob,{contentType:"image/jpeg",upsert:true});batch.push({page_number:n,text:r.data.text||"",preview_storage_path:previewPath});bar.style.width=(80+Math.round((i+1)/pages.length*20))+"%";if(batch.length===3||i===pages.length-1){const {error}=await sb.functions.invoke("catalog-ocr-apply",{body:{catalog_id:catalogId,pages:batch}});if(error)throw error;batch=[]}}
+ await worker.terminate();
+}
+document.getElementById("catalogUploadForm").onsubmit=async e=>{
+ e.preventDefault();const file=document.getElementById("catalogPdf").files[0],brandId=document.getElementById("catalogBrand").value,title=document.getElementById("catalogTitle").value.trim(),type=document.getElementById("catalogType").value,year=Number(document.getElementById("catalogYear").value)||null,st=document.getElementById("catalogUploadStatus"),bar=document.getElementById("catalogProgressBar");if(!file||!brandId||!title)return;
+ const brand=catalogBrands.find(x=>x.id===brandId),stamp=Date.now(),slug=slugify(title)+"-"+String(stamp).slice(-6),path=brand.slug+"/"+year+"/"+stamp+"-"+slugify(file.name.replace(/\.pdf$/i,""))+".pdf";st.className="form-status";st.textContent="Preparando catálogo...";bar.style.width="2%";
+ const {data:cat,error:ce}=await sb.from("catalogs").insert({representada_id:brandId,title,slug,catalog_type:type,year,source_type:"upload",file_name:file.name,mime_type:file.type||"application/pdf",size_bytes:file.size,storage_bucket:"catalogs",storage_path:path,status:"uploading",published:false}).select("*").single();if(ce){st.className="form-status err";st.textContent=ce.message;return}
+ try{await tusUpload(file,path,p=>{bar.style.width=Math.max(3,Math.round(p*.65))+"%";st.textContent="Enviando PDF: "+p+"%"});await sb.from("catalogs").update({status:"uploaded"}).eq("id",cat.id);bar.style.width="70%";st.textContent="Lendo texto, produtos e códigos...";
+ const {data,error}=await sb.functions.invoke("catalog-pdf-extract",{body:{catalog_id:cat.id}});if(error)throw error;bar.style.width="80%";if(data?.ocr_required_pages?.length){st.textContent="Texto extraído. Iniciando OCR em "+data.ocr_required_pages.length+" páginas...";await ocrFallback(file,cat.id,data.ocr_required_pages,st,bar)}
+ bar.style.width="100%";st.className="form-status ok";st.textContent="Catálogo processado. "+Number(data?.candidates||0)+" itens detectados na primeira leitura. Revise apenas as exceções.";e.currentTarget.reset();await Promise.all([loadCatalogLibrary(),counts()]);
+ }catch(err){await sb.from("catalogs").update({status:"error",extraction_summary:{error:String(err?.message||err)}}).eq("id",cat.id);st.className="form-status err";st.textContent="Falha no processamento: "+(err?.message||err)}
+};
+document.getElementById("reloadCatalogs").onclick=loadCatalogLibrary;
 
 function dateValue(v){if(v===null||v===undefined||v==="")return null;const s=String(v).trim();if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){const[d,m,y]=s.split("/");return y+"-"+m+"-"+d}if(/^\d{8}$/.test(s))return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8);return null}
 function clean(v){const s=String(v??"").trim();return !s||s==="0"?null:s}
