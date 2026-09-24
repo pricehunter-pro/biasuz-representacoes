@@ -2,6 +2,7 @@ const cfg=window.BIASUZ_CONFIG||{};
 const sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 const money=v=>"R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2});
+const slugify=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 let brand=null,policy=null,productPage=0;const productPageSize=100;
 
 async function auth(){
@@ -79,6 +80,22 @@ async function loadOrders(){
  document.getElementById("orderRows").innerHTML=(data||[]).map(o=>'<div class="item"><div><strong>Pedido #'+esc(o.order_number)+'</strong><br><small>'+new Date(o.created_at).toLocaleString("pt-BR")+'</small></div><div>'+money(o.total)+'</div><div>'+esc(o.status)+'</div><div></div><select data-order="'+o.id+'"><option value="enviado">enviado</option><option value="em_analise">em_analise</option><option value="aprovado">aprovado</option><option value="faturado">faturado</option><option value="expedido">expedido</option><option value="entregue">entregue</option><option value="cancelado">cancelado</option></select></div>').join("")||'<p class="muted">Nenhum pedido desta representada.</p>';
  document.querySelectorAll("[data-order]").forEach(s=>{s.value=(data||[]).find(x=>x.id===s.dataset.order)?.status||"enviado";s.onchange=async()=>{await sb.from("orders").update({status:s.value}).eq("id",s.dataset.order)}})
 }
+document.getElementById("syncCatalog").onclick=async()=>{
+ if(!brand)return;const st=document.getElementById("syncStatus");st.className="status";st.textContent="Sincronizando "+brand.name+"...";
+ const {data,error}=await sb.functions.invoke("catalog-sync",{body:{slug:brand.slug,max_pages:900}});
+ if(error){st.className="status err";st.textContent="Falha: "+error.message;return}
+ const result=data?.results?.[0];st.className="status ok";st.textContent=result?"Sincronização concluída: "+Number(result.products||0)+" produtos processados, "+Number(result.images||0)+" imagens.":"Sincronização concluída.";
+ productPage=0;await Promise.all([loadProducts(),loadSyncInfo()]);
+};
+document.getElementById("newBrandForm").onsubmit=async e=>{
+ e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("newBrandStatus");st.textContent="Cadastrando...";
+ const segments=String(d.segments||"").split(",").map(x=>x.trim()).filter(Boolean);
+ const row={name:d.name.trim(),slug:slugify(d.name),official_url:d.official_url.trim(),instagram_url:d.instagram_url||null,segments,description:d.description||null,active:true,catalog_status:"pending"};
+ const {error}=await sb.from("representadas").insert(row);
+ if(error){st.className="status err";st.textContent=error.message;return}
+ st.className="status ok";st.textContent="Representada cadastrada. A fonte de catálogo foi preparada automaticamente.";
+ setTimeout(()=>location.reload(),700);
+};
 document.getElementById("reloadProducts").onclick=()=>{productPage=0;loadProducts();loadSyncInfo()};
 document.getElementById("adminProductSearch").addEventListener("input",()=>{productPage=0;loadProducts()});
 document.getElementById("adminPriceFilter").addEventListener("change",()=>{productPage=0;loadProducts()});
