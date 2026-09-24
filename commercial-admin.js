@@ -67,7 +67,7 @@ async function loadProducts(){
 
 document.getElementById("promoForm").onsubmit=async e=>{
  e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));const st=document.getElementById("promoStatus");
- const row={representada_id:brand.id,title:d.title,description:d.description||null,starts_at:d.starts_at?new Date(d.starts_at).toISOString():null,ends_at:d.ends_at?new Date(d.ends_at).toISOString():null,active:true};
+ const row={representada_id:brand.id,title:d.title,description:d.description||null,starts_at:d.starts_at?new Date(d.starts_at).toISOString():null,ends_at:d.ends_at?new Date(d.ends_at).toISOString():null,rules:{kind:d.kind||"campaign",link_url:d.link_url||null},active:true};
  const {error}=await sb.from("promotions").insert(row);st.className="status "+(error?"err":"ok");st.textContent=error?error.message:"Promoção publicada.";if(!error){e.currentTarget.reset();await loadPromos()}
 };
 async function loadPromos(){
@@ -83,6 +83,8 @@ async function loadOrders(){
 function renderBrandLogo(){
  const box=document.getElementById("brandLogoPreview");if(!box||!brand)return;
  box.innerHTML=brand.logo_url?'<img src="'+esc(brand.logo_url)+'" alt="Logomarca '+esc(brand.name)+'" style="max-width:100%;max-height:84px;width:auto;height:auto;object-fit:contain">':'<span class="muted">Sem logomarca cadastrada</span>';
+ const bp=document.getElementById("brandBannerPreview"),cap=document.getElementById("brandBannerCaption");if(cap)cap.value=brand.banner_caption||"";
+ if(bp)bp.innerHTML=brand.banner_image_url?'<img src="'+esc(brand.banner_image_url)+'" alt="Banner '+esc(brand.name)+'">':'<span class="muted">Sem banner oficial — usando layout automático</span>';
 }
 document.getElementById("uploadBrandLogo").onclick=async()=>{
  if(!brand)return;const file=document.getElementById("brandLogoFile").files[0],st=document.getElementById("brandLogoStatus");if(!file){st.className="status err";st.textContent="Selecione um arquivo de imagem.";return}
@@ -96,6 +98,23 @@ document.getElementById("uploadBrandLogo").onclick=async()=>{
  if(de){st.className="status err";st.textContent=de.message;return}
  brand.logo_url=url;renderBrandLogo();st.className="status ok";st.textContent="Logomarca atualizada.";
 };
+document.getElementById("uploadBrandBanner").onclick=async()=>{
+ if(!brand)return;const file=document.getElementById("brandBannerFile").files[0],st=document.getElementById("brandBannerStatus");if(!file){st.className="status err";st.textContent="Selecione uma arte horizontal.";return}
+ if(file.size>8*1024*1024){st.className="status err";st.textContent="Use uma imagem de até 8 MB.";return}
+ st.className="status";st.textContent="Enviando banner...";
+ const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path="banners/"+brand.slug+"."+ext;
+ const {error:ue}=await sb.storage.from("brand-assets").upload(path,file,{contentType:file.type||"image/jpeg",upsert:true,cacheControl:"3600"});
+ if(ue){st.className="status err";st.textContent=ue.message;return}
+ const {data:u}=sb.storage.from("brand-assets").getPublicUrl(path),url=u.publicUrl+"?v="+Date.now();
+ const {error:de}=await sb.from("representadas").update({banner_image_url:url,banner_caption:document.getElementById("brandBannerCaption").value.trim()||null}).eq("id",brand.id);
+ if(de){st.className="status err";st.textContent=de.message;return}
+ brand.banner_image_url=url;brand.banner_caption=document.getElementById("brandBannerCaption").value.trim()||null;renderBrandLogo();st.className="status ok";st.textContent="Banner publicado na landing.";
+};
+document.getElementById("saveBrandBannerCaption").onclick=async()=>{
+ if(!brand)return;const st=document.getElementById("brandBannerStatus"),caption=document.getElementById("brandBannerCaption").value.trim()||null;
+ const {error}=await sb.from("representadas").update({banner_caption:caption}).eq("id",brand.id);st.className="status "+(error?"err":"ok");st.textContent=error?error.message:"Texto do destaque atualizado.";if(!error)brand.banner_caption=caption;
+};
+
 document.getElementById("syncCatalog").onclick=async()=>{
  if(!brand)return;const st=document.getElementById("syncStatus");st.className="status";st.textContent="Sincronizando "+brand.name+"...";
  const {data,error}=await sb.functions.invoke("catalog-sync",{body:{slug:brand.slug,max_pages:900}});
