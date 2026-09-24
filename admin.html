@@ -4,33 +4,43 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Biasuz • CRM Comercial</title><link rel="stylesheet" href="./styles.css">
 <style>
-.admin-shell{min-height:100vh;background:#0e0f11;color:#f4f4f0;padding:30px 5vw}.admin-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.admin-top h1{margin:0;font-size:34px}.admin-card{background:#18191d;border:1px solid #292b31;border-radius:18px;padding:22px}.login{max-width:420px;margin:8vh auto}.login input,.toolbar select,.toolbar input,.admin-card textarea{width:100%;background:#101114;color:white;border:1px solid #34363d;border-radius:10px;padding:12px;font:inherit}.login label{display:grid;gap:7px;margin-bottom:14px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.kpi{background:#18191d;border:1px solid #292b31;border-radius:16px;padding:18px}.kpi span{color:#9699a0;font-size:12px}.kpi strong{display:block;font-size:30px;margin-top:5px}.toolbar{display:grid;grid-template-columns:1fr 180px 180px;gap:10px;margin-bottom:14px}.leads{display:grid;gap:8px}.lead-row{display:grid;grid-template-columns:1.2fr 1fr .6fr .7fr .8fr auto;gap:10px;align-items:center;padding:14px;border:1px solid #2d3035;border-radius:12px;background:#15161a}.lead-row small{color:#95979d}.lead-row select{background:#0f1012;color:white;border:1px solid #34363d;border-radius:8px;padding:8px}.muted{color:#9b9da4}.hidden{display:none!important}@media(max-width:900px){.kpis{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.lead-row{grid-template-columns:1fr 1fr}.lead-row>div:first-child{grid-column:1/-1}}
+.admin-shell{min-height:100vh;background:#0e0f11;color:#f4f4f0;padding:30px 5vw}.admin-top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.admin-top h1{margin:0;font-size:34px}.admin-card{background:#18191d;border:1px solid #292b31;border-radius:18px;padding:22px;margin-bottom:16px}.login{max-width:420px;margin:8vh auto}.login input,.toolbar select,.toolbar input,.admin-card textarea,.admin-card input,.admin-card select{width:100%;background:#101114;color:white;border:1px solid #34363d;border-radius:10px;padding:12px;font:inherit}.login label{display:grid;gap:7px;margin-bottom:14px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid #34363d;background:#15161a;color:#bbb;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.tab.active{background:#f5c400;color:#111;border-color:#f5c400}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.kpi{background:#18191d;border:1px solid #292b31;border-radius:16px;padding:18px}.kpi span{color:#9699a0;font-size:12px}.kpi strong{display:block;font-size:30px;margin-top:5px}.toolbar{display:grid;grid-template-columns:1fr 180px 180px auto;gap:10px;margin-bottom:14px}.rows{display:grid;gap:8px}.row{display:grid;grid-template-columns:1.4fr 1.2fr .7fr .8fr .8fr auto;gap:10px;align-items:center;padding:14px;border:1px solid #2d3035;border-radius:12px;background:#15161a}.row small{color:#95979d}.row select{background:#0f1012;color:white;border:1px solid #34363d;border-radius:8px;padding:8px}.muted{color:#9b9da4}.hidden{display:none!important}.progress{height:10px;background:#0f1012;border-radius:999px;overflow:hidden;margin:12px 0}.progress>i{display:block;height:100%;width:0;background:#f5c400}.import-box{display:grid;gap:14px;max-width:760px}.catalog-row{grid-template-columns:1.4fr 1fr .8fr .8fr auto}.pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:14px}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#27292e;color:#d3d4d6;font-size:11px;font-weight:800}@media(max-width:950px){.kpis{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.row,.catalog-row{grid-template-columns:1fr 1fr}.row>div:first-child{grid-column:1/-1}}@media(max-width:600px){.kpis{grid-template-columns:1fr}.row,.catalog-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="admin-shell">
-  <section id="loginView" class="admin-card login">
-    <div class="brand"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>CRM COMERCIAL</small></span></div>
-    <h1>Área interna</h1><p class="muted">Acesso restrito à equipe autorizada.</p>
-    <form id="loginForm">
-      <label>E-mail<input name="email" type="email" required></label>
-      <label>Senha<input name="password" type="password" required></label>
-      <button class="btn" type="submit">Entrar</button><p id="loginStatus" class="form-status"></p>
-    </form>
-  </section>
-  <section id="appView" class="hidden">
-    <div class="admin-top"><div><span class="eyebrow">Biasuz Representações</span><h1>Pipeline comercial</h1></div><button id="logout" class="btn btn-outline">Sair</button></div>
-    <div class="kpis">
-      <div class="kpi"><span>Total de leads</span><strong id="kTotal">0</strong></div>
-      <div class="kpi"><span>Novos</span><strong id="kNew">0</strong></div>
-      <div class="kpi"><span>Propostas</span><strong id="kProposal">0</strong></div>
-      <div class="kpi"><span>Pedidos ganhos</span><strong id="kWon">0</strong></div>
-    </div>
-    <div class="admin-card">
-      <div class="toolbar"><input id="search" placeholder="Buscar empresa, nome ou telefone"><select id="stateFilter"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="segmentFilter"><option value="">Todos os segmentos</option><option>Pet</option><option>Bazar</option><option>Jardinagem</option><option>Farma</option><option>Tech</option><option>Matco</option></select></div>
-      <div id="leads" class="leads"></div>
-    </div>
-  </section>
+<section id="loginView" class="admin-card login">
+ <div class="brand"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>CRM COMERCIAL</small></span></div>
+ <h1>Área interna</h1><p class="muted">Acesso restrito à equipe autorizada.</p>
+ <form id="loginForm"><label>E-mail<input name="email" type="email" required></label><label>Senha<input name="password" type="password" required></label><button class="btn" type="submit">Entrar</button><p id="loginStatus" class="form-status"></p></form>
+</section>
+<section id="appView" class="hidden">
+ <div class="admin-top"><div><span class="eyebrow">Biasuz Representações</span><h1>Central comercial</h1></div><button id="logout" class="btn btn-outline">Sair</button></div>
+ <div class="tabs"><button class="tab active" data-tab="leads">Leads</button><button class="tab" data-tab="customers">Carteira</button><button class="tab" data-tab="catalog">Representadas</button><button class="tab" data-tab="import">Importar CSV</button></div>
+ <div class="kpis"><div class="kpi"><span>Leads</span><strong id="kLeads">0</strong></div><div class="kpi"><span>Carteira</span><strong id="kCustomers">0</strong></div><div class="kpi"><span>Representadas</span><strong id="kBrands">0</strong></div><div class="kpi"><span>Produtos</span><strong id="kProducts">0</strong></div></div>
+
+ <section id="tab-leads" class="tabview">
+  <div class="admin-card"><div class="toolbar"><input id="leadSearch" placeholder="Buscar empresa, nome ou telefone"><select id="leadState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="leadSegment"><option value="">Todos os segmentos</option><option>Pet</option><option>Bazar</option><option>Jardinagem</option><option>Farma</option><option>Tech</option><option>Matco</option></select><button class="btn btn-small" id="reloadLeads">Atualizar</button></div><div id="leadRows" class="rows"></div></div>
+ </section>
+
+ <section id="tab-customers" class="tabview hidden">
+  <div class="admin-card"><div class="toolbar"><input id="customerSearch" placeholder="Buscar CNPJ, razão social, fantasia, cidade ou telefone"><select id="customerState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="customerStage"><option value="">Todos</option><option value="prospect">Prospects</option><option value="cliente">Clientes</option><option value="inativo">Inativos</option><option value="descartado">Descartados</option></select><button class="btn btn-small" id="reloadCustomers">Buscar</button></div><div id="customerRows" class="rows"></div><div class="pager"><button id="prevCustomers" class="btn btn-outline btn-small">Anterior</button><span id="customerPage" class="muted">1</span><button id="nextCustomers" class="btn btn-outline btn-small">Próxima</button></div></div>
+ </section>
+
+ <section id="tab-catalog" class="tabview hidden">
+  <div class="admin-card"><div id="brandRows" class="rows"></div></div>
+ </section>
+
+ <section id="tab-import" class="tabview hidden">
+  <div class="admin-card import-box"><div><span class="eyebrow">Carga de carteira</span><h2>Importar clientes/prospects</h2><p class="muted">Selecione o CSV original. O navegador processa localmente e envia ao Supabase em lotes autenticados. Nenhuma chave administrativa fica no arquivo ou no navegador.</p></div>
+   <input id="csvFile" type="file" accept=".csv,text/csv">
+   <button class="btn" id="importCsv">Importar carteira</button>
+   <div class="progress"><i id="importBar"></i></div><p id="importStatus" class="form-status"></p>
+  </div>
+ </section>
+</section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script><script src="./config.js"></script><script src="./admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="./config.js"></script><script src="./admin.js"></script>
 </body></html>
