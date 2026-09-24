@@ -32,6 +32,9 @@ Leia nesta ordem:
 - Portal da Representada
 - Portal do Representante
 - Painel do Administrador / CRM
+- Gestão Comercial: vendedores, regiões, carteira, metas, performance e comissões
+- Planejador de campanhas com audiência elegível e consentimento
+- Ficha completa do cliente com histórico de interações, responsável, região e próxima ação
 - Gestão das Lojas B2B por representada
 - Pedidos separados por indústria
 - Política comercial individual por indústria
@@ -41,6 +44,7 @@ Leia nesta ordem:
 - Importação CSV de clientes/prospects
 - Sincronização de catálogos com sites oficiais
 - Estrutura para Evolution API/WhatsApp
+- GitHub Actions de qualidade para validar JavaScript, IDs HTML, ativos locais e referências básicas
 
 ## Segurança
 
@@ -58,3 +62,9 @@ E-mail/senha, link mágico e recuperação de senha estão implementados. Google
 ## Produção
 
 O deploy é feito a partir do repositório na VPS/EasyPanel que atende `bia.dunihub.online`. Veja `docs/DEPLOYMENT_VPS.md`.
+
+## Estado comercial atual
+
+A carteira importada possui 7.382 clientes/prospects atribuídos ao vendedor inicial e às regiões por UF. O banco ainda não possui pedidos enviados, portanto metas, performance e comissões começam zerados e passam a ser calculados com a operação real.
+
+O módulo de campanhas permite planejar e calcular a audiência, mas não realiza disparos automáticos enquanto a integração de WhatsApp/Evolution e os consentimentos necessários não estiverem validados.
