@@ -9,6 +9,7 @@
 <style>
 body{background:#0b0c0f;color:#f4f4f0}.shell{min-height:100vh;padding:28px 5vw}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.head h1{font-size:38px;margin:6px 0}.head p{color:#9398a0}.grid{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.panel{background:#16181d;border:1px solid #2a2e35;border-radius:18px;padding:20px;margin-bottom:14px}.info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.box{padding:13px;border:1px solid #2b2f36;border-radius:12px;background:#101216}.box span{font-size:10px;color:#888e97;text-transform:uppercase;letter-spacing:.1em}.box strong{display:block;margin-top:5px;overflow-wrap:anywhere}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}label{display:grid;gap:6px;font-size:11px;font-weight:800}input,select,textarea{width:100%;background:#0c0e12;color:#fff;border:1px solid #353a43;border-radius:10px;padding:11px;font:inherit}.list{display:grid;gap:8px}.item{padding:13px;border:1px solid #292d34;border-radius:12px;background:#111318}.item small{color:#90959e}.item p{margin:8px 0 0;color:#c3c6cc;line-height:1.55}.actions{display:flex;gap:8px;flex-wrap:wrap}.muted{color:#9297a0}.status{font-size:12px}.status.ok{color:#69dc90}.status.err{color:#ff8d82}@media(max-width:900px){.grid{grid-template-columns:1fr}.info{grid-template-columns:1fr 1fr}}@media(max-width:600px){.shell{padding:20px 4vw}.info,.form-grid{grid-template-columns:1fr}.head{flex-direction:column}}
 </style>
+<link rel="stylesheet" href="./ui-v2.css?v=20260924-4">
 </head><body>
 <main class="shell">
  <header class="head"><div><a class="eyebrow" href="./admin.html">← Carteira / CRM</a><h1 id="title">Cliente</h1><p id="subtitle">Carregando cadastro...</p></div><div class="actions"><a id="waAction" class="btn btn-small" target="_blank" rel="noopener">WhatsApp</a><a id="emailAction" class="btn btn-small btn-outline">E-mail</a></div></header>
@@ -34,4 +35,5 @@ body{background:#0b0c0f;color:#f4f4f0}.shell{min-height:100vh;padding:28px 5vw}.
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="./config.js?v=20260924-27"></script><script src="./customer-admin.js?v=20260924-27"></script>
+<script src="./ui-v2.js?v=20260924-3"></script>
 </body></html>
