@@ -49,7 +49,9 @@ function render(){
   row("E-mail / senha",state.settings?.email!==false?"Ativo":"Verificar",state.settings?.email!==false?"ok":"warn")+
   row("Google OAuth",ext.google?"Ativo":"Credenciais pendentes",ext.google?"ok":"warn")+
   row("Discord OAuth",ext.discord?"Ativo":"Credenciais pendentes",ext.discord?"ok":"warn")+
-  row("WhatsApp / Phone OTP",phone?"Ativo":"Provedor pendente",phone?"ok":"warn")+
+  row("Telegram OIDC",cfg.telegramOidcEnabled?"Ativo":"Client ID/Secret pendentes",cfg.telegramOidcEnabled?"ok":"warn")+
+  row("WhatsApp / Phone OTP",phone?"Ativo":"Twilio/Twilio Verify pendente",phone?"ok":"warn")+
+  row("Evolution API assistida","Função implantada","warn","Falta cadastrar URL, API key e instância nos Secrets para validar o primeiro envio")+
   row("Representantes com portal",state.repProfiles,state.repProfiles?"ok":"warn")+
   row("Vendedores sem usuário vinculado",state.unlinked,state.unlinked?"warn":"ok");
  document.getElementById("catalogRows").innerHTML=
@@ -69,6 +71,8 @@ function render(){
  if(state.reviewCats)priorities.push(["Concluir revisão de catálogos",state.reviewCats+" catálogos pendentes","warn"]);
  if(!ext.google)priorities.push(["Ativar Google OAuth","Cadastrar Client ID/Secret no Supabase","warn"]);
  if(!ext.discord)priorities.push(["Ativar Discord OAuth","Cadastrar aplicação OAuth","warn"]);
+ if(!cfg.telegramOidcEnabled)priorities.push(["Ativar Telegram OIDC","Criar Login OIDC no BotFather e cadastrar como custom:telegram","warn"]);
+ priorities.push(["Concluir Evolution API","Cadastrar EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE nos Secrets","warn"]);
  if(state.unlinked)priorities.push(["Vincular vendedor ao portal",state.unlinked+" vendedor(es) sem usuário representante","warn"]);
  if(!state.optin)priorities.push(["Coletar consentimento WhatsApp","Carteira importada ainda sem opt-ins registrados","warn"]);
  if(!state.rules)priorities.push(["Cadastrar regras de comissão","Necessário antes de gerar comissão prevista","warn"]);
