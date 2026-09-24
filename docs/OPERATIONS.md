@@ -93,3 +93,39 @@ Se login falhar:
 - Não reutilizar senhas temporárias.
 - Revogar links de catálogo quando necessário.
 - Guardar consentimento de comunicações comerciais.
+
+## 11. Vendedores, regiões e carteira
+
+Em **Admin > Gestão Comercial**:
+1. cadastrar o vendedor;
+2. vincular o cadastro a um usuário com perfil `representante` quando houver acesso ao portal;
+3. definir comissão padrão apenas se houver regra comercial aprovada;
+4. atribuir clientes/regiões;
+5. acompanhar metas e performance.
+
+A carga inicial vinculou a carteira cujo responsável textual era “Junior” ao vendedor inicial e associou cada cliente à região de sua UF.
+
+## 12. Metas e comissões
+
+- Meta pode ser geral ou por representada e possui período.
+- Progresso é calculado usando pedidos válidos no período; rascunhos, cancelados e rejeitados não contam.
+- Comissão prevista só nasce quando houver pedido válido, vendedor e percentual aplicável.
+- Fluxo: prevista -> aprovada -> paga.
+- Nunca aprovar/pagar comissão automaticamente sem conferência comercial/financeira.
+
+## 13. Campanhas
+
+- Criar campanha em Gestão Comercial.
+- Definir representada, segmento, UF, canal e mensagem.
+- Calcular audiência antes de salvar/disparar.
+- WhatsApp só considera elegível quem tem `whatsapp_marketing_allowed=true`, telefone e não fez opt-out.
+- A carteira importada atualmente não possui opt-ins de WhatsApp registrados; por isso o disparo automático permanece bloqueado.
+- Evolution API deverá ser conectada no backend, não diretamente no navegador.
+
+## 14. Ficha CRM do cliente
+
+Na Carteira, usar **Abrir** para consultar/editar responsável, região, estágio, próxima ação, observações, interações e pedidos do cliente.
+
+## 15. Qualidade de código
+
+Todo push executa `.github/workflows/quality.yml`. Falha de sintaxe ou referência estrutural básica deve ser corrigida antes de considerar a mudança concluída. GitHub Pages não é o deploy de produção; o workflow Pages é apenas manual/legado.
