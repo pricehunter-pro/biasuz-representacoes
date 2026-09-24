@@ -165,3 +165,41 @@ linear-gradient(135deg,#f8f8f5 0%,#efeee9 58%,#e8e6df 100%)!important;color:#111
 @media(max-width:1350px){.ranking-grid{grid-template-columns:1fr 1fr}.customer-filter-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:850px){.insight-metrics{grid-template-columns:1fr 1fr}.ranking-grid{grid-template-columns:1fr}.customer-filter-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.insight-metrics,.customer-filter-grid{grid-template-columns:1fr}}
+
+/* v8 landing header hierarchy + brand carousel */
+.landing-header-v5 .portal-nav-top{order:0;padding:8px 5vw;background:#090b0e!important;border-top:0!important;border-bottom:1px solid #272c34!important}
+.landing-header-v5 .portal-nav-inner{display:grid;grid-template-columns:auto repeat(4,minmax(160px,1fr));max-width:1460px}
+.landing-header-v5 .portal-nav-label{color:#8f96a1}
+.landing-header-v5 .portal-link{min-height:48px;background:#11151b;border-color:#303641;color:#f4f5f7}
+.landing-header-v5 .portal-link b{font-size:12px}.landing-header-v5 .portal-link small{font-size:9px;color:#8f96a1}
+.landing-header-v5 .portal-link:hover{background:#171b22;border-color:#f5c400}
+.landing-header-v5 .portal-client{background:#15191f!important;color:#fff!important;border-color:#39404b!important}
+.landing-header-v5 .institutional-nav-row{min-height:66px;background:#f5f5f1!important;border-bottom:1px solid #dddcd4;color:#111!important}
+.landing-header-v5 .institutional-nav-row .brand strong,.landing-header-v5 .institutional-nav-row .brand small{color:#111!important}
+.landing-header-v5 .institutional-nav-row .main-nav a{color:#2e3339!important}.landing-header-v5 .institutional-nav-row .main-nav a:hover{color:#8c7100!important}
+.brand-carousel-section{padding:58px 7vw 66px;background:#0b0d10;color:#fff;overflow:hidden;border-top:1px solid #22262d;border-bottom:1px solid #22262d}
+.brand-carousel-head{max-width:1380px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:end;gap:20px}
+.brand-carousel-head .eyebrow{color:#f5c400}.brand-carousel-head h2{font-size:clamp(30px,3.5vw,52px);line-height:1.05;letter-spacing:-.04em;margin:8px 0 0}
+.carousel-controls{display:flex;gap:8px}.carousel-controls button{width:44px;height:44px;border:1px solid #343a44;border-radius:12px;background:#14181e;color:#fff;font-size:18px;cursor:pointer}.carousel-controls button:hover{border-color:#f5c400;color:#f5c400}
+.brand-carousel-window{max-width:1380px;margin:auto;overflow:hidden;border-radius:24px;border:1px solid #2e343d;box-shadow:0 32px 80px rgba(0,0,0,.28)}
+.brand-carousel-track{display:flex;transition:transform .6s cubic-bezier(.2,.75,.25,1);will-change:transform}
+.brand-slide{flex:0 0 100%;min-height:390px;padding:46px;background:
+ radial-gradient(circle at 83% 30%,rgba(245,196,0,.22),transparent 26%),
+ linear-gradient(125deg,#15191f,#0e1116 64%,#191b16);background-size:cover;background-position:center;position:relative;overflow:hidden}
+.brand-slide:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:36px 36px;pointer-events:none}
+.brand-slide-content{position:relative;z-index:2;max-width:650px}.brand-slide-kicker{display:inline-block;color:#f5c400;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.brand-slide-logo{display:flex;align-items:center;justify-content:flex-start;width:min(360px,75vw);height:108px;margin:22px 0 12px;padding:16px 22px;border-radius:18px;background:#fff;border:1px solid rgba(255,255,255,.8)}
+.brand-slide-logo img{display:block;max-width:100%;max-height:76px;width:auto;height:auto;object-fit:contain}
+.brand-slide h3{font-size:clamp(32px,4vw,58px);letter-spacing:-.045em;margin:8px 0 10px}.brand-slide p{font-size:14px;line-height:1.7;color:#c1c6ce;max-width:600px}
+.brand-slide-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.brand-slide .btn-outline{color:#fff;border-color:#46505c;background:rgba(0,0,0,.18)}
+.brand-carousel-dots{max-width:1380px;margin:16px auto 0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}.brand-carousel-dots button{width:22px;height:4px;padding:0;border:0;border-radius:99px;background:#353b44;cursor:pointer;transition:.2s}.brand-carousel-dots button.active{width:44px;background:#f5c400}
+@media(max-width:1050px){
+ .landing-header-v5 .portal-nav-inner{display:flex;overflow-x:auto;gap:8px;scrollbar-width:none}.landing-header-v5 .portal-nav-label{min-width:max-content}.landing-header-v5 .portal-link{min-width:170px}
+ .landing-header-v5 .institutional-nav-row{padding-left:4vw;padding-right:4vw}.landing-header-v5 .main-nav{display:flex;overflow-x:auto;gap:18px;scrollbar-width:none}.landing-header-v5 .main-nav a{min-width:max-content}
+ .brand-carousel-section{padding-left:5vw;padding-right:5vw}.brand-slide{min-height:360px;padding:36px}
+}
+@media(max-width:700px){
+ .landing-header-v5 .portal-nav-top{padding:7px 3vw}.landing-header-v5 .portal-nav-label{display:none}.landing-header-v5 .portal-link{min-width:145px;padding:8px 10px}.landing-header-v5 .portal-link small{display:none}.landing-header-v5 .institutional-nav-row{min-height:62px}
+ .landing-header-v5 .main-nav{max-width:62vw}.landing-header-v5 .main-nav a{font-size:11px}
+ .brand-carousel-section{padding:42px 4vw 48px}.brand-carousel-head{align-items:flex-start}.carousel-controls{display:none}.brand-slide{min-height:420px;padding:26px 22px}.brand-slide-logo{width:100%;height:96px}.brand-slide h3{font-size:38px}.brand-slide-actions .btn{width:100%}
+}
