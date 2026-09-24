@@ -47,15 +47,20 @@ async function loadRepresentativeWorkspace(){
  else {const r=await sb.from("salespeople").select("*").eq("user_id",user.id).eq("active",true).maybeSingle();seller=r.data;se=r.error}
  if(se||!seller){document.getElementById("repGoalList").innerHTML='<p class="muted">Seu acesso ainda não foi vinculado a um cadastro de vendedor. O administrador pode fazer o vínculo em Gestão Comercial.</p>';return}
  const now=new Date(),monthKey=new Date(now.getFullYear(),now.getMonth(),1).toISOString().slice(0,10);
- const [cc,perf,goals,comm]=await Promise.all([
+ const [cc,perf,goals,comm,assignedCustomers]=await Promise.all([
   sb.from("customers").select("*",{count:"exact",head:true}).eq("salesperson_id",seller.id),
   sb.from("sales_performance_monthly").select("*").eq("salesperson_id",seller.id).eq("month_start",monthKey).maybeSingle(),
   sb.from("sales_goals").select("*,representadas(name)").eq("salesperson_id",seller.id).lte("period_start",now.toISOString().slice(0,10)).gte("period_end",now.toISOString().slice(0,10)).order("period_start",{ascending:false}),
-  sb.from("commissions").select("expected_amount,status").eq("salesperson_id",seller.id).in("status",["prevista","aprovada"])
+  sb.from("commissions").select("expected_amount,status").eq("salesperson_id",seller.id).in("status",["prevista","aprovada"]),
+  sb.from("customers").select("city,state").eq("salesperson_id",seller.id).limit(5000)
  ]);
  const sales=Number(perf.data?.sales_total||0),expected=(comm.data||[]).reduce((a,x)=>a+Number(x.expected_amount||0),0),goalRows=goals.data||[],overall=goalRows.find(g=>!g.representada_id)||goalRows[0],target=Number(overall?.target_value||0),pct=target?Math.min(100,Math.round(sales/target*100)):0;
  document.getElementById("repCustomerCount").textContent=(cc.count||0).toLocaleString("pt-BR");
  document.getElementById("repSalesMonth").textContent=money(sales);document.getElementById("repGoalMonth").textContent=money(target);document.getElementById("repGoalProgress").textContent=target?pct+"% atingido":"Nenhuma meta definida.";document.getElementById("repCommission").textContent=money(expected);
+ const gauge=document.getElementById("repGoalGauge");if(gauge){gauge.style.setProperty("--gauge",pct+"%");gauge.querySelector("strong").textContent=pct+"%"}
+ const cityMap=new Map();(assignedCustomers.data||[]).forEach(x=>{const k=(x.city||"N/I")+" / "+(x.state||"");cityMap.set(k,(cityMap.get(k)||0)+1)});
+ const cities=[...cityMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,10),maxCity=Math.max(1,...cities.map(x=>x[1]));
+ document.getElementById("repCityRanking").innerHTML=cities.length?cities.map((x,i)=>'<div class="rank-row"><span><b>'+(i+1)+'</b>'+esc(x[0])+'</span><strong>'+x[1].toLocaleString("pt-BR")+'</strong><i><em style="width:'+Math.round(x[1]/maxCity*100)+'%"></em></i></div>').join(""):'<p class="muted">Sem cidades vinculadas.</p>';
  document.getElementById("repGoalList").innerHTML=goalRows.length?goalRows.map(g=>'<div class="list-item"><strong>'+esc(g.representadas?.name||"Meta geral")+'</strong><small>'+new Date(g.period_start+"T12:00:00").toLocaleDateString("pt-BR")+' a '+new Date(g.period_end+"T12:00:00").toLocaleDateString("pt-BR")+'</small><p>Meta: '+money(g.target_value)+' · '+Number(g.target_orders||0)+' pedidos</p></div>').join(""):'<p class="muted">Nenhuma meta vigente cadastrada.</p>';
 }
 
