@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Catálogo comercial Biasuz Representações">
+<title>Representada • Biasuz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+<style>
+.brand-page{min-height:100vh;background:#111215;color:white}.brand-hero{padding:90px 7vw 48px;border-bottom:1px solid #292b30}.brand-hero h1{font-size:clamp(46px,7vw,92px);line-height:.95;letter-spacing:-.055em;margin:14px 0}.brand-hero p{max-width:760px;color:#aeb0b5;line-height:1.7}.catalog{padding:60px 7vw 90px}.catalog-toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:24px}.catalog-toolbar input{width:min(420px,100%);background:#191a1e;color:white;border:1px solid #34363a;border-radius:12px;padding:13px 15px;font:inherit}.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.product-card{background:#191a1e;border:1px solid #292b30;border-radius:16px;overflow:hidden}.product-card img{width:100%;aspect-ratio:1/1;object-fit:contain;background:white}.product-card .pc{padding:17px}.product-card h3{margin:0 0 8px;font-size:17px}.product-card p{color:#9b9da4;font-size:12px}.empty{padding:40px;border:1px dashed #34363a;border-radius:16px;color:#aaa}.back{display:inline-flex;margin:24px 7vw 0;color:#c7c8cc;font-size:13px}@media(max-width:1000px){.product-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.product-grid{grid-template-columns:1fr}.catalog-toolbar{align-items:stretch;flex-direction:column}}
+</style>
+</head>
+<body class="brand-page">
+<a class="back" href="./index.html">← Voltar para Biasuz</a>
+<section class="brand-hero">
+<span class="eyebrow">Representada Biasuz</span><h1 id="brandName">Carregando...</h1>
+<p id="brandDesc"></p>
+<div class="hero-actions"><a id="officialLink" class="btn" target="_blank" rel="noopener">Site oficial</a><a id="whatsLink" class="btn btn-outline">Falar com a Biasuz</a></div>
+</section>
+<section class="catalog">
+<div class="catalog-toolbar"><div><span class="eyebrow">Catálogo</span><h2 id="catalogTitle">Produtos</h2></div><input id="productSearch" placeholder="Buscar produto, categoria ou SKU"></div>
+<div id="productGrid" class="product-grid"></div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js"></script><script src="./brand.js"></script>
+</body></html>
