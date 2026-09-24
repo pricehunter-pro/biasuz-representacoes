@@ -4,5 +4,8 @@ window.BIASUZ_CONFIG = {
   supabasePublishableKey: "sb_publishable_5qQvoQfA8cnVn1GietQcug_RraCvYcH",
   whatsappNumber: "5575992268989",
   instagramUrl: "https://www.instagram.com/biasuzrepresentacoes/",
-  instagramHandle: "@biasuzrepresentacoes"
+  instagramHandle: "@biasuzrepresentacoes",
+  telegramBotUsername: "",
+  authMode: "hybrid",
+  passwordMinLength: 8
 };
