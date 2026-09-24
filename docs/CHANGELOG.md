@@ -2,6 +2,17 @@
 
 ## 2026-09-24
 
+### Continuidade 14h
+- Landing page elevada para uma linguagem visual premium em grafite/obsidiana + amarelo Biasuz.
+- Nova seção de plataforma comercial conectada.
+- Correção global de encaixe de logomarcas com `object-fit: contain` e quadros consistentes.
+- `auth-ui.js` conectado também ao Painel Administrativo.
+- Google, Discord, Telegram, WhatsApp, link mágico e recuperação aparecem na experiência unificada de login.
+- Conta administrativa principal confirmada com papel `admin` e troca obrigatória de senha inicial.
+- `docs/PROJECT_HISTORY.md` criado para preservar toda a evolução e regras do projeto.
+- Novos catálogos reais incorporados à biblioteca e pipeline de leitura.
+
+
 ### Infraestrutura e produção
 - Produção consolidada em `bia.dunihub.online`.
 - GitHub definido como fonte de verdade.
