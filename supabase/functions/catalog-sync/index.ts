@@ -221,39 +221,93 @@ async function sitemapUrls(origin:string){
 
 async function generic(brand:any,maxPages:number){
   const origin=new URL(brand.official_url).origin;
+  const discovered=new Set<string>();
+  const listingLinks=new Set<string>();
+
+  const addLink=(base:string,href:any)=>{
+    const u=abs(base,href); if(!u)return;
+    try{
+      const x=new URL(u); if(x.origin!==origin)return;
+      const p=x.pathname.toLowerCase();
+      if(/\.(jpg|jpeg|png|gif|webp|svg|pdf|xml|zip|css|js|ico)$/i.test(p))return;
+      if(/\/(login|conta|account|carrinho|cart|checkout|politica|privacy|contato|contact|sobre|about|blog|noticia|news|tag|author|feed)(\/|$)/i.test(p))return;
+      listingLinks.add(x.href.split("#")[0]);
+    }catch{}
+  };
+
   const allSitemapUrls=await sitemapUrls(origin);
-  let urls=allSitemapUrls.filter(u=>/\/produto[s]?\/|\/product[s]?\/|\/shop\/|\/item\//i.test(u));
-  let broadMode=false;
-  if(!urls.length&&allSitemapUrls.length){
-    broadMode=true;
-    urls=allSitemapUrls.filter(u=>{
-      try{
-        const x=new URL(u);
-        const p=x.pathname.toLowerCase();
-        return x.origin===origin
-          && !/\.(jpg|jpeg|png|gif|webp|svg|pdf|xml|zip)$/i.test(p)
-          && !/(blog|noticia|news|politica|privacy|contato|contact|sobre|about|categoria|category|tag|author|feed)/i.test(p)
-          && p!=="/";
-      }catch{return false}
-    });
+  for(const u of allSitemapUrls){
+    if(/\/produto[s]?\/|\/product[s]?\/|\/shop\/|\/item\/|\/b2c\//i.test(u)) discovered.add(u);
   }
-  if(!urls.length){
-    const candidates=[origin+"/produtos/",origin+"/products/",origin+"/collections/all",brand.official_url];
-    for(const c of candidates){
+
+  const seedPages=uniq([
+    brand.official_url,
+    origin+"/produtos/",
+    origin+"/produtos",
+    origin+"/products/",
+    origin+"/products",
+    origin+"/loja/",
+    origin+"/shop/",
+    origin+"/produtos-todos-os-produtos",
+    origin+"/todos-os-produtos",
+    origin+"/b2c/c/rawraw"
+  ]);
+
+  for(const seed of seedPages){
+    try{
+      const html=await fetchText(seed);
+      for(const m of html.matchAll(/href=["']([^"']+)["']/gi))addLink(seed,m[1]);
+      for(const m of html.matchAll(/href=["']([^"']*(?:\?|&)pg=\d+[^"']*)["']/gi))addLink(seed,m[1]);
+      for(const m of html.matchAll(/href=["']([^"']*(?:\?|&)page=\d+[^"']*)["']/gi))addLink(seed,m[1]);
+    }catch{}
+  }
+
+  const pagedSeeds=seedPages.filter(x=>/produto|product|todos-os-produtos|rawraw/i.test(x));
+  for(const seed of pagedSeeds.slice(0,4)){
+    for(let n=2;n<=20;n++){
+      const sep=seed.includes("?")?"&":"?";
+      for(const pageUrl of [seed+sep+"pg="+n,seed+sep+"page="+n,seed.replace(/\/$/,"")+"/page/"+n+"/"]){
+        try{
+          const html=await fetchText(pageUrl);
+          if(!html||/404|página não encontrada|page not found/i.test(h1(html)))continue;
+          for(const m of html.matchAll(/href=["']([^"']+)["']/gi))addLink(pageUrl,m[1]);
+        }catch{}
+      }
+    }
+  }
+
+  for(const u of listingLinks){
+    try{
+      const x=new URL(u),p=x.pathname.toLowerCase();
+      if(x.href===origin+"/"||p==="/")continue;
+      if(/\/(categoria|category|colecao|collection|marcas|brands)(\/|$)/i.test(p))continue;
+      if(/produtos-todos-os-produtos|todos-os-produtos|\/produtos\/?$|\/products\/?$|\/loja\/?$|\/shop\/?$|\/b2c\/c\//i.test(p))continue;
+      discovered.add(x.href);
+    }catch{}
+  }
+
+  if(!discovered.size){
+    for(const u of allSitemapUrls){
       try{
-        const html=await fetchText(c);
-        const links=[...html.matchAll(/href=["']([^"']+)["']/gi)].map(m=>abs(c,m[1])).filter(Boolean) as string[];
-        urls.push(...links.filter(u=>/\/produto[s]?\/|\/product[s]?\/|\/item\//i.test(u)));
+        const x=new URL(u),p=x.pathname.toLowerCase();
+        if(x.origin!==origin||p==="/")continue;
+        if(/\.(jpg|jpeg|png|gif|webp|svg|pdf|xml|zip)$/i.test(p))continue;
+        if(/(blog|noticia|news|politica|privacy|contato|contact|sobre|about|categoria|category|tag|author|feed)/i.test(p))continue;
+        discovered.add(u);
       }catch{}
     }
   }
-  urls=uniq(urls).slice(0,maxPages);
+
+  const urls=[...discovered].slice(0,maxPages);
   const items:any[]=[];
+  const rejectHeading=(name:string)=>/^(produtos|todos os produtos|categorias|loja|home|início|inicio|novidades|lançamentos|mais vendidos|onde comprar|revendedores)$/i.test(name.trim());
+
   for(let i=0;i<urls.length;i+=10){
     const batch=urls.slice(i,i+10);
     const out=await Promise.all(batch.map(async u=>{
       try{
-        const html=await fetchText(u);const lds=productLd(html);
+        const html=await fetchText(u);
+        const lds=productLd(html);
         if(lds.length){
           return lds.map((p:any)=>{
             const off=offerFromLd(p),img=Array.isArray(p.image)?p.image:[p.image].filter(Boolean);
@@ -261,17 +315,43 @@ async function generic(brand:any,maxPages:number){
             return {external_key:"url:"+u,name:p.name||h1(html),description:strip(p.description||meta(html,"description")),sku:p.sku||null,ean:p.gtin13||p.gtin14||p.gtin||null,category:p.category||breadcrumbCategory(html),product_url:p.url||u,image_url:imageUrls[0]||meta(html,"og:image",true),images:imageUrls.map((x:any,idx:number)=>({url:x,position:idx})),source_price:off.price,source_currency:off.currency,source_availability:off.availability,attributes:{brand:p.brand?.name||p.brand||null},source_metadata:{jsonld:true}};
           });
         }
-        if(broadMode)return [];
+
         const name=h1(html)||meta(html,"og:title",true);
-        if(!name)return [];
+        if(!name||rejectHeading(name))return [];
+        const plain=strip(html);
+        const ogType=String(meta(html,"og:type",true)||"").toLowerCase();
+        const hasCommerce=/(sku|código|codigo|r\$|adicionar ao carrinho|comprar|estoque|indisponível|indisponivel)/i.test(plain);
+        const likelyProduct=ogType==="product"||hasCommerce||/\/produto[s]?\/|\/product[s]?\/|\/item\/|\/b2c\//i.test(u);
         const image=meta(html,"og:image",true);
         const desc=strip(meta(html,"description")||meta(html,"og:description",true));
-        return [{external_key:"url:"+u,name,description:desc,category:breadcrumbCategory(html),product_url:u,image_url:image,images:image?[{url:image,position:0}]:[],source_availability:null,source_metadata:{jsonld:false}}];
+        if(!likelyProduct && !(image&&desc.length>35&&listingLinks.has(u)))return [];
+
+        const sku=(plain.match(/(?:SKU|Código|Codigo)\s*:?\s*([A-Za-z0-9._/-]+)/i)||[])[1]||null;
+        const prices=[...plain.matchAll(/R\$\s*([\d.]+,\d{2})/g)].map(m=>Number(m[1].replace(/\./g,"").replace(",","."))).filter(Number.isFinite);
+        const sourcePrice=prices.length?Math.min(...prices):null;
+        const compare=prices.length>1?Math.max(...prices):null;
+        const unavailable=/indisponível|indisponivel|fora de estoque|esgotado/i.test(plain);
+        const available=!unavailable&&/(adicionar ao carrinho|comprar|estoque|disponível|disponivel)/i.test(plain);
+        return [{
+          external_key:"url:"+u,
+          name,
+          description:desc||plain.slice(0,2500),
+          sku,
+          category:breadcrumbCategory(html),
+          product_url:u,
+          image_url:image,
+          images:image?[{url:image,position:0}]:[],
+          source_price:sourcePrice,
+          source_compare_at_price:compare,
+          source_currency:sourcePrice!=null?"BRL":null,
+          source_availability:unavailable?"out_of_stock":available?"in_stock":null,
+          source_metadata:{jsonld:false,og_type:ogType||null}
+        }];
       }catch{return []}
     }));
     items.push(...out.flat());
   }
-  return items;
+  return [...new Map(items.filter((x:any)=>x?.name&&x?.external_key).map((x:any)=>[String(x.external_key),x])).values()];
 }
 
 async function detectAndFetch(brand:any,source:any,maxPages:number){
@@ -316,7 +396,8 @@ Deno.serve(async(req:Request)=>{
       if(runErr)throw runErr;
       let platform="unknown",items:any[]=[],errors:any[]=[];
       try{
-        const got=await detectAndFetch(brand,source,maxPages);platform=got.platform;items=got.items;errors=got.errors;
+        const crawlBrand={...brand,official_url:source.source_url||brand.official_url};
+        const got=await detectAndFetch(crawlBrand,source,maxPages);platform=got.platform;items=got.items;errors=got.errors;
         const saved=await saveProducts(db,brand,platform,items);
         const status=saved.products?"success":errors.length?"failed":"partial";
         await db.from("catalog_sync_runs").update({completed_at:new Date().toISOString(),status,platform,discovered_count:items.length,upserted_count:saved.products,variant_count:saved.variants,image_count:saved.images,error_count:errors.length,errors}).eq("id",run.id);
