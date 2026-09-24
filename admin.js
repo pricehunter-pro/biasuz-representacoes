@@ -26,19 +26,37 @@ function renderLeads(){const q=document.getElementById("leadSearch").value.toLow
 function openWA(phone,msg){let n=digits(phone);if(!n)return;if(n.length<=11)n="55"+n;window.open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
 
 async function loadCustomers(reset=false){
- if(reset)customerPage=0;const q=document.getElementById("customerSearch").value.trim(),uf=document.getElementById("customerState").value,stage=document.getElementById("customerStage").value;
+ if(reset)customerPage=0;
+ const q=document.getElementById("customerSearch").value.trim(),uf=document.getElementById("customerState").value,stage=document.getElementById("customerStage").value,
+ cnae=document.getElementById("customerCnae").value.trim(),city=document.getElementById("customerCity").value.trim(),address=document.getElementById("customerAddress").value.trim(),
+ email=document.getElementById("customerEmail").value.trim(),phone=digits(document.getElementById("customerWhatsapp").value);
  let req=sb.from("customers").select("*").order("legal_name").range(customerPage*pageSize,customerPage*pageSize+pageSize-1);
- if(uf)req=req.eq("state",uf);if(stage)req=req.eq("lifecycle_stage",stage);if(q)req=req.or("cnpj.ilike.%"+q+"%,legal_name.ilike.%"+q+"%,trade_name.ilike.%"+q+"%,city.ilike.%"+q+"%,phone1.ilike.%"+digits(q)+"%");
+ if(uf)req=req.eq("state",uf);if(stage)req=req.eq("lifecycle_stage",stage);
+ if(q)req=req.or("cnpj.ilike.%"+q+"%,legal_name.ilike.%"+q+"%,trade_name.ilike.%"+q+"%");
+ if(cnae)req=req.or("cnae_code.ilike.%"+cnae+"%,cnae_description.ilike.%"+cnae+"%,secondary_cnaes.ilike.%"+cnae+"%");
+ if(city)req=req.ilike("city","%"+city+"%");
+ if(address)req=req.or("street.ilike.%"+address+"%,district.ilike.%"+address+"%,zip_code.ilike.%"+digits(address)+"%");
+ if(email)req=req.ilike("email","%"+email+"%");
+ if(phone)req=req.or("phone1.ilike.%"+phone+"%,phone2.ilike.%"+phone+"%");
  const {data,error}=await req;if(error){document.getElementById("customerRows").innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
- const rows=data||[];document.getElementById("customerPage").textContent=String(customerPage+1);document.getElementById("customerRows").innerHTML=rows.length?rows.map(x=>'<div class="row"><div><strong>'+esc(x.trade_name||x.legal_name)+'</strong><br><small>'+esc(x.legal_name)+'</small></div><div>'+esc(x.phone1||"—")+'<br><small>'+esc(x.email||"")+'</small></div><div>'+esc(x.city||"—")+'<br><small>'+esc(x.state||"")+'</small></div><div><span class="badge">'+esc(x.company_size||"porte n/i")+'</span></div><select data-customer-stage="'+x.id+'"><option '+(x.lifecycle_stage==="prospect"?"selected":"")+'>prospect</option><option '+(x.lifecycle_stage==="cliente"?"selected":"")+'>cliente</option><option '+(x.lifecycle_stage==="inativo"?"selected":"")+'>inativo</option><option '+(x.lifecycle_stage==="descartado"?"selected":"")+'>descartado</option></select><div style="display:flex;gap:6px;flex-wrap:wrap"><a class="btn btn-small btn-outline" href="./customer-admin.html?id='+encodeURIComponent(x.id)+'">Abrir</a><button class="btn btn-small" data-customer-wa="'+x.id+'">WhatsApp</button></div></div>').join(""):'<p class="muted">Nenhum registro nesta página.</p>';
+ const rows=data||[];document.getElementById("customerPage").textContent=String(customerPage+1);document.getElementById("customerRows").innerHTML=rows.length?rows.map(x=>'<div class="row"><div><strong>'+esc(x.trade_name||x.legal_name)+'</strong><br><small>'+esc(x.legal_name)+'</small><br><small>'+esc(x.cnae_code||"")+' '+esc(x.cnae_description||"")+'</small></div><div>'+esc(x.phone1||"—")+'<br><small>'+esc(x.email||"")+'</small></div><div>'+esc(x.city||"—")+'<br><small>'+esc(x.state||"")+' · '+esc(x.district||"")+'</small></div><div><span class="badge">'+esc(x.company_size||"porte n/i")+'</span></div><select data-customer-stage="'+x.id+'"><option '+(x.lifecycle_stage==="prospect"?"selected":"")+'>prospect</option><option '+(x.lifecycle_stage==="cliente"?"selected":"")+'>cliente</option><option '+(x.lifecycle_stage==="inativo"?"selected":"")+'>inativo</option><option '+(x.lifecycle_stage==="descartado"?"selected":"")+'>descartado</option></select><div style="display:flex;gap:6px;flex-wrap:wrap"><a class="btn btn-small btn-outline" href="./customer-admin.html?id='+encodeURIComponent(x.id)+'">Abrir</a><a class="btn btn-small" href="./customer-admin.html?id='+encodeURIComponent(x.id)+'#whatsapp">WhatsApp assistido</a></div></div>').join(""):'<p class="muted">Nenhum registro encontrado com estes filtros.</p>';
  document.querySelectorAll("[data-customer-stage]").forEach(el=>el.onchange=async()=>sb.from("customers").update({lifecycle_stage:el.value}).eq("id",el.dataset.customerStage));
- document.querySelectorAll("[data-customer-wa]").forEach(el=>el.onclick=()=>{const x=rows.find(v=>v.id===el.dataset.customerWa);if(x)openWA(x.phone1,"Olá, aqui é o Junior da Biasuz Representações. Posso apresentar nosso portfólio de marcas e condições comerciais para sua empresa?")});
+}
+async function loadAdminInsights(){
+ const {data,error}=await sb.rpc("admin_dashboard_insights");if(error)return;
+ const d=data||{},stages=d.customer_stages||[],total=stages.reduce((a,x)=>a+Number(x.value||0),0),active=stages.find(x=>x.label==="cliente")?.value||0,pct=total?Math.round(Number(active)/total*100):0;
+ document.getElementById("insOrders").textContent=Number(d.orders_month_count||0).toLocaleString("pt-BR");
+ document.getElementById("insSales").textContent="R$ "+Number(d.orders_month_total||0).toLocaleString("pt-BR",{minimumFractionDigits:2});
+ document.getElementById("insPositives").textContent=Number(d.positive_customers_month||0).toLocaleString("pt-BR");
+ const gauge=document.getElementById("adminGauge");gauge.style.setProperty("--gauge",pct+"%");gauge.querySelector("b").textContent=pct+"%";
+ const render=(id,rows)=>{const box=document.getElementById(id),max=Math.max(1,...(rows||[]).map(x=>Number(x.value||0)));box.innerHTML=(rows||[]).map((x,i)=>'<div class="rank-row"><span><b>'+(i+1)+'</b>'+esc(x.label)+'</span><strong>'+Number(x.value||0).toLocaleString("pt-BR")+'</strong><i><em style="width:'+Math.round(Number(x.value||0)/max*100)+'%"></em></i></div>').join("")||'<p class="muted">Sem dados.</p>'};
+ render("adminStateRanking",d.top_states);render("adminCityRanking",d.top_cities);render("adminBrandRanking",d.top_brands);render("adminStageRanking",d.customer_stages);
 }
 async function loadCatalog(){
  const {data,error}=await sb.from("representadas").select("id,name,slug,segments,catalog_status,products_count,official_url").order("name");if(error)return;
  document.getElementById("brandRows").innerHTML=(data||[]).map(b=>'<div class="row catalog-row"><div><strong>'+esc(b.name)+'</strong><br><small>'+esc((b.segments||[]).join(" • "))+'</small></div><div><span class="badge">'+esc(b.catalog_status)+'</span></div><div>'+esc(b.products_count||0)+' produtos</div><div><a target="_blank" rel="noopener" href="'+esc(b.official_url)+'">Site oficial</a></div><a class="btn btn-small" target="_blank" href="./brand.html?slug='+encodeURIComponent(b.slug)+'">Catálogo</a></div>').join("");
 }
-async function refreshAll(){await Promise.all([counts(),loadLeads(),loadCustomers(true),loadCatalog(),loadCatalogLibrary()])}
+async function refreshAll(){await Promise.all([counts(),loadAdminInsights(),loadLeads(),loadCustomers(true),loadCatalog(),loadCatalogLibrary()])}
 
 
 const slugify=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -123,4 +141,5 @@ document.getElementById("newCustomerForm").onsubmit=async e=>{
 document.getElementById("importCsv").onclick=()=>{const file=document.getElementById("csvFile").files[0],status=document.getElementById("importStatus"),bar=document.getElementById("importBar");if(!file){status.textContent="Selecione o arquivo CSV.";return}status.textContent="Lendo arquivo...";Papa.parse(file,{header:true,skipEmptyLines:true,complete:async res=>{try{const rows=res.data.map(mapRow).filter(Boolean);let done=0;for(let i=0;i<rows.length;i+=250){const batch=rows.slice(i,i+250);const {error}=await sb.from("customers").upsert(batch,{onConflict:"cnpj"});if(error)throw error;done+=batch.length;bar.style.width=Math.round(done/rows.length*100)+"%";status.textContent=done+" / "+rows.length+" registros importados"}status.className="form-status ok";status.textContent="Importação concluída: "+done+" registros.";await counts();await loadCustomers(true)}catch(e){status.className="form-status err";status.textContent="Erro na importação: "+e.message}}})};
 
 ["leadSearch","leadState","leadSegment"].forEach(id=>document.getElementById(id).addEventListener(id==="leadSearch"?"input":"change",renderLeads));
-document.getElementById("reloadLeads").onclick=loadLeads;document.getElementById("reloadCustomers").onclick=()=>loadCustomers(true);document.getElementById("prevCustomers").onclick=()=>{if(customerPage>0){customerPage--;loadCustomers()}};document.getElementById("nextCustomers").onclick=()=>{customerPage++;loadCustomers()};window.BiasuzAuth?.init(sb,{role:"admin",statusId:"loginStatus",redirectPath:"/admin.html"});boot();
+document.getElementById("reloadLeads").onclick=loadLeads;document.getElementById("reloadCustomers").onclick=()=>loadCustomers(true);
+document.getElementById("clearCustomerFilters").onclick=()=>{["customerSearch","customerCnae","customerCity","customerAddress","customerEmail","customerWhatsapp"].forEach(id=>document.getElementById(id).value="");document.getElementById("customerState").value="";document.getElementById("customerStage").value="";loadCustomers(true)};document.getElementById("prevCustomers").onclick=()=>{if(customerPage>0){customerPage--;loadCustomers()}};document.getElementById("nextCustomers").onclick=()=>{customerPage++;loadCustomers()};window.BiasuzAuth?.init(sb,{role:"admin",statusId:"loginStatus",redirectPath:"/admin.html"});boot();
