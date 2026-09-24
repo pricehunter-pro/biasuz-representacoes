@@ -1,0 +1,8 @@
+const cfg=window.BIASUZ_CONFIG||{},box=document.getElementById("shareContent"),token=new URLSearchParams(location.search).get("t");
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+async function boot(){if(!token||!cfg.supabaseUrl){box.innerHTML='<h1>Link inválido</h1><p class="share-meta">Solicite um novo catálogo à Biasuz Representações.</p>';return}
+try{const r=await fetch(cfg.supabaseUrl+"/functions/v1/catalog-share?token="+encodeURIComponent(token),{headers:{apikey:cfg.supabasePublishableKey||""}}),d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Link indisponível");
+const msg="Olá! Segue o catálogo "+d.title+" da "+d.brand+": "+location.href;
+box.innerHTML='<div class="share-brand">'+(d.logo_url?'<img src="'+esc(d.logo_url)+'" alt="'+esc(d.brand)+'">':'')+'<div><span class="eyebrow">Catálogo comercial</span><h1>'+esc(d.title)+'</h1><p class="share-meta">'+esc(d.brand)+' • '+Number(d.page_count||0)+' páginas</p></div></div><p>'+esc(d.description||"Material comercial disponibilizado pela Biasuz Representações.")+'</p><div class="share-actions"><a class="btn" href="'+esc(d.download_url)+'">Baixar PDF</a><a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(msg)+'">Compartilhar no WhatsApp</a><a class="btn btn-outline" href="mailto:?subject='+encodeURIComponent(d.title)+'&body='+encodeURIComponent(msg)+'">Enviar por e-mail</a></div><p class="share-note">Este link pode ter validade definida pela Biasuz Representações. As condições comerciais vigentes devem ser confirmadas no momento do pedido.</p>';
+}catch(e){box.innerHTML='<h1>Catálogo indisponível</h1><p class="share-meta">'+esc(e.message)+'</p>'}}
+boot();
