@@ -27,7 +27,7 @@ async function loadPortal(){
  document.getElementById("portalTitle").textContent=roleNames[profile.role]||"Portal";
  document.getElementById("profileName").textContent=profile.display_name||"Usuário Biasuz";
  document.getElementById("profileRole").textContent=roleNames[profile.role]||profile.role;
- await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores(),loadNotifications()]);
+ await Promise.all([loadContext(),loadOrders(),loadRequests(),loadStores(),loadNotifications(),loadRepresentativeCatalogs()]);
 }
 async function loadStores(){
  const section=document.getElementById("storesSection"),grid=document.getElementById("storeGrid");
@@ -60,6 +60,17 @@ async function loadOrders(){
  const {data,error}=await sb.from("orders").select("id,order_number,status,total,created_at,representada_id").order("created_at",{ascending:false}).limit(100);
  const rows=data||[];document.getElementById("orderCount").textContent=rows.length;
  document.getElementById("ordersList").innerHTML=error?'<p class="form-status err">'+esc(error.message)+'</p>':rows.length?rows.map(o=>'<div class="list-item"><strong>Pedido #'+esc(o.order_number)+'</strong><small>'+new Date(o.created_at).toLocaleDateString("pt-BR")+'</small><div class="pill">'+esc(o.status)+'</div><p>Total: R$ '+Number(o.total||0).toLocaleString("pt-BR",{minimumFractionDigits:2})+'</p></div>').join(""):'<p class="muted">Nenhum pedido disponível para este acesso.</p>';
+}
+async function loadRepresentativeCatalogs(){
+ const section=document.getElementById("repCatalogsSection"),box=document.getElementById("repCatalogsList");
+ if(profile.role!=="representante"){section.classList.add("hidden");return}
+ section.classList.remove("hidden");
+ const {data,error}=await sb.from("catalogs").select("id,title,catalog_type,year,representadas(name)").eq("published",true).order("created_at",{ascending:false}).limit(100);
+ if(error){box.innerHTML='<p class="form-status err">'+esc(error.message)+'</p>';return}
+ box.innerHTML=(data||[]).length?(data||[]).map(c=>'<div class="list-item"><strong>'+esc(c.title)+'</strong><small>'+esc(c.representadas?.name||"")+' · '+esc(c.year||"")+'</small><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px"><button class="btn btn-small" data-cat-wa="'+c.id+'">WhatsApp</button><button class="btn btn-small btn-outline" data-cat-mail="'+c.id+'">E-mail</button></div></div>').join(""):'<p class="muted">Nenhum catálogo publicado.</p>';
+ async function link(id,channel){const {data:r,error:e}=await sb.functions.invoke("catalog-share",{body:{catalog_id:id,channel,expires_days:30}});if(e)throw e;return (cfg.siteUrl||location.origin)+r.path}
+ document.querySelectorAll("[data-cat-wa]").forEach(b=>b.onclick=async()=>{try{const c=(data||[]).find(x=>x.id===b.dataset.catWa),u=await link(c.id,"whatsapp");window.open("https://wa.me/?text="+encodeURIComponent("Catálogo "+c.title+" — Biasuz Representações\n"+u),"_blank")}catch(e){alert(e.message)}});
+ document.querySelectorAll("[data-cat-mail]").forEach(b=>b.onclick=async()=>{try{const c=(data||[]).find(x=>x.id===b.dataset.catMail),u=await link(c.id,"email");location.href="mailto:?subject="+encodeURIComponent("Catálogo "+c.title+" — Biasuz")+"&body="+encodeURIComponent("Segue o catálogo comercial:\n\n"+u)}catch(e){alert(e.message)}});
 }
 async function loadNotifications(){
  const {data,error}=await sb.from("notifications").select("*").order("created_at",{ascending:false}).limit(50);
