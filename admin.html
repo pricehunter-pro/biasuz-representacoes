@@ -24,7 +24,25 @@
  </section>
 
  <section id="tab-customers" class="tabview hidden">
-  <div class="admin-card"><div class="toolbar"><input id="customerSearch" placeholder="Buscar CNPJ, razão social, fantasia, cidade ou telefone"><select id="customerState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="customerStage"><option value="">Todos</option><option value="prospect">Prospects</option><option value="cliente">Clientes</option><option value="inativo">Inativos</option><option value="descartado">Descartados</option></select><button class="btn btn-small" id="reloadCustomers">Buscar</button></div><div id="customerRows" class="rows"></div><div class="pager"><button id="prevCustomers" class="btn btn-outline btn-small">Anterior</button><span id="customerPage" class="muted">1</span><button id="nextCustomers" class="btn btn-outline btn-small">Próxima</button></div></div>
+  <div class="admin-card">
+    <details style="margin-bottom:16px"><summary style="cursor:pointer;font-weight:800">+ Novo cliente / prospect</summary>
+      <form id="newCustomerForm" style="margin-top:14px">
+        <div class="toolbar" style="grid-template-columns:1.2fr 1.2fr .9fr .7fr">
+          <input name="legal_name" required placeholder="Razão social">
+          <input name="trade_name" placeholder="Nome fantasia">
+          <input name="cnpj" required placeholder="CNPJ">
+          <select name="state" required><option value="">UF</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select>
+        </div>
+        <div class="toolbar" style="grid-template-columns:1fr 1fr 1fr 1fr">
+          <input name="city" placeholder="Cidade">
+          <input name="phone1" placeholder="WhatsApp/telefone">
+          <input name="email" type="email" placeholder="E-mail">
+          <select name="segment"><option>Pet</option><option>Bazar</option><option>Jardinagem</option><option>Farma</option><option>Tech</option><option>Matco</option></select>
+        </div>
+        <button class="btn btn-small" type="submit">Cadastrar cliente</button><p id="newCustomerStatus" class="form-status"></p>
+      </form>
+    </details>
+    <div class="toolbar"><input id="customerSearch" placeholder="Buscar CNPJ, razão social, fantasia, cidade ou telefone"><select id="customerState"><option value="">Todos os estados</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select><select id="customerStage"><option value="">Todos</option><option value="prospect">Prospects</option><option value="cliente">Clientes</option><option value="inativo">Inativos</option><option value="descartado">Descartados</option></select><button class="btn btn-small" id="reloadCustomers">Buscar</button></div><div id="customerRows" class="rows"></div><div class="pager"><button id="prevCustomers" class="btn btn-outline btn-small">Anterior</button><span id="customerPage" class="muted">1</span><button id="nextCustomers" class="btn btn-outline btn-small">Próxima</button></div></div>
  </section>
 
  <section id="tab-catalog" class="tabview hidden">
