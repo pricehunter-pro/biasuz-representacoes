@@ -18,6 +18,15 @@ body{background:#090b0e;color:#f5f6f7}.setup-shell{max-width:1280px;margin:auto;
  </header>
  <section id="setupSummary" class="setup-summary"></section>
  <section class="setup-list">
+  <article class="setup-step"><div class="step-no">0</div><div><div class="step-head"><h2>Supabase — URL de produção e retornos de login</h2><span class="step-status warn">Conferir</span></div><div class="step-body">
+   <p>Faça esta conferência antes dos provedores sociais para que Google, Discord, Telegram, link mágico e recuperação de senha voltem para o site correto.</p>
+   <ol><li>No Supabase, abra <b>Authentication → URL Configuration</b>.</li><li>Em <b>Site URL</b>, use:</li></ol>
+   <div class="copy-box"><code>https://bia.dunihub.online</code><button data-copy="https://bia.dunihub.online">Copiar</button></div>
+   <p>Em <b>Redirect URLs / Additional Redirect URLs</b>, adicione os retornos usados pelo portal. A forma mais simples para este projeto é:</p>
+   <div class="copy-box"><code>https://bia.dunihub.online/**</code><button data-copy="https://bia.dunihub.online/**">Copiar</button></div>
+   <div class="note">Se o painel não aceitar wildcard, cadastre explicitamente /portal.html, /admin.html e /reset-password.html.</div>
+  </div></div></article>
+
   <article class="setup-step"><div class="step-no">1</div><div><div class="step-head"><h2>Evolution API — WhatsApp comercial assistido</h2><span id="evolutionStatus" class="step-status warn">Verificando</span></div><div class="step-body">
    <p>Esta integração envia mensagens comerciais preparadas no CRM depois de você revisar e aprovar.</p>
    <ol><li>Abra o painel da sua Evolution API no servidor/VPS.</li><li>Localize a URL pública da Evolution API, a API Key e o nome exato da instância conectada.</li><li>No Supabase, abra <b>Edge Functions → Secrets</b>.</li><li>Cadastre os três segredos abaixo usando exatamente estes nomes.</li></ol>
