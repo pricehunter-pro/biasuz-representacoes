@@ -8,14 +8,24 @@ const cors={
 };
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json"}});
 
+function envKey(jsonName:string,legacyName:string){
+  try{
+    const raw=Deno.env.get(jsonName);
+    if(raw){const parsed=JSON.parse(raw);if(parsed?.default)return String(parsed.default)}
+  }catch{}
+  return Deno.env.get(legacyName)||"";
+}
+
 Deno.serve(async(req)=>{
   if(req.method==="OPTIONS")return new Response("ok",{headers:cors});
   if(req.method!=="POST")return json({error:"method_not_allowed"},405);
 
   const auth=req.headers.get("Authorization")||"";
   const url=Deno.env.get("SUPABASE_URL")!;
-  const anon=Deno.env.get("SUPABASE_ANON_KEY")!;
-  const service=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const anon=envKey("SUPABASE_PUBLISHABLE_KEYS","SUPABASE_ANON_KEY");
+  const service=envKey("SUPABASE_SECRET_KEYS","SUPABASE_SERVICE_ROLE_KEY");
+  if(!anon||!service)return json({error:"supabase_keys_unavailable"},500);
+
   const userClient=createClient(url,anon,{global:{headers:{Authorization:auth}}});
   const adminClient=createClient(url,service);
 
@@ -28,23 +38,6 @@ Deno.serve(async(req)=>{
   if(!isAdmin&&!isRep)return json({error:"forbidden"},403);
 
   const body=await req.json().catch(()=>({}));
-
-  if(body?.action==="health"){
-    const rawBase=Deno.env.get("EVOLUTION_API_URL")||"";
-    const base=rawBase.endsWith("/")?rawBase.slice(0,-1):rawBase;
-    const apiKey=Deno.env.get("EVOLUTION_API_KEY")||"";
-    const instance=Deno.env.get("EVOLUTION_INSTANCE")||"";
-    const missing=[["EVOLUTION_API_URL",base],["EVOLUTION_API_KEY",apiKey],["EVOLUTION_INSTANCE",instance]].filter(([,v])=>!v).map(([k])=>k);
-    if(missing.length)return json({configured:false,reachable:false,missing});
-    try{
-      const health=await fetch(base+"/instance/connectionState/"+encodeURIComponent(instance),{headers:{apikey:apiKey}});
-      const raw=await health.text();let parsed:any={};try{parsed=JSON.parse(raw)}catch{parsed={raw:raw.slice(0,500)}}
-      return json({configured:true,reachable:health.ok,http_status:health.status,state:parsed?.instance?.state||parsed?.state||parsed?.connectionState||null});
-    }catch(e){
-      return json({configured:true,reachable:false,error:String(e?.message||e)});
-    }
-  }
-
   const outboxId=String(body?.outbox_id||"");
   if(!outboxId)return json({error:"outbox_id_required"},400);
 
@@ -63,6 +56,7 @@ Deno.serve(async(req)=>{
   const apiKey=Deno.env.get("EVOLUTION_API_KEY")||"";
   const instance=Deno.env.get("EVOLUTION_INSTANCE")||"";
   if(!base||!apiKey||!instance)return json({error:"evolution_not_configured",required:["EVOLUTION_API_URL","EVOLUTION_API_KEY","EVOLUTION_INSTANCE"]},503);
+  if(!/^https:\/\//i.test(base))return json({error:"evolution_https_required"},503);
 
   let number=String(row.recipient||customer?.phone1||customer?.phone2||"").replace(/\D/g,"");
   if(number.length>=10&&number.length<=11)number="55"+number;
@@ -82,6 +76,7 @@ Deno.serve(async(req)=>{
     await adminClient.from("whatsapp_outbox").update({status:"error",provider_response:parsed,error_message:"HTTP "+response.status}).eq("id",row.id);
     return json({error:"evolution_send_failed",status:response.status,response:parsed},502);
   }
+
   const providerId=parsed?.key?.id||parsed?.response?.key?.id||null;
   await adminClient.from("whatsapp_outbox").update({status:"sent",provider_message_id:providerId,provider_response:parsed,sent_at:new Date().toISOString(),error_message:null}).eq("id",row.id);
   return json({ok:true,id:row.id,provider_message_id:providerId,response:parsed});
