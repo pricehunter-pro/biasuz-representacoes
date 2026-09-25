@@ -5,9 +5,6 @@ window.BIASUZ_CONFIG = {
   whatsappNumber: "5575992268989",
   instagramUrl: "https://www.instagram.com/biasuzrepresentacoes/",
   instagramHandle: "@biasuzrepresentacoes",
-  telegramProvider: "custom:telegram",
-  telegramOidcEnabled: false,
-  telegramBotUsername: "",
   authMode: "hybrid",
   passwordMinLength: 8
 };
