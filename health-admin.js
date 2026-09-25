@@ -27,12 +27,13 @@ async function load(){
   count("campaigns")
  ]);
  let settings=null;try{const r=await fetch(cfg.supabaseUrl+"/auth/v1/settings",{headers:{apikey:cfg.supabasePublishableKey}});if(r.ok)settings=await r.json()}catch{}
- let evolution={configured:false,reachable:false};try{const r=await sb.functions.invoke("evolution-send",{body:{action:"health"}});if(!r.error&&r.data)evolution=r.data}catch{}
+ let evolution={configured:false,probe_ok:false};try{const r=await sb.functions.invoke("integration-health",{body:{}});if(!r.error&&r.data?.evolution)evolution=r.data.evolution}catch{}
  const [{data:unlinked},{data:brandAssets}]=await Promise.all([
   sb.from("salespeople").select("id,name,user_id").eq("active",true).is("user_id",null),
   sb.from("representadas").select("name,slug,logo_url,banner_image_url").eq("active",true).order("name")
  ]);
- state={brands:brands.count,products:products.count,catalogs:catalogs.count,customers:customers.count,orders:orders.count,leads:leads.count,missingLogo:missingLogo.count,missingImage:missingImage.count,activePrices:activePrices.count,reviewCats:reviewCats.count,internalCats:internalCats.count,optin:optin.count,sellers:sellers.count,repProfiles:profiles.count,unlinked:(unlinked||[]).length,goals:goals.count,rules:rules.count,campaigns:campaigns.count,settings,evolution,brandAssets:brandAssets||[]};
+ const normalizedAssets=(brandAssets||[]),accurateMissingLogo=normalizedAssets.filter(x=>!x.logo_url||x.logo_url.includes("google.com/s2/favicons")).length,missingBanner=normalizedAssets.filter(x=>!x.banner_image_url).length;
+ state={brands:brands.count,products:products.count,catalogs:catalogs.count,customers:customers.count,orders:orders.count,leads:leads.count,missingLogo:accurateMissingLogo,missingBanner,missingImage:missingImage.count,activePrices:activePrices.count,reviewCats:reviewCats.count,internalCats:internalCats.count,optin:optin.count,sellers:sellers.count,repProfiles:profiles.count,unlinked:(unlinked||[]).length,goals:goals.count,rules:rules.count,campaigns:campaigns.count,settings,evolution,brandAssets:normalizedAssets};
  render();
 }
 function metric(label,value,note){return '<div class="panel metric"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong><small>'+esc(note)+'</small></div>'}
@@ -55,7 +56,7 @@ function render(){
   row("Discord OAuth",ext.discord?"Ativo":"Credenciais pendentes",ext.discord?"ok":"warn")+
   row("Telegram OIDC",cfg.telegramOidcEnabled?"Ativo":"Client ID/Secret pendentes",cfg.telegramOidcEnabled?"ok":"warn")+
   row("WhatsApp / Phone OTP",phone?"Ativo":"Twilio/Twilio Verify pendente",phone?"ok":"warn")+
-  row("Evolution API assistida",state.evolution?.configured?(state.evolution?.reachable?("Conectada"+(state.evolution?.state?" · "+state.evolution.state:"")):"Configurada, sem conexão"):"Secrets pendentes",state.evolution?.configured&&state.evolution?.reachable?"ok":"warn",state.evolution?.configured?(state.evolution?.reachable?"Health check da instância respondeu com sucesso.":"A função encontrou os Secrets, mas a instância não respondeu como conectada."):"Configure EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE nos Edge Function Secrets")+
+  row("Evolution API assistida",state.evolution?.configured?(state.evolution?.probe_ok?("Conectada"+(state.evolution?.connection_state?" · "+state.evolution.connection_state:"")):"Configurada, revisar instância"):"Secrets pendentes",state.evolution?.configured&&state.evolution?.probe_ok?"ok":"warn",state.evolution?.configured?(state.evolution?.probe_ok?"Teste de status da Evolution respondeu com sucesso.":"Os Secrets existem, mas o teste de status não respondeu com sucesso."):"Configure EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE nos Edge Function Secrets")+
   row("Representantes com portal",state.repProfiles,state.repProfiles?"ok":"warn")+
   row("Vendedores sem usuário vinculado",state.unlinked,state.unlinked?"warn":"ok");
  document.getElementById("catalogRows").innerHTML=
@@ -69,9 +70,9 @@ function render(){
   row("Regras de comissão",state.rules,state.rules?"ok":"warn")+
   row("Campanhas",state.campaigns,state.campaigns?"ok":"warn")+
   row("Opt-ins WhatsApp",state.optin,state.optin?"ok":"warn","Disparo automático exige consentimento");
- const assets=(state.brandAssets||[]).filter(x=>!x.logo_url||!x.banner_image_url);
+ const assets=(state.brandAssets||[]).filter(x=>!x.logo_url||x.logo_url.includes("google.com/s2/favicons")||!x.banner_image_url);
  document.getElementById("assetRows").innerHTML=assets.length?assets.map(x=>{
-   const needs=[];if(!x.logo_url)needs.push("logomarca");if(!x.banner_image_url)needs.push("banner horizontal");
+   const needs=[];if(!x.logo_url||x.logo_url.includes("google.com/s2/favicons"))needs.push("logomarca");if(!x.banner_image_url)needs.push("banner horizontal");
    return row(x.name,needs.join(" + "),"warn","Enviar preferencialmente PNG/WebP com boa resolução; banner ideal 1600×600 ou maior.");
  }).join(""):row("Identidade visual","Completa","ok","Todas as representadas possuem logo e banner cadastrados.");
 
@@ -83,7 +84,7 @@ function render(){
  if(!ext.discord)priorities.push(["Ativar Discord OAuth","Cadastrar aplicação OAuth","warn"]);
  if(!cfg.telegramOidcEnabled)priorities.push(["Ativar Telegram OIDC","Criar Login OIDC no BotFather e cadastrar como custom:telegram","warn"]);
  if(!state.evolution?.configured)priorities.push(["Concluir Evolution API","Cadastrar EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE nos Secrets","warn"]);
- else if(!state.evolution?.reachable)priorities.push(["Revisar conexão Evolution API","Secrets encontrados, mas a instância não respondeu ao health check","warn"]);
+ else if(!state.evolution?.probe_ok)priorities.push(["Revisar conexão Evolution API","Secrets encontrados, mas a instância não respondeu ao teste de status","warn"]);
  if(state.unlinked)priorities.push(["Vincular vendedor ao portal",state.unlinked+" vendedor(es) sem usuário representante","warn"]);
  if(!state.optin)priorities.push(["Coletar consentimento WhatsApp","Carteira importada ainda sem opt-ins registrados","warn"]);
  if(!state.rules)priorities.push(["Cadastrar regras de comissão","Necessário antes de gerar comissão prevista","warn"]);
