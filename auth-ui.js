@@ -22,6 +22,8 @@ window.BiasuzAuth=(function(){
   const target=redirectPath||("/portal.html?role="+encodeURIComponent(role));
   const providerReady={
    google:!!ext.google,
+   discord:!!ext.discord,
+   telegram:!!cfg.telegramOidcEnabled,
    whatsapp:!!(s?.phone||ext.phone||s?.sms_provider),
   };
   document.querySelectorAll("[data-auth-provider]").forEach(btn=>{
@@ -38,6 +40,8 @@ window.BiasuzAuth=(function(){
    if(error)setStatus(st,friendlyError(error.message),"err")
   }
   document.getElementById("googleLogin")?.addEventListener("click",()=>providerReady.google?oauth("google"):setStatus(st,"Google está integrado no site. Falta somente cadastrar o Client ID e o Client Secret no Supabase Auth.",""));
+  document.getElementById("discordLogin")?.addEventListener("click",()=>providerReady.discord?oauth("discord"):setStatus(st,"Discord está integrado no site. Falta ativar o provedor e cadastrar Client ID/Secret no Supabase Auth.",""));
+  document.getElementById("telegramLogin")?.addEventListener("click",()=>providerReady.telegram?oauth("custom:telegram"):setStatus(st,"Telegram está integrado no frontend. Falta concluir o provedor OIDC custom:telegram no Supabase e então ativar telegramOidcEnabled no config.js.",""));
   document.getElementById("whatsappLogin")?.addEventListener("click",()=>{
    const panel=document.getElementById("phoneAuthPanel");
    if(!providerReady.whatsapp){if(panel)panel.classList.remove("hidden");return setStatus(st,"Informe o telefone para preparar o acesso. O envio do OTP será ativado assim que o WhatsApp Phone Auth/Twilio estiver configurado no Supabase.","")}
