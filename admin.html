@@ -8,7 +8,7 @@
 
 .auth-premium{max-width:500px!important;background:linear-gradient(180deg,#111318,#0b0d11)!important;border:1px solid #2b3038!important;box-shadow:0 45px 110px rgba(0,0,0,.5);padding:34px!important}.auth-brand{margin-bottom:22px}.auth-kicker{display:inline-flex;color:#f5c400;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.auth-premium h1{font-size:38px!important;letter-spacing:-.04em;margin:10px 0 6px}.auth-social{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:24px 0}.auth-provider{min-height:52px;border:1px solid #323740;background:#12151a;color:#fff;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;font:inherit;text-align:left;cursor:pointer}.auth-provider:hover{border-color:#f5c400}.auth-provider b{display:none}.provider-logo{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #e7e7e7}.provider-logo img{display:block;width:18px;height:18px;object-fit:contain}.auth-provider[data-auth-provider="whatsapp"] .provider-logo img,.auth-provider[data-auth-provider="telegram"] .provider-logo img,.auth-provider[data-auth-provider="discord"] .provider-logo img{width:19px;height:19px}.auth-provider span{font-size:12px;font-weight:800}.auth-provider small{font-size:8px;color:#818793;text-transform:uppercase}.auth-disabled{opacity:.64}.auth-divider{height:1px;background:#2b2f36;margin:25px 0;position:relative}.auth-divider span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0d0f13;padding:0 10px;color:#777d87;font-size:9px;text-transform:uppercase;letter-spacing:.14em}.auth-forgot{float:right;color:#aab0ba;font-size:10px!important;font-weight:600}.auth-main-btn{width:100%;margin-top:5px}.auth-magic{width:100%;border:0;background:transparent;color:#f5c400;font:inherit;font-size:11px;font-weight:800;padding:13px;cursor:pointer}.auth-phone{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px}.auth-bottom{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px;text-align:center;color:#858b94;font-size:11px}.auth-bottom button{border:0;background:transparent;color:#f5c400;cursor:pointer}.auth-premium label{position:relative}@media(max-width:600px){.auth-social{grid-template-columns:1fr}.auth-premium{padding:24px!important}}
 </style>
-<link rel="stylesheet" href="./ui-v2.css?v=20260924-6">
+<link rel="stylesheet" href="./ui-v2.css?v=20260925-1">
 </head>
 <body>
 <div class="admin-shell">
@@ -16,11 +16,9 @@
   <a class="brand auth-brand" href="./index.html"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>REPRESENTAÇÕES</small></span></a>
   <span class="auth-kicker">Acesso seguro</span>
   <h1 id="loginTitle">Painel do Administrador</h1>
-  <p class="muted" id="loginHelp">Entre com senha, link mágico ou um provedor conectado.</p>
+  <p class="muted" id="loginHelp">Entre com Google, e-mail e senha ou WhatsApp quando o OTP estiver habilitado.</p>
   <div class="auth-social">
     <button type="button" class="auth-provider" id="googleLogin" data-auth-provider="google"><span class="provider-logo"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt=""></span><span>Continuar com Google</span><small class="auth-state"></small></button>
-    <button type="button" class="auth-provider" id="discordLogin" data-auth-provider="discord"><span class="provider-logo"><img src="https://cdn.simpleicons.org/discord/5865F2" alt=""></span><span>Continuar com Discord</span><small class="auth-state"></small></button>
-    <button type="button" class="auth-provider" id="telegramLogin" data-auth-provider="telegram"><span class="provider-logo"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt=""></span><span>Continuar com Telegram</span><small class="auth-state"></small></button>
     <button type="button" class="auth-provider" id="whatsappLogin" data-auth-provider="whatsapp"><span class="provider-logo"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt=""></span><span>Continuar com WhatsApp</span><small class="auth-state"></small></button>
   </div>
   <div class="auth-divider"><span>ou com e-mail</span></div>
@@ -130,5 +128,5 @@
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260924-37"></script><script src="./admin.js?v=20260924-40"></script><script src="./ui-v2.js?v=20260924-5"></script>
+<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260925-1"></script><script src="./admin.js?v=20260924-40"></script><script src="./ui-v2.js?v=20260924-5"></script>
 </body></html>
