@@ -28,6 +28,23 @@ Deno.serve(async(req)=>{
   if(!isAdmin&&!isRep)return json({error:"forbidden"},403);
 
   const body=await req.json().catch(()=>({}));
+
+  if(body?.action==="health"){
+    const rawBase=Deno.env.get("EVOLUTION_API_URL")||"";
+    const base=rawBase.endsWith("/")?rawBase.slice(0,-1):rawBase;
+    const apiKey=Deno.env.get("EVOLUTION_API_KEY")||"";
+    const instance=Deno.env.get("EVOLUTION_INSTANCE")||"";
+    const missing=[["EVOLUTION_API_URL",base],["EVOLUTION_API_KEY",apiKey],["EVOLUTION_INSTANCE",instance]].filter(([,v])=>!v).map(([k])=>k);
+    if(missing.length)return json({configured:false,reachable:false,missing});
+    try{
+      const health=await fetch(base+"/instance/connectionState/"+encodeURIComponent(instance),{headers:{apikey:apiKey}});
+      const raw=await health.text();let parsed:any={};try{parsed=JSON.parse(raw)}catch{parsed={raw:raw.slice(0,500)}}
+      return json({configured:true,reachable:health.ok,http_status:health.status,state:parsed?.instance?.state||parsed?.state||parsed?.connectionState||null});
+    }catch(e){
+      return json({configured:true,reachable:false,error:String(e?.message||e)});
+    }
+  }
+
   const outboxId=String(body?.outbox_id||"");
   if(!outboxId)return json({error:"outbox_id_required"},400);
 
