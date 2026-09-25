@@ -5,6 +5,6 @@ window.BIASUZ_CONFIG = {
   whatsappNumber: "5575992268989",
   instagramUrl: "https://www.instagram.com/biasuzrepresentacoes/",
   instagramHandle: "@biasuzrepresentacoes",
-  authMode: "hybrid",
+  authMode: "email-google",
   passwordMinLength: 8
 };
