@@ -8,7 +8,7 @@
 
 .auth-premium{max-width:500px!important;background:linear-gradient(180deg,#111318,#0b0d11)!important;border:1px solid #2b3038!important;box-shadow:0 45px 110px rgba(0,0,0,.5);padding:34px!important}.auth-brand{margin-bottom:22px}.auth-kicker{display:inline-flex;color:#f5c400;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.auth-premium h1{font-size:38px!important;letter-spacing:-.04em;margin:10px 0 6px}.auth-social{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:24px 0}.auth-provider{min-height:52px;border:1px solid #323740;background:#12151a;color:#fff;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;font:inherit;text-align:left;cursor:pointer}.auth-provider:hover{border-color:#f5c400}.auth-provider b{display:none}.provider-logo{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #e7e7e7}.provider-logo img{display:block;width:18px;height:18px;object-fit:contain}.auth-provider[data-auth-provider="whatsapp"] .provider-logo img,.auth-provider[data-auth-provider="telegram"] .provider-logo img,.auth-provider[data-auth-provider="discord"] .provider-logo img{width:19px;height:19px}.auth-provider span{font-size:12px;font-weight:800}.auth-provider small{font-size:8px;color:#818793;text-transform:uppercase}.auth-disabled{opacity:.64}.auth-divider{height:1px;background:#2b2f36;margin:25px 0;position:relative}.auth-divider span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0d0f13;padding:0 10px;color:#777d87;font-size:9px;text-transform:uppercase;letter-spacing:.14em}.auth-forgot{float:right;color:#aab0ba;font-size:10px!important;font-weight:600}.auth-main-btn{width:100%;margin-top:5px}.auth-magic{width:100%;border:0;background:transparent;color:#f5c400;font:inherit;font-size:11px;font-weight:800;padding:13px;cursor:pointer}.auth-phone{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px}.auth-bottom{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px;text-align:center;color:#858b94;font-size:11px}.auth-bottom button{border:0;background:transparent;color:#f5c400;cursor:pointer}.auth-premium label{position:relative}@media(max-width:600px){.auth-social{grid-template-columns:1fr}.auth-premium{padding:24px!important}}
 </style>
-<link rel="stylesheet" href="./ui-v2.css?v=20260925-1">
+<link rel="stylesheet" href="./ui-v2.css?v=20260925-2">
 </head>
 <body>
 <div class="admin-shell">
@@ -34,7 +34,7 @@
 </section>
 <section id="appView" class="hidden">
  <div class="admin-top"><div><span class="eyebrow">Biasuz Representações</span><h1>Central comercial</h1></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-outline" href="./master-preview.html">Visualizar portais</a><a class="btn btn-outline" href="./reset-password.html?mode=change">Minha senha</a><button id="logout" class="btn btn-outline">Sair</button></div></div>
- <div class="tabs"><button class="tab active" data-tab="leads">Leads</button><button class="tab" data-tab="customers">Carteira</button><button class="tab" data-tab="catalog">Representadas</button><button class="tab" data-tab="catalogs">Catálogos & PDFs</button><a class="tab" href="./catalog-review.html">Revisar extrações</a><a class="tab" href="./commercial-admin.html">Gestão das Lojas</a><a class="tab" href="./sales-admin.html">Gestão Comercial</a><a class="tab" href="./health-admin.html">Diagnóstico</a><button class="tab" data-tab="import">Importar CSV</button></div>
+ <div class="tabs"><button class="tab active" data-tab="leads">Leads</button><button class="tab" data-tab="customers">Carteira</button><button class="tab" data-tab="catalog">Representadas</button><button class="tab" data-tab="catalogs">Catálogos & PDFs</button><button class="tab" data-tab="prices">Tabelas de preços</button><a class="tab" href="./catalog-review.html">Revisar extrações</a><a class="tab" href="./commercial-admin.html">Gestão das Lojas</a><a class="tab" href="./sales-admin.html">Gestão Comercial</a><a class="tab" href="./health-admin.html">Diagnóstico</a><button class="tab" data-tab="import">Importar CSV</button></div>
  <div class="kpis"><div class="kpi"><span>Leads</span><strong id="kLeads">0</strong></div><div class="kpi"><span>Carteira</span><strong id="kCustomers">0</strong></div><div class="kpi"><span>Representadas</span><strong id="kBrands">0</strong></div><div class="kpi"><span>Produtos</span><strong id="kProducts">0</strong></div></div>
  <section class="admin-insights">
    <div class="insight-metrics">
@@ -114,6 +114,36 @@
   </div>
  </section>
 
+ <section id="tab-prices" class="tabview hidden">
+  <div class="admin-card">
+   <div class="section-title">
+    <div><span class="eyebrow">Central de preços</span><h2>Importar planilhas Excel, XLS ou CSV</h2><p class="muted">O sistema identifica cabeçalho, SKU, marca, estoque, imagens, dados fiscais e diferentes colunas de preço. Nada vira preço B2B ativo sem revisão.</p></div>
+    <button id="reloadPriceImports" class="btn btn-small btn-outline" type="button">Atualizar histórico</button>
+   </div>
+   <div class="price-import-notice"><strong>Importação em duas etapas.</strong><span>1) Ler e organizar a planilha. 2) Aplicar cadastro/estoque. A publicação comercial de preços é sempre separada e controlada.</span></div>
+   <form id="priceSheetForm" class="price-upload">
+    <label class="price-file">Arquivo<input id="priceSheetFile" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" required></label>
+    <label>Título<input id="priceSheetTitle" placeholder="Ex.: Geonav Nordeste Setembro 2026"></label>
+    <label>Representada padrão<select id="priceDefaultBrand"><option value="">Detectar pela planilha</option></select></label>
+    <label>UF / escopo<select id="priceState"><option value="">Geral</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option><option>MG</option><option>SP</option><option>RJ</option><option>ES</option><option>PR</option><option>SC</option><option>RS</option><option>GO</option><option>DF</option><option>MT</option><option>MS</option></select></label>
+    <label>Região<input id="priceRegion" placeholder="Ex.: Capital, Interior, Nordeste"></label>
+    <label>Vigência inicial<input id="priceValidFrom" type="date"></label>
+    <label>Vigência final<input id="priceValidUntil" type="date"></label>
+    <button class="btn" id="analyzePriceSheet" type="submit">Analisar planilha</button>
+   </form>
+   <div id="priceSheetAnalysis" class="hidden price-analysis">
+    <div class="price-analysis-head"><div><span class="eyebrow">Leitura inteligente</span><h3 id="priceDetectedSheet">—</h3><p id="priceDetectedInfo" class="muted"></p></div><div><button id="importPriceSheet" class="btn" type="button">Importar para revisão</button></div></div>
+    <details class="price-map-details"><summary>Revisar mapeamento de colunas</summary><div id="priceColumnMap" class="price-column-map"></div></details>
+    <div class="price-preview-wrap"><table class="price-preview"><thead id="pricePreviewHead"></thead><tbody id="pricePreviewBody"></tbody></table></div>
+    <div class="progress"><i id="priceImportBar"></i></div><p id="priceImportStatus" class="form-status"></p>
+   </div>
+  </div>
+  <div class="admin-card">
+   <div><span class="eyebrow">Histórico</span><h2>Planilhas importadas</h2><p class="muted">Cadastros e estoque podem ser aplicados ao catálogo mestre. As colunas de preço ficam preservadas na área de revisão por escopo/região.</p></div>
+   <div id="priceImportRows" class="price-import-list"></div>
+  </div>
+ </section>
+
  <section id="tab-import" class="tabview hidden">
   <div class="admin-card import-box"><div><span class="eyebrow">Carga de carteira</span><h2>Importar clientes/prospects</h2><p class="muted">Selecione o CSV original. O navegador processa localmente e envia ao Supabase em lotes autenticados. Nenhuma chave administrativa fica no arquivo ou no navegador.</p></div>
    <input id="csvFile" type="file" accept=".csv,text/csv">
@@ -126,7 +156,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260925-1"></script><script src="./admin.js?v=20260924-40"></script><script src="./ui-v2.js?v=20260924-5"></script>
+<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260925-1"></script><script src="./admin.js?v=20260925-2"></script><script src="./ui-v2.js?v=20260925-2"></script>
 </body></html>
