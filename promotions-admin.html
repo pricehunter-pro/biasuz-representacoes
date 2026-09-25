@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Promoções • Biasuz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260925-42"><link rel="stylesheet" href="./ui-v2.css?v=20260925-12">
+<style>
+body{background:#090b0e;color:#f4f5f6}.shell{min-height:100vh;padding:28px 5vw}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px}.head h1{font-size:42px;margin:6px 0}.head p{color:#9ca3ae;max-width:760px}.panel{background:#14181e;border:1px solid #2d333c;border-radius:20px;padding:20px;margin-bottom:14px}.grid{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}label{display:grid;gap:6px;color:#dfe2e6;font-size:11px;font-weight:800}input,select,textarea{width:100%;background:#0c0f13;color:#fff;border:1px solid #343b46;border-radius:10px;padding:11px;font:inherit}.list{display:grid;gap:10px}.promo{display:grid;grid-template-columns:1fr auto;gap:12px;padding:15px;border:1px solid #303641;border-radius:15px;background:#101318}.promo h3{margin:0 0 5px}.promo p{color:#aab1bb;font-size:12px;line-height:1.6;margin:6px 0}.promo small{color:#848c97}.promo-actions{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;border:1px solid #3b424d;font-size:9px;font-weight:900}.badge.on{color:#78df98;border-color:#245a38}.badge.off{color:#ffcf69;border-color:#5c4618}.muted{color:#969da8}.status.ok{color:#72de95}.status.err{color:#ff948b}@media(max-width:900px){.grid{grid-template-columns:1fr}}@media(max-width:600px){.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.head{flex-direction:column}.promo{grid-template-columns:1fr}}</style>
+</head><body>
+<main class="shell">
+<header class="head"><div><a class="eyebrow" href="./admin.html">← Painel do Administrador</a><h1>Promoções e campanhas</h1><p>Crie condições promocionais que aparecerão no Painel do Cliente. A representada também pode publicar as próprias promoções no portal dela; o administrador mantém visão e controle geral.</p></div><div><a class="btn btn-small btn-outline" href="./master-preview.html">Visualizar portais</a></div></header>
+<div class="grid">
+ <section class="panel"><span class="eyebrow">Nova promoção</span><h2>Publicar campanha</h2>
+  <form id="promoForm" class="form-grid">
+   <label class="full">Representada<select name="representada_id" id="brandSelect" required></select></label>
+   <label class="full">Título<input name="title" required placeholder="Ex.: Semana Pet — condição especial"></label>
+   <label class="full">Descrição<textarea name="description" rows="4" placeholder="Explique o benefício, regras e produtos participantes"></textarea></label>
+   <label>Preço promocional (opcional)<input name="promo_price" inputmode="decimal" placeholder="0,00"></label>
+   <label>Tipo<select name="kind"><option value="campaign">Campanha</option><option value="product">Produto promocional</option><option value="catalog">Catálogo promocional</option><option value="condition">Condição comercial</option></select></label>
+   <label>Início<input name="starts_at" type="datetime-local"></label>
+   <label>Fim<input name="ends_at" type="datetime-local"></label>
+   <label class="full">Link opcional<input name="link_url" type="url" placeholder="https://..."></label>
+   <label class="full" style="display:flex;grid-template-columns:auto 1fr;align-items:center"><input name="active" type="checkbox" checked style="width:auto"> Publicar imediatamente</label>
+   <button class="btn full" type="submit">Salvar promoção</button><p id="status" class="status full"></p>
+  </form>
+ </section>
+ <section class="panel"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><span class="eyebrow">Campanhas cadastradas</span><h2>Ativas e programadas</h2></div><button id="reload" class="btn btn-small btn-outline">Atualizar</button></div><div id="promoRows" class="list"></div></section>
+</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js?v=20260925-42"></script><script src="./promotions-admin.js?v=20260925-1"></script>
+</body></html>
