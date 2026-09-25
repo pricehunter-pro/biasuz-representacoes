@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fila WhatsApp • Biasuz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260924-31">
+<link rel="stylesheet" href="./ui-v2.css?v=20260924-11">
+<style>
+body{background:#090b0e;color:#f7f7f4}.queue-shell{max-width:1500px;margin:auto;padding:30px 4vw 70px}.queue-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}.queue-head h1{font-size:clamp(30px,4vw,48px);margin:6px 0}.queue-head p{color:#9ea5b0;max-width:800px}.queue-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.queue-kpis article{border:1px solid #2d333c;background:#12161c;border-radius:16px;padding:16px}.queue-kpis span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#8f96a1}.queue-kpis strong{display:block;font-size:25px;margin-top:6px}.queue-tools{display:grid;grid-template-columns:1fr 180px auto;gap:8px;margin-bottom:14px}.queue-tools input,.queue-tools select{background:#0d1014;color:#fff;border:1px solid #343b46;border-radius:10px;padding:11px;font:inherit}.queue-list{display:grid;gap:10px}.queue-card{border:1px solid #2c323b;background:linear-gradient(180deg,#161a20,#111419);border-radius:18px;padding:16px;display:grid;grid-template-columns:1.1fr 1.6fr auto;gap:14px;align-items:start}.queue-customer strong{display:block}.queue-customer small{color:#8f97a2;line-height:1.6}.queue-message textarea{width:100%;min-height:110px;resize:vertical;background:#0c0f13;color:#fff;border:1px solid #343b46;border-radius:10px;padding:11px;font:inherit;font-size:12px;line-height:1.55}.queue-actions{display:grid;gap:7px;min-width:150px}.queue-actions .btn{width:100%}.queue-status{display:inline-flex;padding:5px 8px;border-radius:999px;border:1px solid #39414c;background:#20262e;font-size:9px;font-weight:800;text-transform:uppercase}.queue-status.sent{color:#74dd9a;border-color:#285c3a}.queue-status.error{color:#ff9388;border-color:#6a312c}.queue-status.cancelled{color:#a5abb4}.queue-empty{padding:28px;border:1px dashed #333a45;border-radius:16px;color:#9ca4af}.muted{color:#9299a4}@media(max-width:900px){.queue-kpis{grid-template-columns:1fr 1fr}.queue-card{grid-template-columns:1fr}.queue-actions{display:flex;flex-wrap:wrap}.queue-actions .btn{width:auto}.queue-tools{grid-template-columns:1fr 1fr}}@media(max-width:560px){.queue-head{flex-direction:column}.queue-kpis,.queue-tools{grid-template-columns:1fr}.queue-actions{display:grid}.queue-actions .btn{width:100%}}
+</style>
+</head><body>
+<main class="queue-shell">
+ <header class="queue-head">
+  <div><a class="eyebrow" href="./sales-admin.html">← Gestão Comercial</a><h1 id="title">Fila WhatsApp</h1><p id="subtitle">Carregando campanha...</p></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-small btn-outline" href="./health-admin.html">Diagnóstico</a><a class="btn btn-small btn-outline" href="./admin.html">Central comercial</a></div>
+ </header>
+ <section class="queue-kpis">
+  <article><span>Na fila</span><strong id="kQueued">0</strong></article>
+  <article><span>Rascunhos</span><strong id="kDraft">0</strong></article>
+  <article><span>Enviadas</span><strong id="kSent">0</strong></article>
+  <article><span>Erros</span><strong id="kError">0</strong></article>
+ </section>
+ <div class="queue-tools">
+  <input id="search" placeholder="Buscar empresa, cidade ou telefone">
+  <select id="statusFilter"><option value="">Todos os status</option><option value="draft">Rascunho</option><option value="approved">Aprovado</option><option value="sending">Enviando</option><option value="sent">Enviado</option><option value="error">Erro</option><option value="cancelled">Cancelado</option></select>
+  <button id="reload" class="btn btn-small">Atualizar</button>
+ </div>
+ <div id="rows" class="queue-list"></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js?v=20260924-33"></script>
+<script src="./campaign-outbox.js?v=20260924-1"></script>
+</body></html>
