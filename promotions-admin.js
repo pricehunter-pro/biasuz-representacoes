@@ -1,0 +1,18 @@
+const cfg=window.BIASUZ_CONFIG||{},sb=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const money=v=>"R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2});
+let brands=[];
+async function auth(){const {data:{user}}=await sb.auth.getUser();if(!user||user.app_metadata?.role!=="admin"){location.href="./admin.html";return false}return true}
+async function loadBrands(){const {data}=await sb.from("representadas").select("id,name").eq("active",true).order("name");brands=data||[];document.getElementById("brandSelect").innerHTML='<option value="">Selecione</option>'+brands.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("")}
+async function loadPromos(){
+ const {data,error}=await sb.from("promotions").select("id,title,description,promo_price,starts_at,ends_at,active,rules,created_at,representadas(name)").order("created_at",{ascending:false}).limit(100),box=document.getElementById("promoRows");
+ if(error){box.innerHTML='<p class="status err">'+esc(error.message)+'</p>';return}
+ const rows=data||[];box.innerHTML=rows.length?rows.map(p=>'<article class="promo"><div><span class="badge '+(p.active?'on':'off')+'">'+(p.active?'ATIVA':'PAUSADA')+'</span><h3>'+esc(p.title)+'</h3><small>'+esc(p.representadas?.name||"Biasuz")+(p.starts_at?' · início '+new Date(p.starts_at).toLocaleDateString("pt-BR"):'')+(p.ends_at?' · fim '+new Date(p.ends_at).toLocaleDateString("pt-BR"):'')+'</small><p>'+esc(p.description||"Sem descrição.")+'</p>'+(p.promo_price!=null?'<strong>'+money(p.promo_price)+'</strong>':'')+'</div><div class="promo-actions"><button class="btn btn-small btn-outline" data-toggle="'+p.id+'" data-active="'+p.active+'">'+(p.active?'Pausar':'Ativar')+'</button><button class="btn btn-small btn-outline" data-delete="'+p.id+'">Excluir</button></div></article>').join(""):'<p class="muted">Nenhuma promoção cadastrada.</p>';
+ document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=async()=>{await sb.from("promotions").update({active:b.dataset.active!=="true",updated_at:new Date().toISOString()}).eq("id",b.dataset.toggle);loadPromos()});
+ document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=async()=>{if(!confirm("Excluir esta promoção?"))return;await sb.from("promotions").delete().eq("id",b.dataset.delete);loadPromos()});
+}
+document.getElementById("promoForm").onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget)),st=document.getElementById("status");st.className="status";st.textContent="Salvando...";
+ const price=d.promo_price?Number(String(d.promo_price).replace(".","").replace(",",".")):null;
+ const row={representada_id:d.representada_id,title:d.title,description:d.description||null,promo_price:Number.isFinite(price)?price:null,starts_at:d.starts_at?new Date(d.starts_at).toISOString():null,ends_at:d.ends_at?new Date(d.ends_at).toISOString():null,active:!!e.currentTarget.elements.active.checked,rules:{kind:d.kind,link_url:d.link_url||null}};
+ const {error}=await sb.from("promotions").insert(row);if(error){st.className="status err";st.textContent=error.message;return}st.className="status ok";st.textContent="Promoção salva e disponibilizada conforme o período/status.";e.currentTarget.reset();e.currentTarget.elements.active.checked=true;loadPromos()};
+document.getElementById("reload").onclick=loadPromos;(async()=>{if(!await auth())return;await Promise.all([loadBrands(),loadPromos()])})();
