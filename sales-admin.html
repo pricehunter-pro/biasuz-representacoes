@@ -83,16 +83,18 @@ body{background:#0b0c0f;color:#f3f3ef}.sales-shell{min-height:100vh;padding:28px
      <label>Representada<select name="representada_id" id="campaignBrand"><option value="">Todas</option></select></label>
      <label>Segmento<select name="segment"><option value="">Todos</option><option>Pet</option><option>Bazar</option><option>Jardinagem</option><option>Farma</option><option>Tech</option><option>Matco</option></select></label>
      <label>Estado<select name="state"><option value="">Todos</option><option>BA</option><option>SE</option><option>AL</option><option>PE</option><option>PB</option><option>RN</option><option>CE</option><option>PI</option><option>MA</option></select></label>
+     <label>Cidade<input name="city" placeholder="Ex.: Feira de Santana"></label>
+     <label>CNAE / atividade<input name="cnae" placeholder="Código ou palavra-chave"></label>
      <label>Canal<select name="channel"><option value="whatsapp">WhatsApp</option><option value="email">E-mail</option><option value="multicanal">Multicanal</option></select></label>
      <label>Agendamento<input name="scheduled_at" type="datetime-local"></label>
      <label class="full">Descrição<input name="description" placeholder="Objetivo da campanha"></label>
-     <label class="full">Mensagem<textarea name="message_template" rows="6" required placeholder="Mensagem comercial. O envio automático só será liberado para contatos elegíveis e com consentimento."></textarea></label>
+     <label class="full">Mensagem<textarea name="message_template" rows="6" required placeholder="Mensagem comercial. Use {{empresa}}, {{cidade}}, {{estado}} e {{representada}} para personalizar. O envio só será liberado para contatos elegíveis e com consentimento."></textarea></label>
      <button id="previewCampaign" class="btn btn-outline full" type="button">Calcular audiência elegível</button>
      <div id="campaignPreview" class="full muted">Defina os filtros para calcular a audiência.</div>
      <button class="btn full" type="submit">Salvar campanha em rascunho</button><p id="campaignStatus" class="status full"></p>
     </form>
    </div>
-   <div class="panel"><span class="eyebrow">Campanhas</span><h2>Planejamento e histórico</h2><p class="muted">O disparo automático permanece bloqueado enquanto a integração Evolution/WhatsApp e o consentimento dos contatos não estiverem validados.</p><div id="campaignRows" class="rows"></div></div>
+   <div class="panel"><span class="eyebrow">Campanhas</span><h2>Planejamento e fila assistida</h2><p class="muted">A campanha gera apenas rascunhos para contatos com opt-in válido. Cada mensagem continua sujeita à revisão e envio individual pela Evolution API.</p><div id="campaignRows" class="rows"></div></div>
   </div>
  </section>
 
@@ -118,6 +120,6 @@ body{background:#0b0c0f;color:#f3f3ef}.sales-shell{min-height:100vh;padding:28px
  </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="./config.js?v=20260924-26"></script><script src="./sales-admin.js?v=20260924-26"></script>
+<script src="./config.js?v=20260924-26"></script><script src="./sales-admin.js?v=20260924-31"></script>
 <script src="./ui-v2.js?v=20260924-3"></script>
 </body></html>
