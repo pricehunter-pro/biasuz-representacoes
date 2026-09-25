@@ -81,6 +81,7 @@ window.BiasuzUI=(function(){
    linkItem("box","Gestão das Lojas","./commercial-admin.html")+
    linkItem("chart","Gestão Comercial","./sales-admin.html")+
    linkItem("settings","Diagnóstico","./health-admin.html")+
+   linkItem("help","Guia de ativação","./setup-admin.html")+
    sideItem("upload","Importar carteira",'data-admin-target="import"');
   const layout=document.createElement("div");layout.className="dashboard-layout";layout.innerHTML=baseSidebar("admin",nav);layout.appendChild(main);app.appendChild(layout);
   const top=main.querySelector(".admin-top");top?.classList.add("dashboard-topbar");
