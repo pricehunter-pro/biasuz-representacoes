@@ -28,8 +28,11 @@ async function load(){
  ]);
  let settings=null;try{const r=await fetch(cfg.supabaseUrl+"/auth/v1/settings",{headers:{apikey:cfg.supabasePublishableKey}});if(r.ok)settings=await r.json()}catch{}
  let evolution={configured:false,reachable:false};try{const r=await sb.functions.invoke("evolution-send",{body:{action:"health"}});if(!r.error&&r.data)evolution=r.data}catch{}
- const {data:unlinked}=await sb.from("salespeople").select("id,name,user_id").eq("active",true).is("user_id",null);
- state={brands:brands.count,products:products.count,catalogs:catalogs.count,customers:customers.count,orders:orders.count,leads:leads.count,missingLogo:missingLogo.count,missingImage:missingImage.count,activePrices:activePrices.count,reviewCats:reviewCats.count,internalCats:internalCats.count,optin:optin.count,sellers:sellers.count,repProfiles:profiles.count,unlinked:(unlinked||[]).length,goals:goals.count,rules:rules.count,campaigns:campaigns.count,settings,evolution};
+ const [{data:unlinked},{data:brandAssets}]=await Promise.all([
+  sb.from("salespeople").select("id,name,user_id").eq("active",true).is("user_id",null),
+  sb.from("representadas").select("name,slug,logo_url,banner_image_url").eq("active",true).order("name")
+ ]);
+ state={brands:brands.count,products:products.count,catalogs:catalogs.count,customers:customers.count,orders:orders.count,leads:leads.count,missingLogo:missingLogo.count,missingImage:missingImage.count,activePrices:activePrices.count,reviewCats:reviewCats.count,internalCats:internalCats.count,optin:optin.count,sellers:sellers.count,repProfiles:profiles.count,unlinked:(unlinked||[]).length,goals:goals.count,rules:rules.count,campaigns:campaigns.count,settings,evolution,brandAssets:brandAssets||[]};
  render();
 }
 function metric(label,value,note){return '<div class="panel metric"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong><small>'+esc(note)+'</small></div>'}
@@ -66,6 +69,12 @@ function render(){
   row("Regras de comissão",state.rules,state.rules?"ok":"warn")+
   row("Campanhas",state.campaigns,state.campaigns?"ok":"warn")+
   row("Opt-ins WhatsApp",state.optin,state.optin?"ok":"warn","Disparo automático exige consentimento");
+ const assets=(state.brandAssets||[]).filter(x=>!x.logo_url||!x.banner_image_url);
+ document.getElementById("assetRows").innerHTML=assets.length?assets.map(x=>{
+   const needs=[];if(!x.logo_url)needs.push("logomarca");if(!x.banner_image_url)needs.push("banner horizontal");
+   return row(x.name,needs.join(" + "),"warn","Enviar preferencialmente PNG/WebP com boa resolução; banner ideal 1600×600 ou maior.");
+ }).join(""):row("Identidade visual","Completa","ok","Todas as representadas possuem logo e banner cadastrados.");
+
  const priorities=[];
  if(state.missingLogo)priorities.push(["Inserir logomarcas oficiais",state.missingLogo+" representadas sem logo","warn"]);
  if(state.missingImage)priorities.push(["Enriquecer imagens de produtos",state.missingImage+" produtos sem imagem","warn"]);
