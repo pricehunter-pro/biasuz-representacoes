@@ -81,12 +81,11 @@ function render(){
  if(state.missingImage)priorities.push(["Enriquecer imagens de produtos",state.missingImage+" produtos sem imagem","warn"]);
  if(state.reviewCats)priorities.push(["Concluir revisão de catálogos",state.reviewCats+" catálogos pendentes","warn"]);
  if(!ext.google)priorities.push(["Ativar Google OAuth","Cadastrar Client ID/Secret no Supabase","warn"]);
- if(!ext.discord)priorities.push(["Ativar Discord OAuth","Cadastrar aplicação OAuth","warn"]);
  if(!cfg.telegramOidcEnabled)priorities.push(["Ativar Telegram OIDC","Criar Login OIDC no BotFather e cadastrar como custom:telegram","warn"]);
  if(!state.evolution?.configured)priorities.push(["Concluir Evolution API","Cadastrar EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE nos Secrets","warn"]);
  else if(!state.evolution?.probe_ok)priorities.push(["Revisar conexão Evolution API","Secrets encontrados, mas a instância não respondeu ao teste de status","warn"]);
  if(state.unlinked)priorities.push(["Vincular vendedor ao portal",state.unlinked+" vendedor(es) sem usuário representante","warn"]);
- if(!state.optin)priorities.push(["Coletar consentimento WhatsApp","Carteira importada ainda sem opt-ins registrados","warn"]);
+ if(!state.optin)priorities.push(["Coletar consentimento WhatsApp comercial","Necessário apenas para campanhas; não é método de login","warn"]);
  if(!state.rules)priorities.push(["Cadastrar regras de comissão","Necessário antes de gerar comissão prevista","warn"]);
  if(!state.goals)priorities.push(["Cadastrar metas","Performance já está pronta para medir o realizado","warn"]);
  if(!priorities.length)priorities.push(["Operação essencial","Sem pendências automáticas detectadas","ok"]);
