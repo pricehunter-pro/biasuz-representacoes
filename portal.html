@@ -11,7 +11,7 @@
 .store-section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:20px}.store-section-head h2{margin:7px 0 4px}.store-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.store-card{border:1px solid #2e3036;background:#141519;border-radius:16px;overflow:hidden;transition:.2s}.store-card:hover{transform:translateY(-3px);border-color:#f5c400}.store-logo{height:108px;background:#fff;display:grid;place-items:center;padding:18px}.store-logo img{max-width:100%;max-height:70px;object-fit:contain}.store-logo-fallback{font-size:20px;font-weight:900;color:#111}.store-card-body{padding:15px}.store-card-body h3{margin:0 0 5px}.store-card-body p{font-size:11px;margin:0 0 13px}.store-card .btn{width:100%}@media(max-width:1000px){.store-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.store-grid{grid-template-columns:1fr}}
 .auth-premium{max-width:500px!important;background:linear-gradient(180deg,#111318,#0b0d11)!important;border:1px solid #2b3038!important;box-shadow:0 45px 110px rgba(0,0,0,.5);padding:34px!important}.auth-brand{margin-bottom:22px}.auth-kicker{display:inline-flex;color:#f5c400;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.auth-premium h1{font-size:38px!important;letter-spacing:-.04em;margin:10px 0 6px}.auth-social{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:24px 0}.auth-provider{min-height:52px;border:1px solid #323740;background:#12151a;color:#fff;border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;font:inherit;text-align:left;cursor:pointer}.auth-provider:hover{border-color:#f5c400}.auth-provider b{display:none}.provider-logo{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #e7e7e7}.provider-logo img{display:block;width:18px;height:18px;object-fit:contain}.auth-provider[data-auth-provider="whatsapp"] .provider-logo img,.auth-provider[data-auth-provider="telegram"] .provider-logo img,.auth-provider[data-auth-provider="discord"] .provider-logo img{width:19px;height:19px}.auth-provider span{font-size:12px;font-weight:800}.auth-provider small{font-size:8px;color:#818793;text-transform:uppercase}.auth-disabled{opacity:.64}.auth-divider{height:1px;background:#2b2f36;margin:25px 0;position:relative}.auth-divider span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0d0f13;padding:0 10px;color:#777d87;font-size:9px;text-transform:uppercase;letter-spacing:.14em}.auth-forgot{float:right;color:#aab0ba;font-size:10px;font-weight:600}.auth-main-btn{width:100%;margin-top:5px}.auth-magic{width:100%;border:0;background:transparent;color:#f5c400;font:inherit;font-size:11px;font-weight:800;padding:13px;cursor:pointer}.auth-phone{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px}.auth-bottom{border-top:1px solid #2a2e35;margin-top:16px;padding-top:16px;text-align:center;color:#858b94;font-size:11px}.auth-bottom button{border:0;background:transparent;color:#f5c400;cursor:pointer}.auth-premium label{position:relative}@media(max-width:600px){.auth-social{grid-template-columns:1fr}.auth-premium{padding:24px!important}}
 </style>
-<link rel="stylesheet" href="./ui-v2.css?v=20260925-1">
+<link rel="stylesheet" href="./ui-v2.css?v=20260925-14">
 </head>
 <body>
 <div class="portal-shell">
@@ -19,22 +19,17 @@
   <a class="brand auth-brand" href="./index.html"><span class="brand-mark">B</span><span><strong>BIASUZ</strong><small>REPRESENTAÇÕES</small></span></a>
   <span class="auth-kicker">Acesso seguro</span>
   <h1 id="loginTitle">Acesso ao portal</h1>
-  <p class="muted" id="loginHelp">Entre com Google, e-mail e senha ou WhatsApp quando o OTP estiver habilitado.</p>
-  <div class="auth-social">
+  <p class="muted" id="loginHelp">Entre com sua conta Google ou com e-mail e senha.</p>
+  <div class="auth-social auth-social-single">
     <button type="button" class="auth-provider" id="googleLogin" data-auth-provider="google"><span class="provider-logo"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt=""></span><span>Continuar com Google</span><small class="auth-state"></small></button>
-    <button type="button" class="auth-provider" id="discordLogin" data-auth-provider="discord"><span class="provider-logo"><img src="https://cdn.simpleicons.org/discord/5865F2" alt=""></span><span>Continuar com Discord</span><small class="auth-state"></small></button>
-    <button type="button" class="auth-provider" id="telegramLogin" data-auth-provider="telegram"><span class="provider-logo"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt=""></span><span>Continuar com Telegram</span><small class="auth-state"></small></button>
-    <button type="button" class="auth-provider" id="whatsappLogin" data-auth-provider="whatsapp"><span class="provider-logo"><img src="https://cdn.simpleicons.org/whatsapp/25D366" alt=""></span><span>Continuar com WhatsApp</span><small class="auth-state"></small></button>
   </div>
-  <div class="auth-divider"><span>ou com e-mail</span></div>
+  <div class="auth-divider"><span>ou use e-mail e senha</span></div>
   <form id="loginForm">
     <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="voce@empresa.com.br"></label>
     <label>Senha <a href="#" id="forgotPassword" class="auth-forgot">Esqueci minha senha</a><input name="password" type="password" required autocomplete="current-password" placeholder="••••••••"></label>
     <button class="btn auth-main-btn" type="submit">Entrar →</button>
-    <button class="auth-magic" id="magicLogin" type="button">Entrar por link mágico no e-mail</button>
     <p id="loginStatus" class="form-status"></p>
   </form>
-  <div id="phoneAuthPanel" class="auth-phone hidden"><label>WhatsApp<input id="whatsappPhone" inputmode="tel" placeholder="(75) 99999-9999"></label><button id="sendWhatsappOtp" class="btn btn-small" type="button">Enviar código</button><div id="otpRow" class="hidden"><label>Código<input id="whatsappOtp" inputmode="numeric" maxlength="6"></label><button id="verifyWhatsappOtp" class="btn btn-small" type="button">Validar e entrar</button></div></div>
   <div id="signupPanel" class="auth-phone hidden">
       <strong style="display:block;margin-bottom:8px">Criar acesso</strong>
       <p class="muted" style="font-size:11px">Use o mesmo e-mail cadastrado na sua empresa. Se ele já estiver na carteira Biasuz, o perfil de cliente será vinculado automaticamente.</p>
@@ -131,5 +126,5 @@
 </section>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260925-43"></script><script src="./portal.js?v=20260924-40"></script><script src="./ui-v2.js?v=20260924-4"></script>
+<script src="./config.js?v=20260924-37"></script><script src="./auth-ui.js?v=20260925-44"></script><script src="./portal.js?v=20260924-40"></script><script src="./ui-v2.js?v=20260924-4"></script>
 </body></html>
