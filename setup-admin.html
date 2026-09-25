@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guia de ativação • Biasuz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20260925-41">
+<link rel="stylesheet" href="./ui-v2.css?v=20260925-11">
+<style>
+body{background:#090b0e;color:#f5f6f7}.setup-shell{max-width:1280px;margin:auto;padding:28px 5vw 70px}.setup-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.setup-head h1{font-size:clamp(34px,5vw,56px);letter-spacing:-.045em;margin:8px 0}.setup-head p{max-width:800px;color:#9fa6b0;line-height:1.7}.setup-actions{display:flex;gap:8px;flex-wrap:wrap}.setup-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}.summary-card{padding:17px;border:1px solid #2e343d;border-radius:16px;background:#12161b}.summary-card span{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#858d98}.summary-card strong{display:block;margin-top:8px;font-size:16px}.setup-list{display:grid;gap:14px}.setup-step{display:grid;grid-template-columns:56px 1fr;gap:18px;border:1px solid #2d333c;background:linear-gradient(180deg,#15191f,#101318);border-radius:22px;padding:22px}.step-no{width:48px;height:48px;border-radius:14px;background:#f5c400;color:#111;display:grid;place-items:center;font-weight:900;font-size:18px}.step-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.step-head h2{margin:0;font-size:22px}.step-status{border:1px solid #414853;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.step-status.ok{color:#7ce09b;border-color:#235a37;background:#102619}.step-status.warn{color:#ffdb75;border-color:#5a4718;background:#29210e}.step-body{color:#aeb5bf;line-height:1.7;font-size:13px}.step-body ol{padding-left:20px}.copy-box{display:grid;grid-template-columns:1fr auto;gap:8px;margin:9px 0}.copy-box code{display:block;overflow:auto;padding:11px 12px;border:1px solid #333a44;border-radius:10px;background:#090c10;color:#e7e9ec;font-size:11px}.copy-box button{border:1px solid #3b424d;background:#161b22;color:#fff;border-radius:10px;padding:0 12px;font-weight:800;cursor:pointer}.copy-box button:hover{border-color:#f5c400}.note{padding:12px 14px;border-left:3px solid #f5c400;background:#17170f;border-radius:0 10px 10px 0;color:#c7c4a7;font-size:12px}.asset-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.asset-item{padding:10px 12px;border:1px solid #303640;border-radius:11px;background:#0e1217;font-size:11px}.asset-item strong{display:block;color:#fff}.asset-item span{color:#9199a4}.footer-note{margin-top:18px;color:#838b96;font-size:11px;line-height:1.6}@media(max-width:900px){.setup-summary{grid-template-columns:1fr 1fr}.asset-list{grid-template-columns:1fr}}@media(max-width:620px){.setup-head{flex-direction:column}.setup-summary{grid-template-columns:1fr}.setup-step{grid-template-columns:1fr}.step-head{flex-direction:column}.copy-box{grid-template-columns:1fr}.copy-box button{min-height:40px}}</style>
+</head>
+<body>
+<main class="setup-shell">
+ <header class="setup-head">
+  <div><a class="eyebrow" href="./admin.html">← Painel do Administrador</a><h1>Guia de ativação</h1><p>Esta tela separa o que já está pronto no sistema do que depende de contas, credenciais ou confirmações suas. Siga de cima para baixo; não precisa fazer tudo de uma vez.</p></div>
+  <div class="setup-actions"><a class="btn btn-small btn-outline" href="./health-admin.html">Ver diagnóstico</a><button id="reload" class="btn btn-small">Atualizar status</button></div>
+ </header>
+ <section id="setupSummary" class="setup-summary"></section>
+ <section class="setup-list">
+  <article class="setup-step"><div class="step-no">1</div><div><div class="step-head"><h2>Evolution API — WhatsApp comercial assistido</h2><span id="evolutionStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+   <p>Esta integração envia mensagens comerciais preparadas no CRM depois de você revisar e aprovar.</p>
+   <ol><li>Abra o painel da sua Evolution API no servidor/VPS.</li><li>Localize a URL pública da Evolution API, a API Key e o nome exato da instância conectada.</li><li>No Supabase, abra <b>Edge Functions → Secrets</b>.</li><li>Cadastre os três segredos abaixo usando exatamente estes nomes.</li></ol>
+   <div class="copy-box"><code>EVOLUTION_API_URL</code><button data-copy="EVOLUTION_API_URL">Copiar</button></div>
+   <div class="copy-box"><code>EVOLUTION_API_KEY</code><button data-copy="EVOLUTION_API_KEY">Copiar</button></div>
+   <div class="copy-box"><code>EVOLUTION_INSTANCE</code><button data-copy="EVOLUTION_INSTANCE">Copiar</button></div>
+   <p>Depois, volte aqui e clique em <b>Atualizar status</b>. O sistema fará um teste de conexão sem enviar mensagem.</p>
+   <div class="note">Não me envie a API Key pelo chat. Digite a chave diretamente nos Secrets do Supabase.</div>
+  </div></div></article>
+
+  <article class="setup-step"><div class="step-no">2</div><div><div class="step-head"><h2>Google — entrar com Google</h2><span id="googleStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+   <ol><li>Abra o Google Cloud / Google Auth Platform com a conta que administrará o acesso da Biasuz.</li><li>Crie um <b>OAuth Client</b> do tipo <b>Web application</b>.</li><li>Em <b>Authorized JavaScript origins</b>, adicione:</li></ol>
+   <div class="copy-box"><code>https://bia.dunihub.online</code><button data-copy="https://bia.dunihub.online">Copiar</button></div>
+   <p>Em <b>Authorized redirect URIs</b>, adicione:</p>
+   <div class="copy-box"><code>https://hszbmroogcciopipjijk.supabase.co/auth/v1/callback</code><button data-copy="https://hszbmroogcciopipjijk.supabase.co/auth/v1/callback">Copiar</button></div>
+   <ol start="4"><li>Copie o Client ID e o Client Secret.</li><li>No Supabase abra <b>Authentication → Sign In / Providers → Google</b>.</li><li>Ative o Google, cole Client ID/Secret e salve.</li></ol>
+  </div></div></article>
+
+  <article class="setup-step"><div class="step-no">3</div><div><div class="step-head"><h2>Discord — entrar com Discord</h2><span id="discordStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+   <ol><li>Abra o Discord Developer Portal e clique em <b>New Application</b>.</li><li>Abra <b>OAuth2</b>.</li><li>Em <b>Redirects</b>, adicione o callback abaixo e salve.</li></ol>
+   <div class="copy-box"><code>https://hszbmroogcciopipjijk.supabase.co/auth/v1/callback</code><button data-copy="https://hszbmroogcciopipjijk.supabase.co/auth/v1/callback">Copiar</button></div>
+   <ol start="4"><li>Copie Client ID e Client Secret.</li><li>No Supabase abra <b>Authentication → Sign In / Providers → Discord</b>.</li><li>Ative, cole as credenciais e salve.</li></ol>
+  </div></div></article>
+
+  <article class="setup-step"><div class="step-no">4</div><div><div class="step-head"><h2>Telegram — login por OpenID Connect</h2><span id="telegramStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+   <ol><li>No Telegram, abra <b>@BotFather</b> e escolha/crie o bot da Biasuz.</li><li>Abra a configuração <b>Login Widget</b>.</li><li>Cadastre as URLs permitidas:</li></ol>
+   <div class="copy-box"><code>https://bia.dunihub.online</code><button data-copy="https://bia.dunihub.online">Copiar</button></div>
+   <div class="copy-box"><code>https://hszbmroogcciopipjijk.supabase.co/auth/v1/callback</code><button data-copy="https://hszbmroogcciopipjijk.supabase.co/auth/v1/callback">Copiar</button></div>
+   <ol start="4"><li>Anote Client ID e Client Secret mostrados pelo BotFather.</li><li>No Supabase abra <b>Authentication → Sign In / Providers → Custom Providers → New Provider</b>.</li><li>Escolha OIDC, identificador <b>custom:telegram</b>, issuer <b>https://oauth.telegram.org</b>, escopos <b>openid profile</b>.</li><li>Salve. Depois me diga apenas “Telegram configurado”; eu ativo a chave visual do frontend.</li></ol>
+   <div class="note">Não precisa solicitar o escopo phone agora. Podemos adicionar depois, se houver necessidade real.</div>
+  </div></div></article>
+
+  <article class="setup-step"><div class="step-no">5</div><div><div class="step-head"><h2>WhatsApp OTP — login por código</h2><span id="phoneStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+   <p>O login por WhatsApp é diferente da Evolution API. No Supabase, o canal WhatsApp para OTP precisa de um provedor compatível; para WhatsApp, use Twilio ou Twilio Verify.</p>
+   <ol><li>Crie ou acesse sua conta Twilio.</li><li>Habilite o remetente/WhatsApp conforme o fluxo da Twilio.</li><li>No Supabase abra <b>Authentication → Sign In / Providers → Phone</b>.</li><li>Ative Phone Auth e configure Twilio/Twilio Verify.</li><li>Revise rate limits e proteção contra abuso antes de liberar para todos.</li></ol>
+   <div class="note">Esta etapa pode ficar para depois. E-mail/senha e OAuth funcionam independentemente dela.</div>
+  </div></div></article>
+
+  <article class="setup-step"><div class="step-no">6</div><div><div class="step-head"><h2>Logomarcas e banners das representadas</h2><span id="assetsStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+    <p>Envie preferencialmente <b>PNG com fundo transparente, SVG ou WebP</b>. Para banners, use horizontal em torno de <b>1600×600</b> ou maior.</p>
+    <div id="assetList" class="asset-list"></div>
+  </div></div></article>
+
+  <article class="setup-step"><div class="step-no">7</div><div><div class="step-head"><h2>Operação comercial</h2><span id="commercialStatus" class="step-status warn">Verificando</span></div><div class="step-body">
+   <p>Depois dos acessos, feche a configuração operacional:</p>
+   <ol><li>Vincular cada vendedor a um usuário do Painel do Representante.</li><li>Cadastrar metas por vendedor/período.</li><li>Cadastrar regras de comissão.</li><li>Registrar consentimentos de WhatsApp para campanhas em massa.</li><li>Subir os catálogos oficiais e revisar produtos/preços antes de publicar.</li></ol>
+  </div></div></article>
+ </section>
+ <p class="footer-note">Segredos e senhas nunca devem ser colocados no código público, no GitHub ou em mensagens de atendimento. O sistema foi preparado para manter as credenciais sensíveis no Supabase e nos próprios provedores.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js?v=20260925-41"></script>
+<script src="./setup-admin.js?v=20260925-1"></script>
+</body></html>
