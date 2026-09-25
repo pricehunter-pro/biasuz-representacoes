@@ -79,6 +79,7 @@ window.BiasuzUI=(function(){
    '<div class="dashboard-nav-group">Gestão</div>'+
    linkItem("file","Revisar extrações","./catalog-review.html")+
    linkItem("box","Gestão das Lojas","./commercial-admin.html")+
+   linkItem("chart","Promoções","./promotions-admin.html")+
    linkItem("chart","Gestão Comercial","./sales-admin.html")+
    linkItem("settings","Diagnóstico","./health-admin.html")+
    linkItem("help","Guia de ativação","./setup-admin.html")+
