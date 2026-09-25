@@ -71,16 +71,12 @@ document.getElementById("goalForm").onsubmit=async e=>{e.preventDefault();const 
 
 async function previewCampaignAudience(){
  const form=document.getElementById("campaignForm"),d=Object.fromEntries(new FormData(form)),box=document.getElementById("campaignPreview");
- let totalReq=sb.from("customers").select("*",{count:"exact",head:true}).neq("lifecycle_stage","descartado");
- if(d.state)totalReq=totalReq.eq("state",d.state);if(d.segment)totalReq=totalReq.eq("segment",d.segment);
- const total=await totalReq;
- let eligibleReq=sb.from("customers").select("*",{count:"exact",head:true}).neq("lifecycle_stage","descartado");
- if(d.state)eligibleReq=eligibleReq.eq("state",d.state);if(d.segment)eligibleReq=eligibleReq.eq("segment",d.segment);
- if(d.channel==="whatsapp"||d.channel==="multicanal")eligibleReq=eligibleReq.eq("whatsapp_marketing_allowed",true).is("whatsapp_opt_out_at",null).not("phone1","is",null);
- else eligibleReq=eligibleReq.not("email","is",null);
- const eligible=await eligibleReq,totalCount=total.count||0,eligibleCount=eligible.count||0;
+ box.textContent="Calculando audiência...";
+ const {data,error}=await sb.rpc("campaign_audience_preview",{p_segment:d.segment||null,p_state:d.state||null,p_city:d.city||null,p_cnae:d.cnae||null,p_channel:d.channel||"whatsapp"});
+ if(error){box.innerHTML='<span class="status err">'+esc(error.message)+'</span>';return}
+ const totalCount=Number(data?.total||0),eligibleCount=Number(data?.eligible||0);
  form.dataset.totalAudience=String(totalCount);form.dataset.eligibleAudience=String(eligibleCount);
- box.innerHTML='<strong>'+eligibleCount.toLocaleString("pt-BR")+' elegíveis</strong> de '+totalCount.toLocaleString("pt-BR")+' contatos na carteira. '+(d.channel==="whatsapp"&&eligibleCount===0?'<span class="status err">Nenhum cliente importado possui opt-in de WhatsApp registrado; disparo automático continuará bloqueado.</span>':'');
+ box.innerHTML='<strong>'+eligibleCount.toLocaleString("pt-BR")+' elegíveis</strong> de '+totalCount.toLocaleString("pt-BR")+' contatos na carteira. '+((d.channel==="whatsapp"||d.channel==="multicanal")&&eligibleCount===0?'<span class="status err">Nenhum contato com opt-in de WhatsApp atende aos filtros atuais.</span>':'');
 }
 document.getElementById("previewCampaign").onclick=previewCampaignAudience;
 document.getElementById("campaignForm").onsubmit=async e=>{
@@ -89,18 +85,33 @@ document.getElementById("campaignForm").onsubmit=async e=>{
  const brand=brands.find(x=>x.id===d.representada_id);
  const {error}=await sb.from("campaigns").insert({
   name:d.name,representada_id:d.representada_id||null,brand:brand?.name||null,segment:d.segment||null,state:d.state||null,
-  channel:d.channel||"whatsapp",description:d.description||null,message_template:d.message_template,status:"rascunho",
+  channel:d.channel||"whatsapp",description:d.description||null,message_template:d.message_template,status:"draft",
   scheduled_at:d.scheduled_at?new Date(d.scheduled_at).toISOString():null,total_audience_count:Number(form.dataset.totalAudience||0),
-  eligible_audience_count:Number(form.dataset.eligibleAudience||0)
+  eligible_audience_count:Number(form.dataset.eligibleAudience||0),audience_filter:{city:d.city||null,cnae:d.cnae||null}
  });
  if(error)return setStatus("campaignStatus",error.message,"err");
  form.reset();delete form.dataset.totalAudience;delete form.dataset.eligibleAudience;document.getElementById("campaignPreview").textContent="Defina os filtros para calcular a audiência.";setStatus("campaignStatus","Campanha salva em rascunho.","ok");loadCampaigns();
 };
+const campaignStatusLabel=s=>({draft:"rascunho",scheduled:"agendada",running:"em andamento",paused:"fila preparada",completed:"concluída",cancelled:"cancelada"}[s]||s);
 async function loadCampaigns(){
  const {data,error}=await sb.from("campaigns").select("*,representadas(name)").order("created_at",{ascending:false}).limit(100),box=document.getElementById("campaignRows");
  if(error){box.innerHTML='<p class="status err">'+esc(error.message)+'</p>';return}
- const rows=data||[];box.innerHTML=rows.length?rows.map(c=>'<div class="row"><div><strong>'+esc(c.name)+'</strong><br><small>'+esc(c.representadas?.name||c.brand||"Todas as representadas")+' · '+esc(c.segment||"todos os segmentos")+' · '+esc(c.state||"todos os estados")+'</small></div><div><small>Elegíveis</small><br><strong>'+Number(c.eligible_audience_count||0).toLocaleString("pt-BR")+' / '+Number(c.total_audience_count||0).toLocaleString("pt-BR")+'</strong></div><div><span class="badge '+(c.status==="encerrada"?"":"warn")+'">'+esc(c.status)+'</span></div><div class="action-row"><button class="btn btn-small btn-outline" data-copy-campaign="'+c.id+'">Copiar mensagem</button></div></div>').join(""):'<p class="muted">Nenhuma campanha cadastrada.</p>';
- document.querySelectorAll("[data-copy-campaign]").forEach(b=>b.onclick=async()=>{const c=rows.find(x=>x.id===b.dataset.copyCampaign);await navigator.clipboard.writeText(c.message_template);alert("Mensagem copiada.");});
+ const rows=data||[];
+ box.innerHTML=rows.length?rows.map(c=>{
+   const f=c.audience_filter||{},scope=[c.representadas?.name||c.brand||"Todas as representadas",c.segment||"todos os segmentos",c.state||"todos os estados",f.city||null,f.cnae?("CNAE "+f.cnae):null].filter(Boolean).join(" · ");
+   const canQueue=(c.channel==="whatsapp"||c.channel==="multicanal")&&Number(c.eligible_audience_count||0)>0;
+   return '<div class="row campaign-row"><div><strong>'+esc(c.name)+'</strong><br><small>'+esc(scope)+'</small><br><small>'+esc(c.channel)+' · '+esc(campaignStatusLabel(c.status))+'</small></div><div><small>Elegíveis</small><br><strong>'+Number(c.eligible_audience_count||0).toLocaleString("pt-BR")+' / '+Number(c.total_audience_count||0).toLocaleString("pt-BR")+'</strong><br><small>'+Number(c.queued_count||0).toLocaleString("pt-BR")+' na fila</small></div><div><span class="badge '+(c.status==="completed"?"ok":"warn")+'">'+esc(campaignStatusLabel(c.status))+'</span></div><div class="action-row"><button class="btn btn-small btn-outline" data-copy-campaign="'+c.id+'">Copiar mensagem</button>'+(canQueue?'<button class="btn btn-small" data-queue-campaign="'+c.id+'">Gerar fila WhatsApp</button>':'')+(Number(c.queued_count||0)>0?'<a class="btn btn-small btn-outline" href="./campaign-outbox.html?campaign_id='+encodeURIComponent(c.id)+'">Revisar fila</a>':'')+'</div></div>';
+ }).join(""):'<p class="muted">Nenhuma campanha cadastrada.</p>';
+ document.querySelectorAll("[data-copy-campaign]").forEach(b=>b.onclick=async()=>{const x=rows.find(v=>v.id===b.dataset.copyCampaign);await navigator.clipboard.writeText(x.message_template);alert("Mensagem copiada.")});
+ document.querySelectorAll("[data-queue-campaign]").forEach(b=>b.onclick=async()=>{
+   const x=rows.find(v=>v.id===b.dataset.queueCampaign);if(!x)return;
+   if(!confirm("Gerar rascunhos de WhatsApp apenas para os contatos elegíveis e com consentimento desta campanha?"))return;
+   b.disabled=true;b.textContent="Gerando...";
+   const {data,error}=await sb.rpc("queue_campaign_whatsapp",{p_campaign_id:x.id});
+   if(error){alert(error.message);b.disabled=false;b.textContent="Gerar fila WhatsApp";return}
+   alert("Fila preparada: "+Number(data?.queued||0).toLocaleString("pt-BR")+" mensagens. Novos rascunhos: "+Number(data?.inserted||0).toLocaleString("pt-BR")+".");
+   await loadCampaigns();
+ });
 }
 
 async function loadRules(){
